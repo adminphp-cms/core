@@ -53,6 +53,35 @@ class Block extends Model
     }
 
     /**
+     * Value of a content field for the site: a translated field gives its value in the
+     * given locale (current one by default), else in the default locale, else the first filled one.
+     * An empty value gives null.
+     */
+    public function translated(string $field, ?string $locale = null): mixed
+    {
+        $value = $this->content[$field] ?? null;
+
+        if ($value === []) {
+            return null;
+        }
+
+        if (! is_array($value) || array_is_list($value)) {
+            return $value;
+        }
+
+        $adminPhp = app(AdminPhp::class);
+        $locales = array_unique([$locale ?? app()->getLocale(), $adminPhp->defaultLocale(), ...$adminPhp->locales()]);
+
+        foreach ($locales as $candidate) {
+            if (filled($value[$candidate] ?? null)) {
+                return $value[$candidate];
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return MorphTo<Model, $this>
      */
     public function blockable(): MorphTo

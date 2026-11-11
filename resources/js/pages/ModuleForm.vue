@@ -5,6 +5,7 @@ import { api, ApiError } from '../api'
 import { isFilled } from '../composables/useLocalizedValue'
 import { config } from '../config'
 import PublicationPanel from '../components/PublicationPanel.vue'
+import UiIcon from '../components/ui/UiIcon.vue'
 import FieldRenderer from '../fields/FieldRenderer.vue'
 import { useEditorStore } from '../stores/editor'
 import { useModulesStore } from '../stores/modules'
@@ -21,6 +22,8 @@ const values = ref<FormValues>({})
 const itemTitle = ref('')
 const isDirty = ref(false)
 const isSaving = ref(false)
+/** The editor only shows once the schema and the item are there, so nothing empty can be saved. */
+const isLoaded = ref(false)
 const toast = ref<string | null>(null)
 const publication = ref<Publication | null>(null)
 const revisions = ref<RevisionSummary[]>([])
@@ -258,6 +261,7 @@ onMounted(async () => {
         itemTitle.value = 'Nouveau'
     }
 
+    isLoaded.value = true
     watch(values, () => (isDirty.value = true), { deep: true })
 })
 </script>
@@ -284,20 +288,31 @@ onMounted(async () => {
                 </button>
             </div>
 
-            <span class="status" :class="{ saved: saveStatus.isSaved }">{{ saveStatus.label }}</span>
+            <template v-if="isLoaded">
+                <span class="status" :class="{ saved: saveStatus.isSaved }">{{ saveStatus.label }}</span>
 
-            <template v-if="isPublishable">
-                <button type="button" class="btn" :disabled="isSaving" @click="save">Enregistrer</button>
-                <button type="button" class="btn primary" :disabled="isSaving || !hasSomethingToPublish" @click="publish">
-                    {{ publishLabel }}
+                <template v-if="isPublishable">
+                    <button type="button" class="btn" :disabled="isSaving" @click="save">Enregistrer</button>
+                    <button type="button" class="btn primary" :disabled="isSaving || !hasSomethingToPublish" @click="publish">
+                        <UiIcon name="send" :size="14" /> {{ publishLabel }}
+                    </button>
+                </template>
+                <button v-else type="button" class="btn primary" :disabled="isSaving" @click="save">
+                    {{ isSaving ? 'Enregistrement…' : 'Enregistrer' }}
                 </button>
             </template>
-            <button v-else type="button" class="btn primary" :disabled="isSaving" @click="save">
-                {{ isSaving ? 'Enregistrement…' : 'Enregistrer' }}
-            </button>
         </header>
 
-        <div v-if="schema" class="editor-body" :class="{ 'has-inspector': publication !== null }">
+        <div v-if="!isLoaded" class="canvas" aria-busy="true">
+            <div class="doc doc-skeleton" aria-label="Chargement du contenu">
+                <span class="skeleton is-title" />
+                <span class="skeleton is-lead" />
+                <span class="skeleton" />
+                <span class="skeleton is-short" />
+            </div>
+        </div>
+
+        <div v-else-if="schema" class="editor-body" :class="{ 'has-inspector': publication !== null }">
             <div class="canvas">
                 <div class="doc">
                     <FieldRenderer

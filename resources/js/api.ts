@@ -1,5 +1,5 @@
 import { config } from './config'
-import type { AdminUser, FormValues, Item, ItemSummary, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, ValidationErrors } from './types'
+import type { ActivityEntry, AdminUser, FormValues, Item, ItemSummary, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, ValidationErrors } from './types'
 
 export class ApiError extends Error {
     constructor(
@@ -68,6 +68,8 @@ export const api = {
         request<{ data: AdminUser }>('POST', 'session', credentials).then((response) => response.data),
 
     logout: () => request<unknown>('DELETE', 'session'),
+
+    activity: () => request<{ data: ActivityEntry[] }>('GET', 'activity').then((response) => response.data),
 
     modules: () => request<{ data: ModuleSummary[] }>('GET', 'modules').then((response) => response.data),
 

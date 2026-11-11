@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import BrandLogo from './components/BrandLogo.vue'
+import UiIcon from './components/ui/UiIcon.vue'
+import { initials as initialsOf } from './format'
 import { useModulesStore } from './stores/modules'
 import { useSessionStore } from './stores/session'
 
@@ -18,6 +21,8 @@ watch(
     { immediate: true },
 )
 
+const initials = computed(() => initialsOf(session.user?.name ?? ''))
+
 async function logout(): Promise<void> {
     await session.logout()
     await router.replace({ name: 'login' })
@@ -26,32 +31,52 @@ async function logout(): Promise<void> {
 
 <template>
     <div v-if="session.user" class="app">
-        <nav class="nav" aria-label="Navigation principale">
-            <RouterLink :to="{ name: 'home' }" class="brand">
-                <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
-                    <rect x="1" y="1" width="20" height="20" rx="5" fill="var(--accent)" />
-                    <path d="M6 15l5-9 5 9M8.2 11.5h5.6" stroke="var(--accent-ink)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                AdminPhp
-            </RouterLink>
-
-            <div class="nav-group">
-                <h3>Contenus</h3>
-                <RouterLink
-                    v-for="module in modulesStore.modules"
-                    :key="module.name"
-                    :to="{ name: 'module.index', params: { module: module.name } }"
-                    class="nav-link"
-                >
-                    {{ module.title }} <small>{{ module.count }}</small>
+        <aside class="nav">
+            <div class="nav-brand">
+                <RouterLink :to="{ name: 'home' }" class="brand" aria-label="AdminPHP, tableau de bord">
+                    <BrandLogo />
                 </RouterLink>
             </div>
 
-            <div class="nav-user">
-                <span :title="session.user.email">{{ session.user.name }}</span>
-                <button type="button" class="link-button" @click="logout">Se déconnecter</button>
+            <nav class="nav-scroll" aria-label="Navigation principale">
+                <div class="nav-group">
+                    <RouterLink
+                        :to="{ name: 'home' }"
+                        class="nav-link"
+                        :class="{ 'is-active': $route.name === 'home' }"
+                        :aria-current="$route.name === 'home' ? 'page' : undefined"
+                    >
+                        <span class="nav-link-label"><UiIcon name="layout-dashboard" /> Tableau de bord</span>
+                    </RouterLink>
+                </div>
+
+                <div class="nav-group">
+                    <h3>Contenus</h3>
+                    <RouterLink
+                        v-for="module in modulesStore.modules"
+                        :key="module.name"
+                        :to="{ name: 'module.index', params: { module: module.name } }"
+                        class="nav-link"
+                        :class="{ 'is-active': $route.params.module === module.name }"
+                        :aria-current="$route.params.module === module.name ? 'page' : undefined"
+                    >
+                        <span class="nav-link-label"><UiIcon :name="module.icon" /> {{ module.title }}</span>
+                        <small>{{ module.count }}</small>
+                    </RouterLink>
+                </div>
+            </nav>
+
+            <div class="nav-profile">
+                <span class="avatar" aria-hidden="true">{{ initials }}</span>
+                <span class="nav-profile-text">
+                    <b>{{ session.user.name }}</b>
+                    <small>{{ session.user.email }}</small>
+                </span>
+                <button type="button" class="icon-button" title="Se déconnecter" aria-label="Se déconnecter" @click="logout">
+                    <UiIcon name="log-out" :size="14" />
+                </button>
             </div>
-        </nav>
+        </aside>
 
         <RouterView :key="$route.fullPath" />
     </div>

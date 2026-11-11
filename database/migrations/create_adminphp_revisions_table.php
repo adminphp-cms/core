@@ -9,7 +9,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(app(AdminPhp::class)->table('revisions'), function (Blueprint $table) {
+        $tableName = app(AdminPhp::class)->table('revisions');
+
+        Schema::create($tableName, function (Blueprint $table) use ($tableName) {
             $table->ulid('id')->primary();
             $table->string('revisionable_type', 100);
             $table->ulid('revisionable_id');
@@ -18,7 +20,8 @@ return new class extends Migration
             $table->ulid('user_id')->nullable()->index();
             $table->timestamps();
 
-            $table->index(['revisionable_type', 'revisionable_id', 'status']);
+            // Named explicitly: generated names exceed MySQL's 64 character limit.
+            $table->index(['revisionable_type', 'revisionable_id', 'status'], "{$tableName}_revisionable_index");
         });
     }
 

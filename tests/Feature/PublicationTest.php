@@ -10,22 +10,6 @@ beforeEach(function () {
     actingAsAdmin();
 });
 
-/**
- * @param  array<string, mixed>  $values
- */
-function createArticleItem(array $values = []): string
-{
-    return test()->postJson('/admin/api/modules/article/items', [
-        'title' => ['fr' => 'Version 1'],
-        ...$values,
-    ])->assertCreated()->json('data.id');
-}
-
-function publishArticleItem(string $id, array $payload = []): void
-{
-    test()->postJson("/admin/api/modules/article/items/{$id}/publish", $payload)->assertOk();
-}
-
 it('creates items as unpublished drafts and saves their edits in place', function () {
     $id = createArticleItem();
 

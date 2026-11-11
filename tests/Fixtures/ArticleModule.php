@@ -13,6 +13,10 @@ class ArticleModule extends Module
 {
     protected string $model = Article::class;
 
+    protected string $description = 'Actualités et récits de chantier.';
+
+    protected string $icon = 'newspaper';
+
     public function form(): array
     {
         return [

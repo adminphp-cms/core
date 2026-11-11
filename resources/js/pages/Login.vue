@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ApiError } from '../api'
+import BrandLogo from '../components/BrandLogo.vue'
 import { useSessionStore } from '../stores/session'
 
 const session = useSessionStore()
@@ -40,15 +41,12 @@ async function submit(): Promise<void> {
 <template>
     <main class="login">
         <form class="login-card" @submit.prevent="submit">
-            <div class="brand">
-                <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
-                    <rect x="1" y="1" width="20" height="20" rx="5" fill="var(--accent)" />
-                    <path d="M6 15l5-9 5 9M8.2 11.5h5.6" stroke="var(--accent-ink)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                AdminPhp
+            <div class="brand" role="img" aria-label="AdminPHP">
+                <BrandLogo />
             </div>
 
-            <h1>Connexion</h1>
+            <h1>Bon retour parmi nous</h1>
+            <p class="login-lead">Connectez-vous pour retrouver vos contenus.</p>
 
             <label class="login-field">
                 <span>Email</span>

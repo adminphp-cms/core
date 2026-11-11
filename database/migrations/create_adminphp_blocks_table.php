@@ -24,7 +24,8 @@ return new class extends Migration
             $blueprint->jsonb('content');
             $blueprint->timestamps();
 
-            $blueprint->index(['blockable_type', 'blockable_id', 'editor_name', 'position']);
+            // Named explicitly: generated names exceed MySQL's 64 character limit.
+            $blueprint->index(['blockable_type', 'blockable_id', 'editor_name', 'position'], "{$table}_zone_index");
         });
     }
 

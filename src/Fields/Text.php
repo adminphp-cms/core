@@ -31,6 +31,16 @@ class Text extends Field
         return $this;
     }
 
+    /**
+     * Trims the text (per locale when translatable); an empty text is stored as null.
+     */
+    public function dehydrate(mixed $value): mixed
+    {
+        $clean = fn (mixed $text): mixed => is_string($text) ? (trim($text) === '' ? null : trim($text)) : $text;
+
+        return parent::dehydrate($this->isTranslatable && is_array($value) ? array_map($clean, $value) : $clean($value));
+    }
+
     protected function valueRules(): array
     {
         return ['string', "max:{$this->maxLength}", ...$this->rules];

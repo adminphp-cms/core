@@ -12,6 +12,11 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->jsonb('title');
             $table->jsonb('lead')->nullable();
+            $table->string('category', 50)->nullable();
+            $table->jsonb('tags')->nullable();
+            $table->boolean('is_featured')->default(false);
+            $table->date('event_on')->nullable();
+            $table->timestamp('event_at')->nullable();
             $table->publication();
             $table->timestamps();
         });

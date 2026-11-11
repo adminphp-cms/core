@@ -616,6 +616,97 @@ a {
     font-size: 14px;
 }
 
+/* Choices, switches and dates */
+.control-input {
+    font: 15px/1.4 var(--sans);
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 10px;
+    max-width: 100%;
+}
+
+.control-input:focus {
+    outline: 2px solid var(--accent-soft);
+    border-color: var(--accent);
+}
+
+.choice-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.choice {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.choice:hover {
+    border-color: var(--faint);
+}
+
+.choice[aria-pressed='true'] {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 0;
+    background: none;
+    padding: 4px 0;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.switch-track {
+    width: 34px;
+    height: 20px;
+    border-radius: 999px;
+    background: var(--line);
+    position: relative;
+    transition: background 0.15s;
+}
+
+.switch-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--surface);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s;
+}
+
+.switch[aria-checked='true'] {
+    color: var(--ink);
+}
+
+.switch[aria-checked='true'] .switch-track {
+    background: var(--accent);
+}
+
+.switch[aria-checked='true'] .switch-thumb {
+    transform: translateX(14px);
+}
+
+.switch:focus-visible .switch-track {
+    outline: 2px solid var(--accent-soft);
+    outline-offset: 2px;
+}
+
 /* Publication inspector */
 .editor-body.has-inspector {
     display: grid;

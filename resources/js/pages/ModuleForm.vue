@@ -91,8 +91,12 @@ function fromLocalInput(value: string): string | null {
 }
 
 function emptyValue(field: FieldSchema): unknown {
-    if (field.type === 'blocks') {
+    if (field.type === 'blocks' || (field.type === 'select' && field.multiple)) {
         return []
+    }
+
+    if (field.type === 'toggle') {
+        return false
     }
 
     return field.translatable ? {} : null

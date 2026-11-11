@@ -41,7 +41,7 @@ function formatDate(iso: string): string {
 
             <p v-if="publication.hasDraft" class="inspector-note">
                 Des modifications enregistrées attendent d’être publiées<template v-if="publication.draftUpdatedAt">
-                    ({{ formatDate(publication.draftUpdatedAt) }})</template
+                    ({{ formatDate(publication.draftUpdatedAt) }}<template v-if="publication.draftUpdatedBy">, {{ publication.draftUpdatedBy }}</template>)</template
                 >.
             </p>
             <p v-else-if="publication.publishedAt" class="inspector-note">Publié pour la première fois le {{ formatDate(publication.publishedAt) }}.</p>
@@ -77,7 +77,11 @@ function formatDate(iso: string): string {
                 <li v-for="(revision, index) in revisions" :key="revision.id">
                     <span>
                         {{ formatDate(revision.createdAt) }}
-                        <small v-if="index === 0">dernière publiée</small>
+                        <small>
+                            <template v-if="revision.userName">{{ revision.userName }}</template>
+                            <template v-if="revision.userName && index === 0"> · </template>
+                            <template v-if="index === 0">dernière publiée</template>
+                        </small>
                     </span>
                     <button type="button" class="link-button" :disabled="isBusy" @click="emit('restore', revision.id)">Restaurer</button>
                 </li>

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->ulid('revisionable_id');
             $table->string('status', 20);
             $table->jsonb('payload');
+            $table->ulid('user_id')->nullable()->index();
             $table->timestamps();
 
             $table->index(['revisionable_type', 'revisionable_id', 'status']);

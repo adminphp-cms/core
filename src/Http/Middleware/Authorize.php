@@ -7,6 +7,9 @@ use Gmarineau\AdminPhp\AdminPhp;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Runs the AdminPhp::auth() callback once the admin user is authenticated.
+ */
 class Authorize
 {
     public function handle(Request $request, Closure $next): Response

@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
-    app(AdminPhp::class)->auth(fn () => true);
+    actingAsAdmin();
 });
 
-it('denies access outside the local environment by default', function () {
+it('denies access when the auth callback refuses the request', function () {
     app(AdminPhp::class)->auth(fn () => false);
 
     $this->getJson('/admin/api/modules')->assertForbidden();

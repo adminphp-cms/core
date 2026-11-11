@@ -1,5 +1,5 @@
 import { config } from './config'
-import type { FormValues, Item, ItemSummary, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, ValidationErrors } from './types'
+import type { AdminUser, FormValues, Item, ItemSummary, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, ValidationErrors } from './types'
 
 export class ApiError extends Error {
     constructor(
@@ -11,9 +11,18 @@ export class ApiError extends Error {
     }
 }
 
-async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
-    const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? ''
+let csrfToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? ''
 
+let onUnauthorized: () => void = () => {}
+
+/**
+ * Called when the session has expired, so the admin can send the user back to the login page.
+ */
+export function handleUnauthorized(callback: () => void): void {
+    onUnauthorized = callback
+}
+
+async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
     const response = await fetch(`${config.apiUrl}/${path}`, {
         method,
         headers: {
@@ -27,6 +36,15 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
 
     const payload = await response.json().catch(() => ({}))
 
+    if (typeof payload.csrfToken === 'string') {
+        // The session is regenerated on login and logout, which renews the token.
+        csrfToken = payload.csrfToken
+    }
+
+    if (response.status === 401 && path !== 'session') {
+        onUnauthorized()
+    }
+
     if (!response.ok) {
         throw new ApiError(response.status, payload.message ?? response.statusText, payload.errors ?? {})
     }
@@ -35,6 +53,22 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
 }
 
 export const api = {
+    currentUser: () =>
+        request<{ data: AdminUser }>('GET', 'session')
+            .then((response) => response.data)
+            .catch((error: unknown) => {
+                if (error instanceof ApiError && error.status === 401) {
+                    return null
+                }
+
+                throw error
+            }),
+
+    login: (credentials: { email: string; password: string; remember: boolean }) =>
+        request<{ data: AdminUser }>('POST', 'session', credentials).then((response) => response.data),
+
+    logout: () => request<unknown>('DELETE', 'session'),
+
     modules: () => request<{ data: ModuleSummary[] }>('GET', 'modules').then((response) => response.data),
 
     module: (name: string) => request<{ data: ModuleSchema }>('GET', `modules/${name}`).then((response) => response.data),

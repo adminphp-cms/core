@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | URI prefix of the admin and the middleware applied to all its routes.
-    | Access is then granted by the callback given to AdminPhp::auth().
+    | Admin users must log in; AdminPhp::auth() can restrict access further.
     |
     */
 
@@ -17,6 +17,19 @@ return [
     'domain' => env('ADMINPHP_DOMAIN'),
 
     'middleware' => ['web'],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication guard
+    |--------------------------------------------------------------------------
+    |
+    | Admin users live in their own table and log in through this session
+    | guard, apart from the users of the site. It is registered by AdminPhp
+    | unless the application already defines a guard with this name.
+    |
+    */
+
+    'guard' => 'adminphp',
 
     /*
     |--------------------------------------------------------------------------

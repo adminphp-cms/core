@@ -1,5 +1,5 @@
 import { config } from './config'
-import type { FormValues, Item, ItemSummary, ModuleSchema, ModuleSummary, ValidationErrors } from './types'
+import type { FormValues, Item, ItemSummary, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, ValidationErrors } from './types'
 
 export class ApiError extends Error {
     constructor(
@@ -50,4 +50,19 @@ export const api = {
 
     updateItem: (module: string, id: string, values: FormValues) =>
         request<{ data: Item }>('PUT', `modules/${module}/items/${id}`, values).then((response) => response.data),
+
+    publishItem: (module: string, id: string, options: PublishOptions) =>
+        request<{ data: Item }>('POST', `modules/${module}/items/${id}/publish`, options).then((response) => response.data),
+
+    unpublishItem: (module: string, id: string) =>
+        request<{ data: Item }>('POST', `modules/${module}/items/${id}/unpublish`).then((response) => response.data),
+
+    discardDraft: (module: string, id: string) =>
+        request<{ data: Item }>('DELETE', `modules/${module}/items/${id}/draft`).then((response) => response.data),
+
+    revisions: (module: string, id: string) =>
+        request<{ data: RevisionSummary[] }>('GET', `modules/${module}/items/${id}/revisions`).then((response) => response.data),
+
+    restoreRevision: (module: string, id: string, revisionId: string) =>
+        request<{ data: Item }>('POST', `modules/${module}/items/${id}/revisions/${revisionId}/restore`).then((response) => response.data),
 }

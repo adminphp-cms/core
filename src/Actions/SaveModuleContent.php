@@ -4,7 +4,6 @@ namespace Gmarineau\AdminPhp\Actions;
 
 use Gmarineau\AdminPhp\Modules\Module;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 
@@ -34,11 +33,7 @@ class SaveModuleContent
             ));
         }
 
-        $validated = Validator::make(
-            $input,
-            $module->validationRules($input, onlyPresentFields: $model->exists),
-            attributes: $module->validationAttributes($input),
-        )->validate();
+        $validated = $module->validate($input, onlyPresentFields: $model->exists);
 
         $fields = array_intersect_key($module->fields(), $validated);
 

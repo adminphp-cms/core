@@ -3,9 +3,11 @@
 namespace Gmarineau\AdminPhp;
 
 use Gmarineau\AdminPhp\Console\InstallCommand;
+use Gmarineau\AdminPhp\Enums\PublicationStatus;
 use Gmarineau\AdminPhp\Http\Middleware\Authorize;
 use Gmarineau\AdminPhp\Models\Block;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,6 +23,8 @@ class AdminPhpServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap(['adminphp_block' => Block::class]);
+
+        $this->registerBlueprintMacros();
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'adminphp');
 
@@ -41,6 +45,22 @@ class AdminPhpServiceProvider extends ServiceProvider
                 __DIR__.'/../public' => public_path('vendor/adminphp'),
             ], ['adminphp-assets', 'laravel-assets']);
         }
+    }
+
+    /**
+     * `$table->publication()` adds the columns used by the HasPublication trait.
+     */
+    protected function registerBlueprintMacros(): void
+    {
+        Blueprint::macro('publication', function (): void {
+            /** @var Blueprint $this */
+            $this->string('status', 20)->default(PublicationStatus::Draft->value);
+            $this->timestamp('published_at')->nullable();
+            $this->timestamp('publish_start_at')->nullable();
+            $this->timestamp('publish_end_at')->nullable();
+
+            $this->index(['status', 'publish_start_at', 'publish_end_at']);
+        });
     }
 
     protected function registerRoutes(): void

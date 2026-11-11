@@ -4,10 +4,11 @@ import { useRouter } from 'vue-router'
 import { api, ApiError } from '../api'
 import { isFilled } from '../composables/useLocalizedValue'
 import { config } from '../config'
+import PublicationPanel from '../components/PublicationPanel.vue'
 import FieldRenderer from '../fields/FieldRenderer.vue'
 import { useEditorStore } from '../stores/editor'
 import { useModulesStore } from '../stores/modules'
-import type { BlockValue, FieldSchema, FormValues, ModuleSchema } from '../types'
+import type { BlockValue, FieldSchema, FormValues, Item, ModuleSchema, Publication, RevisionSummary } from '../types'
 
 const props = defineProps<{ module: string; id?: string }>()
 
@@ -21,6 +22,73 @@ const itemTitle = ref('')
 const isDirty = ref(false)
 const isSaving = ref(false)
 const toast = ref<string | null>(null)
+const publication = ref<Publication | null>(null)
+const revisions = ref<RevisionSummary[]>([])
+const publishStartAt = ref('')
+const publishEndAt = ref('')
+
+const isPublishable = computed(() => schema.value?.publishable === true)
+
+const isScheduleChanged = computed(
+    () =>
+        publication.value !== null &&
+        (publishStartAt.value !== toLocalInput(publication.value.publishStartAt) ||
+            publishEndAt.value !== toLocalInput(publication.value.publishEndAt)),
+)
+
+/**
+ * Whether publishing would change what the site shows.
+ */
+const hasSomethingToPublish = computed(
+    () =>
+        publication.value === null ||
+        publication.value.status !== 'published' ||
+        publication.value.hasDraft ||
+        isDirty.value ||
+        isScheduleChanged.value,
+)
+
+const saveStatus = computed(() => {
+    if (!props.id) {
+        return { label: 'Pas encore enregistré', isSaved: false }
+    }
+
+    if (isDirty.value) {
+        return { label: 'Modifications non enregistrées', isSaved: false }
+    }
+
+    if (publication.value?.hasDraft) {
+        return { label: 'Enregistré, non publié', isSaved: false }
+    }
+
+    return { label: 'Enregistré', isSaved: true }
+})
+
+const publishLabel = computed(() => {
+    if (publication.value?.status === 'published') {
+        return hasSomethingToPublish.value ? 'Publier les modifications' : 'Publié'
+    }
+
+    return 'Publier'
+})
+
+/**
+ * ISO date from the API to the value of a datetime-local input, in the browser time zone.
+ */
+function toLocalInput(iso: string | null): string {
+    if (iso === null) {
+        return ''
+    }
+
+    const date = new Date(iso)
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+
+    return date.toISOString().slice(0, 16)
+}
+
+function fromLocalInput(value: string): string | null {
+    return value === '' ? null : new Date(value).toISOString()
+}
 
 function emptyValue(field: FieldSchema): unknown {
     if (field.type === 'blocks') {
@@ -67,35 +135,108 @@ function showToast(message: string): void {
     setTimeout(() => (toast.value = null), 2000)
 }
 
-async function save(): Promise<void> {
+async function applyItem(item: Item): Promise<void> {
+    values.value = item.values
+    itemTitle.value = item.title
+    publication.value = item.publication
+
+    if (item.publication !== null) {
+        publishStartAt.value = toLocalInput(item.publication.publishStartAt)
+        publishEndAt.value = toLocalInput(item.publication.publishEndAt)
+    }
+
+    await nextTick()
+    isDirty.value = false
+}
+
+async function loadRevisions(id: string): Promise<void> {
+    revisions.value = isPublishable.value ? await api.revisions(props.module, id) : []
+}
+
+/**
+ * Runs an API call that returns the item, with the shared busy state and error handling.
+ */
+async function run(action: () => Promise<Item>, successMessage: string): Promise<Item | null> {
     isSaving.value = true
     editor.errors = {}
 
     try {
-        const item = props.id
-            ? await api.updateItem(props.module, props.id, values.value)
-            : await api.createItem(props.module, values.value)
-
-        values.value = item.values
-        itemTitle.value = item.title
-        await nextTick()
-        isDirty.value = false
-        showToast('Enregistré')
+        const item = await action()
+        await applyItem(item)
+        showToast(successMessage)
         modulesStore.loadModules()
 
-        if (!props.id) {
-            await router.replace({ name: 'module.edit', params: { module: props.module, id: item.id } })
-        }
+        return item
     } catch (error) {
         if (error instanceof ApiError && error.status === 422) {
             editor.errors = error.errors
-            showToast('Certains champs sont à corriger')
-        } else {
-            showToast('L’enregistrement a échoué')
-            throw error
+            showToast(error.errors.publishEndAt?.[0] ?? 'Certains champs sont à corriger')
+
+            return null
         }
+
+        showToast('L’opération a échoué')
+        throw error
     } finally {
         isSaving.value = false
+    }
+}
+
+async function goToItem(id: string): Promise<void> {
+    if (!props.id) {
+        await router.replace({ name: 'module.edit', params: { module: props.module, id } })
+    }
+}
+
+async function save(): Promise<void> {
+    const item = await run(
+        () => (props.id ? api.updateItem(props.module, props.id, values.value) : api.createItem(props.module, values.value)),
+        publication.value?.status === 'published' ? 'Enregistré, pas encore publié' : 'Enregistré',
+    )
+
+    if (item !== null) {
+        await goToItem(item.id)
+    }
+}
+
+async function publish(): Promise<void> {
+    const options = { publishStartAt: fromLocalInput(publishStartAt.value), publishEndAt: fromLocalInput(publishEndAt.value) }
+
+    const item = await run(async () => {
+        if (!props.id) {
+            const created = await api.createItem(props.module, values.value)
+
+            return api.publishItem(props.module, created.id, options)
+        }
+
+        return api.publishItem(props.module, props.id, { ...options, values: isDirty.value ? values.value : undefined })
+    }, 'Publié')
+
+    if (item !== null) {
+        await loadRevisions(item.id)
+        await goToItem(item.id)
+    }
+}
+
+async function unpublish(): Promise<void> {
+    if (props.id && window.confirm('Retirer ce contenu du site ?')) {
+        await run(() => api.unpublishItem(props.module, props.id!), 'Retiré du site')
+    }
+}
+
+async function discardDraft(): Promise<void> {
+    if (props.id && window.confirm('Abandonner les modifications non publiées et revenir à la version en ligne ?')) {
+        await run(() => api.discardDraft(props.module, props.id!), 'Modifications abandonnées')
+    }
+}
+
+async function restoreRevision(revisionId: string): Promise<void> {
+    const message = isDirty.value
+        ? 'Restaurer cette version ? Les modifications non enregistrées seront perdues.'
+        : 'Restaurer cette version comme brouillon ?'
+
+    if (props.id && window.confirm(message)) {
+        await run(() => api.restoreRevision(props.module, props.id!, revisionId), 'Version restaurée, à publier')
     }
 }
 
@@ -106,9 +247,8 @@ onMounted(async () => {
     schema.value = await modulesStore.schema(props.module)
 
     if (props.id) {
-        const item = await api.item(props.module, props.id)
-        values.value = item.values
-        itemTitle.value = item.title
+        await applyItem(await api.item(props.module, props.id))
+        await loadRevisions(props.id)
     } else {
         values.value = Object.fromEntries(schema.value.fields.map((field) => [field.name, emptyValue(field)]))
         itemTitle.value = 'Nouveau'
@@ -140,21 +280,44 @@ onMounted(async () => {
                 </button>
             </div>
 
-            <span class="status" :class="{ saved: !isDirty }">{{ isDirty ? 'Modifications non enregistrées' : 'Enregistré' }}</span>
-            <button type="button" class="btn primary" :disabled="isSaving" @click="save">{{ isSaving ? 'Enregistrement…' : 'Enregistrer' }}</button>
+            <span class="status" :class="{ saved: saveStatus.isSaved }">{{ saveStatus.label }}</span>
+
+            <template v-if="isPublishable">
+                <button type="button" class="btn" :disabled="isSaving" @click="save">Enregistrer</button>
+                <button type="button" class="btn primary" :disabled="isSaving || !hasSomethingToPublish" @click="publish">
+                    {{ publishLabel }}
+                </button>
+            </template>
+            <button v-else type="button" class="btn primary" :disabled="isSaving" @click="save">
+                {{ isSaving ? 'Enregistrement…' : 'Enregistrer' }}
+            </button>
         </header>
 
-        <div v-if="schema" class="canvas">
-            <div class="doc">
-                <FieldRenderer
-                    v-for="(field, index) in schema.fields"
-                    :key="field.name"
-                    v-model="values[field.name]"
-                    :field="field"
-                    :path="field.name"
-                    :variant="index === 0 && field.type === 'text' ? 'title' : index === 1 && field.type === 'text' ? 'lead' : 'default'"
-                />
+        <div v-if="schema" class="editor-body" :class="{ 'has-inspector': publication !== null }">
+            <div class="canvas">
+                <div class="doc">
+                    <FieldRenderer
+                        v-for="(field, index) in schema.fields"
+                        :key="field.name"
+                        v-model="values[field.name]"
+                        :field="field"
+                        :path="field.name"
+                        :variant="index === 0 && field.type === 'text' ? 'title' : index === 1 && field.type === 'text' ? 'lead' : 'default'"
+                    />
+                </div>
             </div>
+
+            <PublicationPanel
+                v-if="publication !== null"
+                v-model:publish-start-at="publishStartAt"
+                v-model:publish-end-at="publishEndAt"
+                :publication="publication"
+                :revisions="revisions"
+                :is-busy="isSaving"
+                @unpublish="unpublish"
+                @discard-draft="discardDraft"
+                @restore="restoreRevision"
+            />
         </div>
 
         <div class="toast" :class="{ on: toast }" role="status">{{ toast }}</div>

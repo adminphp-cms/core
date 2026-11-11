@@ -12,6 +12,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->jsonb('title');
             $table->jsonb('lead')->nullable();
+            $table->publication();
             $table->timestamps();
         });
     }

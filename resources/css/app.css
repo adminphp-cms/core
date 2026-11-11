@@ -616,6 +616,173 @@ a {
     font-size: 14px;
 }
 
+/* Publication inspector */
+.editor-body.has-inspector {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    align-items: start;
+}
+
+.inspector {
+    position: sticky;
+    top: 58px;
+    max-height: calc(100vh - 58px);
+    overflow-y: auto;
+    border-left: 1px solid var(--line);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    font-size: 13px;
+}
+
+.inspector-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.inspector h2 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.inspector-note,
+.inspector-hint {
+    margin: 0;
+    color: var(--muted);
+}
+
+.inspector-hint {
+    font-size: 12px;
+    color: var(--faint);
+}
+
+.inspector-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: var(--muted);
+}
+
+.inspector-field input {
+    font: inherit;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 8px;
+}
+
+.inspector-field input:focus {
+    outline: 2px solid var(--accent-soft);
+    border-color: var(--accent);
+}
+
+.inspector-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn.danger {
+    color: var(--danger);
+}
+
+.btn:disabled {
+    filter: none;
+}
+
+.visibility {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.visibility::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.visibility.is-live {
+    color: var(--accent);
+}
+
+.visibility.is-scheduled {
+    color: var(--draft);
+}
+
+.visibility.is-expired {
+    color: var(--danger);
+}
+
+.listing-status {
+    white-space: nowrap;
+}
+
+.listing-status small {
+    display: block;
+    color: var(--draft);
+    font-size: 12px;
+}
+
+.revisions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.revisions li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.revisions small {
+    display: block;
+    color: var(--faint);
+    font-size: 12px;
+}
+
+.link-button {
+    border: 0;
+    background: none;
+    padding: 0;
+    color: var(--accent);
+    font-size: 13px;
+}
+
+.link-button:hover:not(:disabled) {
+    text-decoration: underline;
+}
+
+@media (max-width: 1100px) {
+    .editor-body.has-inspector {
+        display: block;
+    }
+
+    .inspector {
+        position: static;
+        max-height: none;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+    }
+}
+
 /* Toast */
 .toast {
     position: fixed;

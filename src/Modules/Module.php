@@ -2,9 +2,12 @@
 
 namespace Gmarineau\AdminPhp\Modules;
 
+use Gmarineau\AdminPhp\Concerns\HasPublication;
 use Gmarineau\AdminPhp\Fields\Field;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 abstract class Module
 {
@@ -64,6 +67,34 @@ abstract class Module
     }
 
     /**
+     * Whether the model goes through drafts, publication and revisions (HasPublication).
+     */
+    public function isPublishable(): bool
+    {
+        return in_array(HasPublication::class, class_uses_recursive($this->model), true);
+    }
+
+    /**
+     * Validates a submitted form and returns the values of the module fields only.
+     *
+     * @param  array<string, mixed>  $input
+     * @param  bool  $onlyPresentFields  Validate only the fields present in the input (partial update).
+     * @return array<string, mixed>
+     *
+     * @throws ValidationException
+     */
+    public function validate(array $input, bool $onlyPresentFields = false): array
+    {
+        $validated = Validator::make(
+            $input,
+            $this->validationRules($input, $onlyPresentFields),
+            attributes: $this->validationAttributes($input),
+        )->validate();
+
+        return array_intersect_key($validated, $this->fields());
+    }
+
+    /**
      * @return array<string, Field>
      */
     public function fields(): array
@@ -120,6 +151,7 @@ abstract class Module
         return [
             'name' => $this->name(),
             'title' => $this->title(),
+            'publishable' => $this->isPublishable(),
             'fields' => array_values(array_map(fn (Field $field): array => $field->toSchema(), $this->fields())),
         ];
     }

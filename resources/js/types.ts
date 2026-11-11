@@ -5,6 +5,12 @@ export interface AdminConfig {
     defaultLocale: string
 }
 
+export interface AdminUser {
+    id: string
+    name: string
+    email: string
+}
+
 export interface BaseFieldSchema {
     name: string
     label: string
@@ -75,6 +81,7 @@ export interface Publication {
     publishEndAt: string | null
     hasDraft: boolean
     draftUpdatedAt: string | null
+    draftUpdatedBy: string | null
 }
 
 export interface Item {
@@ -94,6 +101,7 @@ export interface PublishOptions {
 export interface RevisionSummary {
     id: string
     createdAt: string
+    userName: string | null
 }
 
 export type ValidationErrors = Record<string, string[]>

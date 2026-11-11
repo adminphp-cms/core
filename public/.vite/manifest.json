@@ -32,12 +32,12 @@
     "src": "node_modules/@fontsource-variable/newsreader/files/newsreader-vietnamese-wght-normal.woff2"
   },
   "resources/js/app.ts": {
-    "file": "assets/app-B3ZvOM_4.js",
+    "file": "assets/app-CTanWp0T.js",
     "name": "app",
     "src": "resources/js/app.ts",
     "isEntry": true,
     "css": [
-      "assets/app-Ba35jq3f.css"
+      "assets/app-B_xvxqjx.css"
     ],
     "assets": [
       "assets/instrument-sans-latin-ext-wght-normal-B5bTHO_g.woff2",

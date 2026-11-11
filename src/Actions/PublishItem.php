@@ -3,6 +3,7 @@
 namespace Gmarineau\AdminPhp\Actions;
 
 use Carbon\CarbonInterface;
+use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Enums\PublicationStatus;
 use Gmarineau\AdminPhp\Enums\RevisionStatus;
 use Gmarineau\AdminPhp\Modules\Module;
@@ -19,6 +20,7 @@ class PublishItem
     public function __construct(
         protected SaveModuleContent $saveModuleContent,
         protected GetFormData $getFormData,
+        protected AdminPhp $adminPhp,
     ) {}
 
     /**
@@ -54,6 +56,7 @@ class PublishItem
             $model->revisions()->create([
                 'status' => RevisionStatus::Published,
                 'payload' => $this->getFormData->handle($module, $model->fresh()),
+                'user_id' => $this->adminPhp->user()?->getKey(),
             ]);
 
             return $model;

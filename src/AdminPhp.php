@@ -3,9 +3,12 @@
 namespace Gmarineau\AdminPhp;
 
 use Closure;
+use Gmarineau\AdminPhp\Models\User;
 use Gmarineau\AdminPhp\Modules\Module;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 use InvalidArgumentException;
 use RuntimeException;
@@ -23,8 +26,8 @@ class AdminPhp
     protected ?Closure $authUsing = null;
 
     /**
-     * Defines who can access the admin. Until real admin users exist,
-     * access is only granted in the local environment by default.
+     * Restricts the admin further than "logged in as an admin user",
+     * e.g. to an IP range. Called on every request of a logged in user.
      *
      * @param  Closure(Request): bool  $callback
      */
@@ -35,9 +38,30 @@ class AdminPhp
 
     public function check(Request $request): bool
     {
-        return $this->authUsing !== null
-            ? (bool) ($this->authUsing)($request)
-            : app()->environment('local');
+        return $this->authUsing === null || (bool) ($this->authUsing)($request);
+    }
+
+    /**
+     * Name of the session guard admin users log in with.
+     */
+    public function guardName(): string
+    {
+        return config('adminphp.guard', 'adminphp');
+    }
+
+    public function guard(): StatefulGuard
+    {
+        return Auth::guard($this->guardName());
+    }
+
+    /**
+     * The admin user of the current request, if any.
+     */
+    public function user(): ?User
+    {
+        $user = $this->guard()->user();
+
+        return $user instanceof User ? $user : null;
     }
 
     /**

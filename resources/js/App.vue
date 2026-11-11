@@ -1,14 +1,31 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useModulesStore } from './stores/modules'
+import { useSessionStore } from './stores/session'
 
 const modulesStore = useModulesStore()
+const session = useSessionStore()
+const router = useRouter()
 
-onMounted(() => modulesStore.loadModules())
+watch(
+    () => session.user,
+    (user) => {
+        if (user !== null) {
+            modulesStore.loadModules()
+        }
+    },
+    { immediate: true },
+)
+
+async function logout(): Promise<void> {
+    await session.logout()
+    await router.replace({ name: 'login' })
+}
 </script>
 
 <template>
-    <div class="app">
+    <div v-if="session.user" class="app">
         <nav class="nav" aria-label="Navigation principale">
             <RouterLink :to="{ name: 'home' }" class="brand">
                 <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
@@ -29,8 +46,16 @@ onMounted(() => modulesStore.loadModules())
                     {{ module.title }} <small>{{ module.count }}</small>
                 </RouterLink>
             </div>
+
+            <div class="nav-user">
+                <span :title="session.user.email">{{ session.user.name }}</span>
+                <button type="button" class="link-button" @click="logout">Se déconnecter</button>
+            </div>
         </nav>
 
         <RouterView :key="$route.fullPath" />
     </div>
+
+    <!-- Only public pages render without a user, so a page never loads data while logged out. -->
+    <RouterView v-else-if="$route.meta.isPublic" />
 </template>

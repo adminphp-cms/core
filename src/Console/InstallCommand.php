@@ -38,7 +38,7 @@ class InstallCommand extends Command
 
         $this->components->bulletList([
             'Register your modules, e.g. in AppServiceProvider::boot(): app(\Gmarineau\AdminPhp\AdminPhp::class)->registerModules([ArticleModule::class]);',
-            'Define who can access the admin: app(\Gmarineau\AdminPhp\AdminPhp::class)->auth(fn ($request) => ...); (local environment only by default)',
+            'Create an admin user: php artisan adminphp:user',
             sprintf('Open %s', url(config('adminphp.path'))),
         ]);
 

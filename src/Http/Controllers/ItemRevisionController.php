@@ -22,13 +22,15 @@ class ItemRevisionController
 
         $revisions = $item->revisions()
             ->where('status', RevisionStatus::Published)
+            ->with('user:id,name')
             ->limit(50)
-            ->get(['id', 'status', 'created_at']);
+            ->get(['id', 'status', 'user_id', 'created_at']);
 
         return response()->json([
             'data' => $revisions->map(fn (Revision $revision): array => [
                 'id' => $revision->id,
                 'createdAt' => $revision->created_at->toIso8601String(),
+                'userName' => $revision->user?->name,
             ])->all(),
         ]);
     }

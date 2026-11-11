@@ -2,6 +2,7 @@
 
 namespace Gmarineau\AdminPhp\Actions;
 
+use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Enums\RevisionStatus;
 use Gmarineau\AdminPhp\Modules\Module;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,7 @@ class SaveDraft
     public function __construct(
         protected SaveModuleContent $saveModuleContent,
         protected GetFormData $getFormData,
+        protected AdminPhp $adminPhp,
     ) {}
 
     /**
@@ -47,10 +49,12 @@ class SaveDraft
                 ...$validated,
             ];
 
+            $userId = $this->adminPhp->user()?->getKey();
+
             if ($draft === null) {
-                $model->draftRevision()->create(['status' => RevisionStatus::Draft, 'payload' => $payload]);
+                $model->draftRevision()->create(['status' => RevisionStatus::Draft, 'payload' => $payload, 'user_id' => $userId]);
             } else {
-                $draft->update(['payload' => $payload]);
+                $draft->update(['payload' => $payload, 'user_id' => $userId]);
             }
         });
 

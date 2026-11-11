@@ -43,7 +43,7 @@ trait ResolvesModuleItems
         $publication = null;
 
         if ($module->isPublishable()) {
-            $draft = $item->draftRevision()->first();
+            $draft = $item->draftRevision()->with('user:id,name')->first();
 
             $values = [...$values, ...($draft->payload ?? [])];
 
@@ -55,6 +55,7 @@ trait ResolvesModuleItems
                 'publishEndAt' => $item->publish_end_at?->toIso8601String(),
                 'hasDraft' => $draft !== null,
                 'draftUpdatedAt' => $draft?->updated_at->toIso8601String(),
+                'draftUpdatedBy' => $draft?->user?->name,
             ];
         }
 

@@ -1,6 +1,5 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Enums\PublicationStatus;
 use Gmarineau\AdminPhp\Enums\RevisionStatus;
 use Gmarineau\AdminPhp\Models\Revision;
@@ -8,7 +7,7 @@ use Gmarineau\AdminPhp\Tests\Fixtures\Article;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
-    app(AdminPhp::class)->auth(fn () => true);
+    actingAsAdmin();
 });
 
 /**
@@ -205,4 +204,17 @@ it('shows the visibility and pending draft in the listing', function () {
         ->assertJsonPath('data.0.hasDraft', true);
 
     $this->getJson('/admin/api/modules/article')->assertJsonPath('data.publishable', true);
+});
+
+it('records who saved the draft and who published each version', function () {
+    $author = actingAsAdmin();
+    $id = createArticleItem();
+    publishArticleItem($id);
+
+    $this->getJson("/admin/api/modules/article/items/{$id}/revisions")
+        ->assertJsonPath('data.0.userName', $author->name);
+
+    $editor = actingAsAdmin();
+    $this->putJson("/admin/api/modules/article/items/{$id}", ['title' => ['fr' => 'Version 2']])
+        ->assertJsonPath('data.publication.draftUpdatedBy', $editor->name);
 });

@@ -3,9 +3,10 @@
 namespace Gmarineau\AdminPhp;
 
 use Gmarineau\AdminPhp\Console\InstallCommand;
+use Gmarineau\AdminPhp\Console\UserCommand;
 use Gmarineau\AdminPhp\Enums\PublicationStatus;
-use Gmarineau\AdminPhp\Http\Middleware\Authorize;
 use Gmarineau\AdminPhp\Models\Block;
+use Gmarineau\AdminPhp\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,8 @@ class AdminPhpServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/adminphp.php', 'adminphp');
 
         $this->app->singleton(AdminPhp::class);
+
+        $this->registerGuard();
     }
 
     public function boot(): void
@@ -31,7 +34,7 @@ class AdminPhpServiceProvider extends ServiceProvider
         $this->registerRoutes();
 
         if ($this->app->runningInConsole()) {
-            $this->commands([InstallCommand::class]);
+            $this->commands([InstallCommand::class, UserCommand::class]);
 
             $this->publishes([
                 __DIR__.'/../config/adminphp.php' => config_path('adminphp.php'),
@@ -44,6 +47,24 @@ class AdminPhpServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../public' => public_path('vendor/adminphp'),
             ], ['adminphp-assets', 'laravel-assets']);
+        }
+    }
+
+    /**
+     * Adds the admin session guard and its user provider to the auth config,
+     * unless the application defines them itself.
+     */
+    protected function registerGuard(): void
+    {
+        $config = $this->app['config'];
+        $guard = $config->get('adminphp.guard', 'adminphp');
+
+        if (! $config->has('auth.providers.adminphp_users')) {
+            $config->set('auth.providers.adminphp_users', ['driver' => 'eloquent', 'model' => User::class]);
+        }
+
+        if (! $config->has("auth.guards.{$guard}")) {
+            $config->set("auth.guards.{$guard}", ['driver' => 'session', 'provider' => 'adminphp_users']);
         }
     }
 
@@ -72,7 +93,7 @@ class AdminPhpServiceProvider extends ServiceProvider
         Route::group([
             'domain' => config('adminphp.domain'),
             'prefix' => config('adminphp.path'),
-            'middleware' => [...config('adminphp.middleware', ['web']), Authorize::class],
+            'middleware' => config('adminphp.middleware', ['web']),
             'as' => 'adminphp.',
         ], fn () => $this->loadRoutesFrom(__DIR__.'/../routes/admin.php'));
     }

@@ -6,6 +6,7 @@ use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Enums\RevisionStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 
@@ -17,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property string $revisionable_id
  * @property RevisionStatus $status
  * @property array<string, mixed> $payload
+ * @property string|null $user_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -27,6 +29,7 @@ class Revision extends Model
     protected $fillable = [
         'status',
         'payload',
+        'user_id',
     ];
 
     public function getTable(): string
@@ -43,6 +46,16 @@ class Revision extends Model
             'status' => RevisionStatus::class,
             'payload' => 'array',
         ];
+    }
+
+    /**
+     * Admin user who saved the draft or published the version.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**

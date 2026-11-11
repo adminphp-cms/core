@@ -9,6 +9,9 @@ use Gmarineau\AdminPhp\Models\Block;
 use Gmarineau\AdminPhp\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\TrimStrings;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,6 +32,8 @@ class AdminPhpServiceProvider extends ServiceProvider
 
         $this->registerBlueprintMacros();
 
+        $this->keepAdminInputUntouched();
+
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'adminphp');
 
         $this->registerRoutes();
@@ -48,6 +53,19 @@ class AdminPhpServiceProvider extends ServiceProvider
                 __DIR__.'/../public' => public_path('vendor/adminphp'),
             ], ['adminphp-assets', 'laravel-assets']);
         }
+    }
+
+    /**
+     * Laravel trims every input string and turns empty ones into null. Rich text is sent
+     * as a tree of text nodes whose leading and trailing spaces are meaningful, so the
+     * admin API receives its input as typed; fields normalize their own values.
+     */
+    protected function keepAdminInputUntouched(): void
+    {
+        $isAdminApiRequest = fn (Request $request): bool => $request->is(trim((string) config('adminphp.path'), '/').'/api/*');
+
+        TrimStrings::skipWhen($isAdminApiRequest);
+        ConvertEmptyStringsToNull::skipWhen($isAdminApiRequest);
     }
 
     /**

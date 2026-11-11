@@ -98,3 +98,19 @@ it('serves the admin page with the published assets for any admin path', functio
         File::deleteDirectory($publicPath);
     }
 });
+
+it('keeps the spaces around rich text nodes but trims plain text fields', function () {
+    $document = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [
+        ['type' => 'text', 'text' => 'Un '],
+        ['type' => 'text', 'text' => 'lien ', 'marks' => [['type' => 'bold']]],
+        ['type' => 'text', 'text' => 'ici'],
+    ]]]];
+
+    $this->postJson('/admin/api/modules/article/items', [
+        'title' => ['fr' => '  Titre avec espaces  ', 'en' => '   '],
+        'content' => [['type' => 'text', 'content' => ['body' => ['fr' => $document]]]],
+    ])
+        ->assertCreated()
+        ->assertJsonPath('data.values.title', ['fr' => 'Titre avec espaces'])
+        ->assertJsonPath('data.values.content.0.content.body.fr', $document);
+});

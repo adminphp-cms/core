@@ -1,6 +1,4 @@
-import '@fontsource-variable/instrument-sans'
-import '@fontsource-variable/newsreader'
-import '@fontsource-variable/newsreader/wght-italic.css'
+import '@fontsource-variable/figtree'
 import '../css/app.css'
 
 import { createPinia } from 'pinia'

@@ -24,8 +24,23 @@ export interface TextFieldSchema extends BaseFieldSchema {
     maxLength: number
 }
 
+export type RichTextTool =
+    | 'history'
+    | 'heading'
+    | 'bold'
+    | 'italic'
+    | 'underline'
+    | 'strike'
+    | 'code'
+    | 'bulletList'
+    | 'orderedList'
+    | 'blockquote'
+    | 'link'
+    | 'horizontalRule'
+
 export interface RichTextFieldSchema extends BaseFieldSchema {
     type: 'rich-text'
+    tools: RichTextTool[]
 }
 
 export interface SelectOption {
@@ -71,6 +86,8 @@ export type FieldSchema =
 export interface ModuleSchema {
     name: string
     title: string
+    description: string
+    icon: string
     publishable: boolean
     fields: FieldSchema[]
 }
@@ -78,7 +95,23 @@ export interface ModuleSchema {
 export interface ModuleSummary {
     name: string
     title: string
+    description: string
+    icon: string
     count: number
+    /** Null when the module is not publishable. */
+    counts: { published: number; unpublished: number; pendingChanges: number } | null
+}
+
+export interface ActivityEntry {
+    id: string
+    action: 'saved' | 'published'
+    module: string
+    moduleTitle: string
+    icon: string
+    itemId: string
+    itemTitle: string
+    userName: string | null
+    at: string
 }
 
 export type Visibility = 'draft' | 'scheduled' | 'live' | 'expired'

@@ -20,7 +20,14 @@ it('lists the registered modules with their item count', function () {
 
     $this->getJson('/admin/api/modules')
         ->assertOk()
-        ->assertExactJson(['data' => [['name' => 'article', 'title' => 'Articles', 'count' => 1]]]);
+        ->assertExactJson(['data' => [[
+            'name' => 'article',
+            'title' => 'Articles',
+            'description' => 'Actualités et récits de chantier.',
+            'icon' => 'newspaper',
+            'count' => 1,
+            'counts' => ['published' => 0, 'unpublished' => 1, 'pendingChanges' => 0],
+        ]]]);
 });
 
 it('returns the form schema of a module', function () {

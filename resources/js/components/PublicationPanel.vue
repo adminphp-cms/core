@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { Publication, RevisionSummary, Visibility } from '../types'
+import { formatDateTime, visibilityBadges } from '../format'
+import type { Publication, RevisionSummary } from '../types'
+import UiBadge from './ui/UiBadge.vue'
+import UiCard from './ui/UiCard.vue'
+import UiIcon from './ui/UiIcon.vue'
 
 defineProps<{
     publication: Publication
@@ -16,28 +20,15 @@ const emit = defineEmits<{
     restore: [revisionId: string]
 }>()
 
-const visibilityLabels: Record<Visibility, string> = {
-    draft: 'Hors ligne',
-    scheduled: 'Programmé',
-    live: 'En ligne',
-    expired: 'Expiré',
-}
-
-const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' })
-
-function formatDate(iso: string): string {
-    return dateFormatter.format(new Date(iso))
-}
+const formatDate = formatDateTime
 </script>
 
 <template>
     <aside class="inspector" aria-label="Publication">
-        <section class="inspector-section">
-            <h2>Publication</h2>
-
-            <p class="visibility" :class="`is-${publication.visibility}`">
-                {{ visibilityLabels[publication.visibility] }}
-            </p>
+        <UiCard title="Publication">
+            <template #actions>
+                <UiBadge :tone="visibilityBadges[publication.visibility].tone" dot>{{ visibilityBadges[publication.visibility].label }}</UiBadge>
+            </template>
 
             <p v-if="publication.hasDraft" class="inspector-note">
                 Des modifications enregistrées attendent d’être publiées<template v-if="publication.draftUpdatedAt">
@@ -66,10 +57,12 @@ function formatDate(iso: string): string {
                     Dépublier
                 </button>
             </div>
-        </section>
+        </UiCard>
 
-        <section class="inspector-section">
-            <h2>Versions publiées</h2>
+        <UiCard title="Versions publiées">
+            <template #actions>
+                <UiIcon name="history" :size="14" class="inspector-icon" />
+            </template>
 
             <p v-if="revisions.length === 0" class="inspector-note">Aucune version publiée pour l’instant.</p>
 
@@ -86,6 +79,6 @@ function formatDate(iso: string): string {
                     <button type="button" class="link-button" :disabled="isBusy" @click="emit('restore', revision.id)">Restaurer</button>
                 </li>
             </ol>
-        </section>
+        </UiCard>
     </aside>
 </template>

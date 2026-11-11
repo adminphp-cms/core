@@ -1,7 +1,36 @@
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { api } from '../api'
+import EmptyState from '../components/ui/EmptyState.vue'
+import IconTile from '../components/ui/IconTile.vue'
+import PageIntro from '../components/ui/PageIntro.vue'
+import UiBadge from '../components/ui/UiBadge.vue'
+import UiCard from '../components/ui/UiCard.vue'
+import UiIcon from '../components/ui/UiIcon.vue'
+import { formatLongDate, formatRelative, initials } from '../format'
 import { useModulesStore } from '../stores/modules'
+import { useSessionStore } from '../stores/session'
+import type { ActivityEntry } from '../types'
 
 const modulesStore = useModulesStore()
+const session = useSessionStore()
+
+const activity = ref<ActivityEntry[]>([])
+const isActivityLoaded = ref(false)
+
+const greeting = computed(() => {
+    const hour = new Date().getHours()
+    const firstName = (session.user?.name ?? '').split(/\s+/)[0]
+
+    return `${hour >= 18 || hour < 5 ? 'Bonsoir' : 'Bonjour'}${firstName ? `, ${firstName}` : ''}`
+})
+
+const today = formatLongDate(new Date())
+
+onMounted(async () => {
+    activity.value = await api.activity()
+    isActivityLoaded.value = true
+})
 </script>
 
 <template>
@@ -11,16 +40,69 @@ const modulesStore = useModulesStore()
         </header>
 
         <div class="page-body">
-            <p v-if="modulesStore.modules.length === 0" class="empty">Aucun module enregistré.</p>
+            <PageIntro :title="greeting" :description="`${today} · Voici où en sont vos contenus.`" />
 
-            <ul v-else class="cards">
+            <EmptyState
+                v-if="modulesStore.modules.length === 0"
+                icon="layout-grid"
+                title="Aucun module pour l’instant"
+                description="Déclarez vos modules dans l’application avec AdminPhp::registerModules()."
+            />
+
+            <ul v-else class="stat-grid">
                 <li v-for="module in modulesStore.modules" :key="module.name">
-                    <RouterLink :to="{ name: 'module.index', params: { module: module.name } }" class="card">
-                        <span class="card-count">{{ module.count }}</span>
-                        <span class="card-title">{{ module.title }}</span>
-                    </RouterLink>
+                    <UiCard class="stat-card">
+                        <div class="stat-card-head">
+                            <IconTile :name="module.icon" />
+                            <RouterLink :to="{ name: 'module.index', params: { module: module.name } }" class="stat-card-title stretched-link">
+                                {{ module.title }}
+                            </RouterLink>
+                            <RouterLink
+                                :to="{ name: 'module.create', params: { module: module.name } }"
+                                class="icon-button stat-card-create"
+                                :title="`Créer dans ${module.title}`"
+                                :aria-label="`Créer dans ${module.title}`"
+                            >
+                                <UiIcon name="plus" :size="14" />
+                            </RouterLink>
+                        </div>
+
+                        <p class="stat-card-count">{{ module.count }}</p>
+
+                        <div class="stat-card-badges">
+                            <template v-if="module.counts">
+                                <UiBadge v-if="module.counts.published > 0" tone="success" dot>{{ module.counts.published }} en ligne</UiBadge>
+                                <UiBadge v-if="module.counts.unpublished > 0" dot>{{ module.counts.unpublished }} hors ligne</UiBadge>
+                                <UiBadge v-if="module.counts.pendingChanges > 0" tone="warning" dot>{{ module.counts.pendingChanges }} à publier</UiBadge>
+                                <span v-if="module.count === 0" class="stat-card-hint">Rien encore, lancez-vous</span>
+                            </template>
+                            <span v-else class="stat-card-hint">{{ module.description || 'Contenus' }}</span>
+                        </div>
+                    </UiCard>
                 </li>
             </ul>
+
+            <UiCard title="Activité récente" description="Les derniers enregistrements et publications." :padded="false">
+                <ol v-if="activity.length > 0" class="activity">
+                    <li v-for="entry in activity" :key="entry.id">
+                        <span class="avatar is-small" aria-hidden="true">{{ initials(entry.userName ?? '?') }}</span>
+                        <p class="activity-text">
+                            <b>{{ entry.userName ?? 'Quelqu’un' }}</b>
+                            {{ entry.action === 'published' ? 'a publié' : 'a enregistré des modifications sur' }}
+                            <RouterLink :to="{ name: 'module.edit', params: { module: entry.module, id: entry.itemId } }">{{ entry.itemTitle }}</RouterLink>
+                        </p>
+                        <UiBadge class="activity-module"><UiIcon :name="entry.icon" :size="12" /> {{ entry.moduleTitle }}</UiBadge>
+                        <time class="activity-time" :datetime="entry.at">{{ formatRelative(entry.at) }}</time>
+                    </li>
+                </ol>
+
+                <EmptyState
+                    v-else-if="isActivityLoaded"
+                    icon="sparkles"
+                    title="Pas encore d’activité"
+                    description="Les enregistrements et publications de l’équipe apparaîtront ici."
+                />
+            </UiCard>
         </div>
     </main>
 </template>

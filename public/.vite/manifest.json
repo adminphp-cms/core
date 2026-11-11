@@ -1,53 +1,23 @@
 {
-  "node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-ext-wght-normal.woff2": {
-    "file": "assets/instrument-sans-latin-ext-wght-normal-B5bTHO_g.woff2",
-    "src": "node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-ext-wght-normal.woff2"
+  "node_modules/@fontsource-variable/figtree/files/figtree-latin-ext-wght-normal.woff2": {
+    "file": "assets/figtree-latin-ext-wght-normal-DCwSJGxG.woff2",
+    "src": "node_modules/@fontsource-variable/figtree/files/figtree-latin-ext-wght-normal.woff2"
   },
-  "node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2": {
-    "file": "assets/instrument-sans-latin-wght-normal-BbzFLZTg.woff2",
-    "src": "node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2"
-  },
-  "node_modules/@fontsource-variable/newsreader/files/newsreader-latin-ext-wght-italic.woff2": {
-    "file": "assets/newsreader-latin-ext-wght-italic-DFS986qL.woff2",
-    "src": "node_modules/@fontsource-variable/newsreader/files/newsreader-latin-ext-wght-italic.woff2"
-  },
-  "node_modules/@fontsource-variable/newsreader/files/newsreader-latin-ext-wght-normal.woff2": {
-    "file": "assets/newsreader-latin-ext-wght-normal-C-3rgBeH.woff2",
-    "src": "node_modules/@fontsource-variable/newsreader/files/newsreader-latin-ext-wght-normal.woff2"
-  },
-  "node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-italic.woff2": {
-    "file": "assets/newsreader-latin-wght-italic-Bxi8ein9.woff2",
-    "src": "node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-italic.woff2"
-  },
-  "node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2": {
-    "file": "assets/newsreader-latin-wght-normal-CCVVNp6i.woff2",
-    "src": "node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2"
-  },
-  "node_modules/@fontsource-variable/newsreader/files/newsreader-vietnamese-wght-italic.woff2": {
-    "file": "assets/newsreader-vietnamese-wght-italic-xAqemagA.woff2",
-    "src": "node_modules/@fontsource-variable/newsreader/files/newsreader-vietnamese-wght-italic.woff2"
-  },
-  "node_modules/@fontsource-variable/newsreader/files/newsreader-vietnamese-wght-normal.woff2": {
-    "file": "assets/newsreader-vietnamese-wght-normal-Czsa-EzN.woff2",
-    "src": "node_modules/@fontsource-variable/newsreader/files/newsreader-vietnamese-wght-normal.woff2"
+  "node_modules/@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2": {
+    "file": "assets/figtree-latin-wght-normal-D_ZTVpCC.woff2",
+    "src": "node_modules/@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2"
   },
   "resources/js/app.ts": {
-    "file": "assets/app-PIvy5JkH.js",
+    "file": "assets/app-Cm_Br0Cy.js",
     "name": "app",
     "src": "resources/js/app.ts",
     "isEntry": true,
     "css": [
-      "assets/app-DpjCQw1A.css"
+      "assets/app-uVTK2Zjn.css"
     ],
     "assets": [
-      "assets/instrument-sans-latin-ext-wght-normal-B5bTHO_g.woff2",
-      "assets/instrument-sans-latin-wght-normal-BbzFLZTg.woff2",
-      "assets/newsreader-vietnamese-wght-normal-Czsa-EzN.woff2",
-      "assets/newsreader-latin-ext-wght-normal-C-3rgBeH.woff2",
-      "assets/newsreader-latin-wght-normal-CCVVNp6i.woff2",
-      "assets/newsreader-vietnamese-wght-italic-xAqemagA.woff2",
-      "assets/newsreader-latin-ext-wght-italic-DFS986qL.woff2",
-      "assets/newsreader-latin-wght-italic-Bxi8ein9.woff2"
+      "assets/figtree-latin-ext-wght-normal-DCwSJGxG.woff2",
+      "assets/figtree-latin-wght-normal-D_ZTVpCC.woff2"
     ]
   }
 }

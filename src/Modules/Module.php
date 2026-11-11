@@ -27,6 +27,17 @@ abstract class Module
     protected string $titleField = 'title';
 
     /**
+     * Short sentence shown under the module title in the admin.
+     */
+    protected string $description = '';
+
+    /**
+     * Icon of the module in the admin: a Lucide icon name in kebab case
+     * (file-text, newspaper, book-open, calendar, image, users, tag, briefcase…).
+     */
+    protected string $icon = 'file-text';
+
+    /**
      * @return array<int, Field>
      */
     abstract public function form(): array;
@@ -42,6 +53,16 @@ abstract class Module
     public function title(): string
     {
         return $this->title !== '' ? $this->title : Str::headline(Str::plural($this->name()));
+    }
+
+    public function description(): string
+    {
+        return $this->description;
+    }
+
+    public function icon(): string
+    {
+        return $this->icon;
     }
 
     /**
@@ -151,6 +172,8 @@ abstract class Module
         return [
             'name' => $this->name(),
             'title' => $this->title(),
+            'description' => $this->description(),
+            'icon' => $this->icon(),
             'publishable' => $this->isPublishable(),
             'fields' => array_values(array_map(fn (Field $field): array => $field->toSchema(), $this->fields())),
         ];

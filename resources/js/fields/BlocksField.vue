@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { ulid } from '../ulid'
 import { useEditorStore } from '../stores/editor'
 import type { BlockSchema, BlocksFieldSchema, BlockValue } from '../types'
+import UiIcon from '../components/ui/UiIcon.vue'
 import FieldRenderer from './FieldRenderer.vue'
 
 const props = defineProps<{
@@ -77,7 +78,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenu))
 
         <template v-for="(block, index) in blocks" :key="block.id">
             <div v-if="index === 0" class="insert">
-                <button type="button" aria-haspopup="menu" @click="toggleMenu(-1)">+ Ajouter un bloc</button>
+                <button type="button" aria-haspopup="menu" @click="toggleMenu(-1)"><UiIcon name="plus" :size="13" /> Ajouter un bloc</button>
                 <div v-if="openMenuAt === -1" class="menu" role="menu">
                     <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" @click="insert(schema, -1)">
                         <b>{{ schema.title }}</b>
@@ -89,9 +90,9 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenu))
                 <div class="gutter">
                     <span class="type">{{ schemasByType[block.type]?.title ?? block.type }}</span>
                     <span class="tools">
-                        <button type="button" title="Monter" :disabled="index === 0" @click="move(index, -1)">↑</button>
-                        <button type="button" title="Descendre" :disabled="index === blocks.length - 1" @click="move(index, 1)">↓</button>
-                        <button type="button" title="Supprimer" @click="remove(index)">✕</button>
+                        <button type="button" title="Monter" aria-label="Monter" :disabled="index === 0" @click="move(index, -1)"><UiIcon name="arrow-up" :size="13" /></button>
+                        <button type="button" title="Descendre" aria-label="Descendre" :disabled="index === blocks.length - 1" @click="move(index, 1)"><UiIcon name="arrow-down" :size="13" /></button>
+                        <button type="button" title="Supprimer" aria-label="Supprimer" @click="remove(index)"><UiIcon name="x" :size="13" /></button>
                     </span>
                 </div>
                 <div class="body block-body">
@@ -112,7 +113,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenu))
             </section>
 
             <div class="insert">
-                <button type="button" aria-haspopup="menu" @click="toggleMenu(index)">+ Ajouter un bloc</button>
+                <button type="button" aria-haspopup="menu" @click="toggleMenu(index)"><UiIcon name="plus" :size="13" /> Ajouter un bloc</button>
                 <div v-if="openMenuAt === index" class="menu" role="menu">
                     <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" @click="insert(schema, index)">
                         <b>{{ schema.title }}</b>
@@ -122,7 +123,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenu))
         </template>
 
         <div v-if="blocks.length === 0" class="insert is-empty">
-            <button type="button" aria-haspopup="menu" @click="toggleMenu(-1)">+ Ajouter un premier bloc</button>
+            <button type="button" aria-haspopup="menu" @click="toggleMenu(-1)"><UiIcon name="plus" :size="13" /> Ajouter un premier bloc</button>
             <div v-if="openMenuAt === -1" class="menu" role="menu">
                 <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" @click="insert(schema, -1)">
                     <b>{{ schema.title }}</b>

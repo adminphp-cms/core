@@ -1,6 +1,7 @@
 <?php
 
 use Gmarineau\AdminPhp\AdminPhp;
+use Gmarineau\AdminPhp\Http\Controllers\ActivityController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemPublicationController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemRevisionController;
 use Gmarineau\AdminPhp\Http\Controllers\ModuleController;
@@ -17,6 +18,8 @@ Route::prefix('api')->name('api.')->group(function () {
     Route::middleware([Authenticate::using(app(AdminPhp::class)->guardName()), Authorize::class])->group(function () {
         Route::get('session', [SessionController::class, 'show'])->name('session.show');
         Route::delete('session', [SessionController::class, 'destroy'])->name('session.destroy');
+
+        Route::get('activity', ActivityController::class)->name('activity');
 
         Route::get('modules', [ModuleController::class, 'index'])->name('modules.index');
         Route::get('modules/{module}', [ModuleController::class, 'show'])->name('modules.show');

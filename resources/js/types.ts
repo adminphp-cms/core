@@ -28,6 +28,26 @@ export interface RichTextFieldSchema extends BaseFieldSchema {
     type: 'rich-text'
 }
 
+export interface SelectOption {
+    value: string | number
+    label: string
+}
+
+export interface SelectFieldSchema extends BaseFieldSchema {
+    type: 'select'
+    multiple: boolean
+    options: SelectOption[]
+}
+
+export interface ToggleFieldSchema extends BaseFieldSchema {
+    type: 'toggle'
+}
+
+export interface DateFieldSchema extends BaseFieldSchema {
+    type: 'date'
+    withTime: boolean
+}
+
 export interface BlockSchema {
     type: string
     title: string
@@ -40,7 +60,13 @@ export interface BlocksFieldSchema extends BaseFieldSchema {
     blocks: BlockSchema[]
 }
 
-export type FieldSchema = TextFieldSchema | RichTextFieldSchema | BlocksFieldSchema
+export type FieldSchema =
+    | TextFieldSchema
+    | RichTextFieldSchema
+    | SelectFieldSchema
+    | ToggleFieldSchema
+    | DateFieldSchema
+    | BlocksFieldSchema
 
 export interface ModuleSchema {
     name: string

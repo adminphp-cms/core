@@ -19,4 +19,18 @@ class Article extends Model
      * @var array<int, string>
      */
     public array $translatable = ['title', 'lead'];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'category' => Category::class,
+            'tags' => 'array',
+            'is_featured' => 'boolean',
+            'event_on' => 'date',
+            'event_at' => 'datetime',
+        ];
+    }
 }

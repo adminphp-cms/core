@@ -80,7 +80,8 @@ class AdminPhpServiceProvider extends ServiceProvider
             $this->timestamp('publish_start_at')->nullable();
             $this->timestamp('publish_end_at')->nullable();
 
-            $this->index(['status', 'publish_start_at', 'publish_end_at']);
+            // Named explicitly so long table names stay under MySQL's 64 character limit.
+            $this->index(['status', 'publish_start_at', 'publish_end_at'], "{$this->getTable()}_publication_index");
         });
     }
 

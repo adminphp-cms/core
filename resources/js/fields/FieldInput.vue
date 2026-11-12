@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { FieldSchema } from '../types'
+import BrowserField from './BrowserField.vue'
 import DateField from './DateField.vue'
 import ImageField from './ImageField.vue'
+import RepeaterField from './RepeaterField.vue'
 import RichTextField from './RichTextField.vue'
 import SelectField from './SelectField.vue'
 import SlugField from './SlugField.vue'
@@ -11,6 +13,8 @@ import ToggleField from './ToggleField.vue'
 defineProps<{
     field: FieldSchema
     modelValue: unknown
+    /** Input path of the value, for the fields that show the errors of their parts. */
+    path: string
     variant?: 'default' | 'title' | 'lead'
     autofocus?: boolean
 }>()
@@ -62,6 +66,20 @@ const emit = defineEmits<{ 'update:modelValue': [value: unknown] }>()
         v-else-if="field.type === 'date'"
         :field="field"
         :model-value="modelValue"
+        @update:model-value="emit('update:modelValue', $event)"
+    />
+    <RepeaterField
+        v-else-if="field.type === 'repeater'"
+        :field="field"
+        :model-value="modelValue"
+        :path="path"
+        @update:model-value="emit('update:modelValue', $event)"
+    />
+    <BrowserField
+        v-else-if="field.type === 'browser'"
+        :field="field"
+        :model-value="modelValue"
+        :path="path"
         @update:model-value="emit('update:modelValue', $event)"
     />
 </template>

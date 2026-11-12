@@ -3,6 +3,7 @@
 namespace Gmarineau\AdminPhp\Models;
 
 use Gmarineau\AdminPhp\AdminPhp;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -59,26 +60,20 @@ class Block extends Model
      */
     public function translated(string $field, ?string $locale = null): mixed
     {
-        $value = $this->content[$field] ?? null;
+        return app(AdminPhp::class)->translate($this->content[$field] ?? null, $locale);
+    }
 
-        if ($value === []) {
-            return null;
-        }
+    /**
+     * Contents chosen in a Browser field of the block, in their chosen order. Only the ones
+     * the site may show are returned, unless $onlyPublished is false.
+     *
+     * @return Collection<int, Model>
+     */
+    public function related(string $field, bool $onlyPublished = true): Collection
+    {
+        $references = $this->content[$field] ?? [];
 
-        if (! is_array($value) || array_is_list($value)) {
-            return $value;
-        }
-
-        $adminPhp = app(AdminPhp::class);
-        $locales = array_unique([$locale ?? app()->getLocale(), $adminPhp->defaultLocale(), ...$adminPhp->locales()]);
-
-        foreach ($locales as $candidate) {
-            if (filled($value[$candidate] ?? null)) {
-                return $value[$candidate];
-            }
-        }
-
-        return null;
+        return Related::resolve(is_array($references) ? $references : [], $onlyPublished);
     }
 
     /**

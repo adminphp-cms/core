@@ -2,9 +2,11 @@
 
 namespace Gmarineau\AdminPhp\Modules;
 
+use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Concerns\HasPublication;
 use Gmarineau\AdminPhp\Fields\Field;
 use Gmarineau\AdminPhp\Forms\HasFields;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -78,6 +80,36 @@ abstract class Module
         }
 
         return is_scalar($value) && $value !== '' ? (string) $value : (string) $model->getKey();
+    }
+
+    /**
+     * Restricts a query of the module's items to the ones whose title contains the term,
+     * in any locale. Override it to search other columns.
+     *
+     * @param  Builder<Model>  $query
+     */
+    public function search(Builder $query, string $term): void
+    {
+        $field = $this->fields()[$this->titleField] ?? null;
+        $pattern = '%'.addcslashes($term, '%_\\').'%';
+
+        if ($field === null) {
+            $query->whereKey($term);
+
+            return;
+        }
+
+        if (! $field->isTranslatable()) {
+            $query->whereLike($field->name, $pattern, caseSensitive: false);
+
+            return;
+        }
+
+        $query->where(function (Builder $query) use ($field, $pattern): void {
+            foreach (app(AdminPhp::class)->locales() as $locale) {
+                $query->orWhereLike("{$field->name}->{$locale}", $pattern, caseSensitive: false);
+            }
+        });
     }
 
     /**

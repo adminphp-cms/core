@@ -23,7 +23,7 @@ it('describes the module form, including its blocks, for the admin front', funct
             'multiline' => false,
         ])
         ->and($schema['fields'][2]['type'])->toBe('blocks')
-        ->and($schema['fields'][2]['blocks'])->toHaveCount(3)
+        ->and($schema['fields'][2]['blocks'])->toHaveCount(4)
         ->and($schema['fields'][2]['blocks'][1])->toMatchArray([
             'type' => 'quote',
             'title' => 'Citation',

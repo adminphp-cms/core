@@ -116,6 +116,48 @@ export interface Asset {
     createdAt: string
 }
 
+export interface RepeaterFieldSchema extends BaseFieldSchema {
+    type: 'repeater'
+    fields: FieldSchema[]
+    min: number | null
+    max: number | null
+    /** Field whose value names an item, null to number them. */
+    itemLabel: string | null
+    addLabel: string
+}
+
+/** An item of a repeater: its id plus the values of its fields. */
+export interface RepeaterItem {
+    id: string
+    [field: string]: unknown
+}
+
+export interface BrowserModule {
+    name: string
+    title: string
+    icon: string
+}
+
+export interface BrowserFieldSchema extends BaseFieldSchema {
+    type: 'browser'
+    modules: BrowserModule[]
+    max: number | null
+}
+
+/** A content chosen in a Browser field: its module name and its id. */
+export interface ContentReference {
+    type: string
+    id: string
+}
+
+/** A chosen content, named for the admin. */
+export interface ReferencedContent extends ContentReference {
+    title: string
+    moduleTitle: string
+    icon: string
+    visibility: Visibility | null
+}
+
 export interface BlockSchema {
     type: string
     title: string
@@ -136,6 +178,8 @@ export type FieldSchema =
     | ToggleFieldSchema
     | DateFieldSchema
     | ImageFieldSchema
+    | RepeaterFieldSchema
+    | BrowserFieldSchema
     | BlocksFieldSchema
 
 export interface ModuleSchema {

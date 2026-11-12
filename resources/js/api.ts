@@ -1,5 +1,5 @@
 import { config } from './config'
-import type { ActivityEntry, AdminUser, Asset, FormValues, Item, ItemSummary, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
+import type { ActivityEntry, AdminUser, Asset, FormValues, Item, ItemSummary, ContentReference, ReferencedContent, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
 
 export class ApiError extends Error {
     constructor(
@@ -118,8 +118,14 @@ export const api = {
 
     module: (name: string) => request<{ data: ModuleSchema }>('GET', `modules/${name}`).then((response) => response.data),
 
-    items: (module: string) =>
-        request<{ data: ItemSummary[] }>('GET', `modules/${module}/items`).then((response) => response.data),
+    items: (module: string, search = '') =>
+        request<{ data: ItemSummary[] }>('GET', `modules/${module}/items${search ? `?search=${encodeURIComponent(search)}` : ''}`).then((response) => response.data),
+
+    /** Names the contents chosen in Browser fields, leaving out the ones that no longer exist. */
+    references: (references: ContentReference[]) =>
+        request<{ data: ReferencedContent[] }>('GET', `references?${references.map((reference) => `items[]=${encodeURIComponent(`${reference.type}:${reference.id}`)}`).join('&')}`).then(
+            (response) => response.data,
+        ),
 
     item: (module: string, id: string) =>
         request<{ data: Item }>('GET', `modules/${module}/items/${id}`).then((response) => response.data),

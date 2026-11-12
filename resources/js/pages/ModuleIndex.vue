@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { api } from '../api'
+import SortableTree from '../components/listing/SortableTree.vue'
 import EmptyState from '../components/ui/EmptyState.vue'
 import PageIntro from '../components/ui/PageIntro.vue'
 import UiBadge from '../components/ui/UiBadge.vue'
 import UiButton from '../components/ui/UiButton.vue'
 import UiCard from '../components/ui/UiCard.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
+import { useToast } from '../composables/useToast'
 import { formatDateTime, visibilityBadges } from '../format'
 import { useModulesStore } from '../stores/modules'
-import type { ItemSummary, ModuleSchema } from '../types'
+import type { ItemPlacement, ItemSummary, ModuleSchema } from '../types'
 
 const props = defineProps<{ module: string }>()
 
@@ -24,6 +26,26 @@ const filteredItems = computed(() => {
 
     return query === '' ? items.value : items.value.filter((item) => item.title.toLocaleLowerCase().includes(query))
 })
+
+const toast = useToast()
+
+/** Drag and drop is offered on the full list only, not on search results. */
+const isTreeShown = computed(() => schema.value?.sortable === true && search.value.trim() === '')
+
+async function reorder(placements: ItemPlacement[]): Promise<void> {
+    const previousItems = items.value
+    const itemsById = Object.fromEntries(items.value.map((item) => [item.id, item]))
+
+    items.value = placements.map((placement) => ({ ...itemsById[placement.id], parentId: placement.parentId }))
+
+    try {
+        await api.reorderItems(props.module, placements)
+        toast.success('Ordre enregistré')
+    } catch (error) {
+        items.value = previousItems
+        toast.error(error instanceof Error ? error.message : 'L’ordre n’a pas pu être enregistré.')
+    }
+}
 
 onMounted(async () => {
     ;[schema.value, items.value] = await Promise.all([modulesStore.schema(props.module), api.items(props.module)])
@@ -65,7 +87,16 @@ onMounted(async () => {
                     </label>
                 </template>
 
-                <div class="table-scroll">
+                <SortableTree
+                    v-if="isTreeShown"
+                    :module="module"
+                    :items="items"
+                    :nesting-depth="schema.nestingDepth"
+                    :publishable="schema.publishable"
+                    @reorder="reorder"
+                />
+
+                <div v-else class="table-scroll">
                     <table class="listing">
                         <thead>
                             <tr>

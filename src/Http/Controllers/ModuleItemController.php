@@ -9,6 +9,7 @@ use Gmarineau\AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ModuleItemController
 {
@@ -26,11 +27,16 @@ class ModuleItemController
         $locale = $this->adminPhp->defaultLocale();
         $isPublishable = $moduleDefinition->isPublishable();
 
-        $items = $moduleDefinition->modelClass()::query()
+        $query = $moduleDefinition->modelClass()::query()
             ->when($isPublishable, fn ($query) => $query->withExists('draftRevision as has_draft'))
-            ->when($search !== '', fn ($query) => $moduleDefinition->search($query, $search))
-            ->latest('updated_at')
-            ->paginate(30);
+            ->when($search !== '', fn ($query) => $moduleDefinition->search($query, $search));
+
+        // Items ordered by hand are listed all at once, in their order, to be dragged around.
+        $items = $moduleDefinition->isSortable()
+            ? new LengthAwarePaginator($collection = $query->orderBy('position')->get(), $collection->count(), max($collection->count(), 1))
+            : $query->latest('updated_at')->paginate(30);
+
+        $isNested = $moduleDefinition->nestingDepth() > 0;
 
         return response()->json([
             'data' => $items->getCollection()->map(fn (Model $item): array => [
@@ -39,6 +45,7 @@ class ModuleItemController
                 'updatedAt' => $item->getAttribute('updated_at')?->toIso8601String(),
                 'visibility' => $isPublishable ? $item->visibility()->value : null,
                 'hasDraft' => $isPublishable && $item->getAttribute('has_draft'),
+                'parentId' => $isNested ? $item->getAttribute('parent_id') : null,
             ])->all(),
             'meta' => [
                 'currentPage' => $items->currentPage(),

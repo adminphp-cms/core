@@ -1,5 +1,5 @@
 import { config } from './config'
-import type { ActivityEntry, AdminUser, Asset, FormValues, Item, ItemSummary, ContentReference, ReferencedContent, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
+import type { ActivityEntry, AdminUser, Asset, FormValues, Item, ItemPlacement, ItemSummary, ContentReference, ReferencedContent, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
 
 export class ApiError extends Error {
     constructor(
@@ -126,6 +126,9 @@ export const api = {
         request<{ data: ReferencedContent[] }>('GET', `references?${references.map((reference) => `items[]=${encodeURIComponent(`${reference.type}:${reference.id}`)}`).join('&')}`).then(
             (response) => response.data,
         ),
+
+    /** Saves the order of a sortable module: every item in its new order, parents before their children. */
+    reorderItems: (module: string, items: ItemPlacement[]) => request<unknown>('PUT', `modules/${module}/items/order`, { items }),
 
     item: (module: string, id: string) =>
         request<{ data: Item }>('GET', `modules/${module}/items/${id}`).then((response) => response.data),

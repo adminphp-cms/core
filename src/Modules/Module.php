@@ -3,12 +3,15 @@
 namespace Gmarineau\AdminPhp\Modules;
 
 use Gmarineau\AdminPhp\AdminPhp;
+use Gmarineau\AdminPhp\Concerns\HasNesting;
+use Gmarineau\AdminPhp\Concerns\HasPosition;
 use Gmarineau\AdminPhp\Concerns\HasPublication;
 use Gmarineau\AdminPhp\Fields\Field;
 use Gmarineau\AdminPhp\Forms\HasFields;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use LogicException;
 
 abstract class Module
 {
@@ -39,6 +42,12 @@ abstract class Module
      * (file-text, newspaper, book-open, calendar, image, users, tag, briefcase…).
      */
     protected string $icon = 'file-text';
+
+    /**
+     * How many levels items can be nested under others (0: a flat list, 1: items and
+     * sub-items…). Needs HasNesting and HasPosition on the model.
+     */
+    protected int $nestingDepth = 0;
 
     /**
      * @return array<int, Field>
@@ -129,6 +138,26 @@ abstract class Module
     }
 
     /**
+     * Whether editors order the items by hand (HasPosition).
+     */
+    public function isSortable(): bool
+    {
+        return in_array(HasPosition::class, class_uses_recursive($this->model), true);
+    }
+
+    /**
+     * @throws LogicException When the model cannot be nested.
+     */
+    public function nestingDepth(): int
+    {
+        if ($this->nestingDepth > 0 && (! $this->isSortable() || ! in_array(HasNesting::class, class_uses_recursive($this->model), true))) {
+            throw new LogicException(sprintf('Module [%s] nests its items: add HasPosition and HasNesting to [%s].', $this->name(), $this->model));
+        }
+
+        return $this->nestingDepth;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function toSchema(): array
@@ -139,6 +168,8 @@ abstract class Module
             'description' => $this->description(),
             'icon' => $this->icon(),
             'publishable' => $this->isPublishable(),
+            'sortable' => $this->isSortable(),
+            'nestingDepth' => $this->nestingDepth(),
             'fields' => array_values(array_map(fn (Field $field): array => $field->toSchema(), $this->fields())),
         ];
     }

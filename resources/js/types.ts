@@ -188,6 +188,10 @@ export interface ModuleSchema {
     description: string
     icon: string
     publishable: boolean
+    /** Items are ordered by hand, by drag and drop in the listing. */
+    sortable: boolean
+    /** How many levels items can be nested under others (0: a flat list). */
+    nestingDepth: number
     fields: FieldSchema[]
 }
 
@@ -232,6 +236,14 @@ export interface ItemSummary {
     updatedAt: string | null
     visibility: Visibility | null
     hasDraft: boolean
+    /** Parent item in a nested module, null at the top or in a flat module. */
+    parentId: string | null
+}
+
+/** An item at its new place, as saved after a drag and drop. */
+export interface ItemPlacement {
+    id: string
+    parentId: string | null
 }
 
 export interface BlockValue {

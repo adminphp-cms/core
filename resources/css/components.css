@@ -467,3 +467,12 @@
         font-size: 16px;
     }
 }
+
+@layer components {
+    /* Row following the pointer while it is dragged in a sortable listing. */
+    .sortable-fallback {
+        opacity: 0.95 !important;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-popover);
+    }
+}

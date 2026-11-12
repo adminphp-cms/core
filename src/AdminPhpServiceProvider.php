@@ -135,6 +135,18 @@ class AdminPhpServiceProvider extends ServiceProvider
             // Named explicitly so long table names stay under MySQL's 64 character limit.
             $this->index(['status', 'publish_start_at', 'publish_end_at'], "{$this->getTable()}_publication_index");
         });
+
+        Blueprint::macro('position', function (): void {
+            /** @var Blueprint $this */
+            $this->unsignedInteger('position')->default(0);
+        });
+
+        Blueprint::macro('nesting', function (): void {
+            /** @var Blueprint $this */
+            $this->foreignUlid('parent_id')->nullable()->constrained($this->getTable())->nullOnDelete();
+
+            $this->index(['parent_id', 'position'], "{$this->getTable()}_tree_index");
+        });
     }
 
     protected function registerRoutes(): void

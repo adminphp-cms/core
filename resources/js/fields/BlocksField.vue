@@ -68,34 +68,61 @@ function closeMenu(event: Event): void {
     }
 }
 
+/** Same grid as a field row, so the insert button lines up with the fields. `.insert` stays: closeMenu() looks for it. */
+const insertClass = 'insert relative grid grid-cols-[128px_minmax(0,1fr)] items-center gap-x-6 gap-y-0 py-1.5 max-md:grid-cols-[minmax(0,1fr)]'
+const insertButtonClass = [
+    'col-2 row-1 flex h-11 w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-ring-hover',
+    'text-sm font-medium text-muted transition-[color,background,border-color]',
+    '[.insert:hover>&]:border-brand-ring [.insert:hover>&]:bg-brand-soft [.insert:hover>&]:text-brand',
+    'focus-visible:border-brand-ring focus-visible:bg-brand-soft focus-visible:text-brand',
+    'aria-expanded:border-brand-ring aria-expanded:bg-brand-soft aria-expanded:text-brand',
+    'max-md:col-1',
+]
+const menuClass = [
+    'absolute top-[calc(100%_-_2px)] left-[calc(152px_+_(100%_-_152px)_/_2)] z-10 ml-[-110px] w-[220px] origin-top p-1',
+    'rounded-lg border border-ring-card bg-surface shadow-popover animate-[pop-in_150ms_var(--ease-snappy)]',
+    'max-md:left-1/2',
+]
+const menuItemClass = 'flex h-8.5 w-full items-center rounded-sm border-none px-2.5 text-left text-ink transition-[background,color] hover:bg-nav-hover hover:text-ink focus-visible:bg-nav-hover'
+
+const gutterClass = [
+    'border-r-2 pt-2 pr-4 text-right text-xs font-medium select-none transition-[color,border-color]',
+    'max-md:flex max-md:items-center max-md:gap-2.5 max-md:p-0 max-md:pb-1 max-md:text-left max-md:[border-right:0]!',
+]
+const gutterStateClass = (hasError: boolean): string =>
+    hasError ? 'border-r-danger text-danger' : 'border-r-transparent text-faint group-focus-within/row:border-r-brand group-focus-within/row:text-ink'
+const toolsClass =
+    'mt-1.5 flex justify-end gap-0.5 opacity-0 transition-opacity duration-150 ease-out group-focus-within/row:opacity-100 group-[:hover]/row:opacity-100 max-md:m-0 max-md:opacity-100'
+const toolButtonClass = 'grid size-6 place-items-center rounded-[6px] border-none text-icon hover:not-disabled:bg-nav-hover hover:not-disabled:text-ink'
+
 onMounted(() => document.addEventListener('click', closeMenu))
 onBeforeUnmount(() => document.removeEventListener('click', closeMenu))
 </script>
 
 <template>
-    <div class="blocks-zone">
-        <p v-if="editor.errorFor(path)" class="field-error zone-error">{{ editor.errorFor(path) }}</p>
+    <div>
+        <p v-if="editor.errorFor(path)" class="field-error pl-38 max-md:pl-0">{{ editor.errorFor(path) }}</p>
 
         <template v-for="(block, index) in blocks" :key="block.id">
-            <div v-if="index === 0" class="insert">
-                <button type="button" aria-haspopup="menu" :aria-expanded="openMenuAt === -1" @click="toggleMenu(-1)"><UiIcon name="plus" :size="15" /> Ajouter un bloc</button>
-                <div v-if="openMenuAt === -1" class="menu" role="menu">
-                    <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" @click="insert(schema, -1)">
-                        <b>{{ schema.title }}</b>
+            <div v-if="index === 0" :class="insertClass">
+                <button type="button" aria-haspopup="menu" :class="insertButtonClass" :aria-expanded="openMenuAt === -1" @click="toggleMenu(-1)"><UiIcon name="plus" :size="15" /> Ajouter un bloc</button>
+                <div v-if="openMenuAt === -1" :class="menuClass" role="menu">
+                    <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" :class="menuItemClass" @click="insert(schema, -1)">
+                        <b class="font-medium">{{ schema.title }}</b>
                     </button>
                 </div>
             </div>
 
-            <section class="block" :data-block-id="block.id" :class="{ 'has-error': editor.errorFor(`${path}.${index}.type`) }">
-                <div class="gutter">
-                    <span class="type">{{ schemasByType[block.type]?.title ?? block.type }}</span>
-                    <span class="tools">
-                        <button type="button" title="Monter" aria-label="Monter" :disabled="index === 0" @click="move(index, -1)"><UiIcon name="arrow-up" :size="13" /></button>
-                        <button type="button" title="Descendre" aria-label="Descendre" :disabled="index === blocks.length - 1" @click="move(index, 1)"><UiIcon name="arrow-down" :size="13" /></button>
-                        <button type="button" title="Supprimer" aria-label="Supprimer" @click="remove(index)"><UiIcon name="x" :size="13" /></button>
+            <section class="group/row relative grid grid-cols-[128px_minmax(0,1fr)] gap-x-6 gap-y-0 max-md:grid-cols-[minmax(0,1fr)]" :data-block-id="block.id">
+                <div :class="[gutterClass, gutterStateClass(Boolean(editor.errorFor(`${path}.${index}.type`)))]">
+                    <span class="block">{{ schemasByType[block.type]?.title ?? block.type }}</span>
+                    <span :class="toolsClass">
+                        <button type="button" :class="toolButtonClass" title="Monter" aria-label="Monter" :disabled="index === 0" @click="move(index, -1)"><UiIcon name="arrow-up" :size="13" /></button>
+                        <button type="button" :class="toolButtonClass" title="Descendre" aria-label="Descendre" :disabled="index === blocks.length - 1" @click="move(index, 1)"><UiIcon name="arrow-down" :size="13" /></button>
+                        <button type="button" :class="toolButtonClass" title="Supprimer" aria-label="Supprimer" @click="remove(index)"><UiIcon name="x" :size="13" /></button>
                     </span>
                 </div>
-                <div class="body block-body">
+                <div class="flex min-w-0 flex-col gap-4 pt-1 pb-5">
                     <template v-if="schemasByType[block.type]">
                         <FieldRenderer
                             v-for="(blockField, fieldIndex) in schemasByType[block.type].fields"
@@ -112,21 +139,21 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenu))
                 </div>
             </section>
 
-            <div class="insert">
-                <button type="button" aria-haspopup="menu" :aria-expanded="openMenuAt === index" @click="toggleMenu(index)"><UiIcon name="plus" :size="15" /> Ajouter un bloc</button>
-                <div v-if="openMenuAt === index" class="menu" role="menu">
-                    <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" @click="insert(schema, index)">
-                        <b>{{ schema.title }}</b>
+            <div :class="insertClass">
+                <button type="button" aria-haspopup="menu" :class="insertButtonClass" :aria-expanded="openMenuAt === index" @click="toggleMenu(index)"><UiIcon name="plus" :size="15" /> Ajouter un bloc</button>
+                <div v-if="openMenuAt === index" :class="menuClass" role="menu">
+                    <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" :class="menuItemClass" @click="insert(schema, index)">
+                        <b class="font-medium">{{ schema.title }}</b>
                     </button>
                 </div>
             </div>
         </template>
 
-        <div v-if="blocks.length === 0" class="insert is-empty">
-            <button type="button" aria-haspopup="menu" :aria-expanded="openMenuAt === -1" @click="toggleMenu(-1)"><UiIcon name="plus" :size="15" /> Ajouter un premier bloc</button>
-            <div v-if="openMenuAt === -1" class="menu" role="menu">
-                <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" @click="insert(schema, -1)">
-                    <b>{{ schema.title }}</b>
+        <div v-if="blocks.length === 0" :class="insertClass">
+            <button type="button" aria-haspopup="menu" :class="insertButtonClass" :aria-expanded="openMenuAt === -1" @click="toggleMenu(-1)"><UiIcon name="plus" :size="15" /> Ajouter un premier bloc</button>
+            <div v-if="openMenuAt === -1" :class="menuClass" role="menu">
+                <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" :class="menuItemClass" @click="insert(schema, -1)">
+                    <b class="font-medium">{{ schema.title }}</b>
                 </button>
             </div>
         </div>

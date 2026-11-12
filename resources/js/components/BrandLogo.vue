@@ -1,3 +1,3 @@
 <template>
-    <span class="brand-admin">Admin</span><span class="brand-php">PHP</span>
+    <span class="text-icon">Admin</span><span class="text-brand">PHP</span>
 </template>

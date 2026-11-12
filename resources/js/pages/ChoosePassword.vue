@@ -77,7 +77,7 @@ async function submit(): Promise<void> {
             <label class="login-field">
                 <span>Mot de passe</span>
                 <input v-model="password" type="password" autocomplete="new-password" minlength="8" required autofocus />
-                <small class="login-hint">8 caractères minimum.</small>
+                <small class="text-xs font-normal text-faint">8 caractères minimum.</small>
             </label>
 
             <label class="login-field">
@@ -89,7 +89,7 @@ async function submit(): Promise<void> {
 
             <p v-if="errors.token" class="field-error" role="alert">
                 {{ errors.token }}
-                <RouterLink v-if="!isInvitation" :to="{ name: 'password.forgot', query: { email } }">Recevoir un nouveau lien</RouterLink>
+                <RouterLink v-if="!isInvitation" :to="{ name: 'password.forgot', query: { email } }" class="font-medium text-ink underline decoration-ring-hover underline-offset-3">Recevoir un nouveau lien</RouterLink>
                 <template v-else>Demandez à un administrateur de vous renvoyer l’invitation.</template>
             </p>
 

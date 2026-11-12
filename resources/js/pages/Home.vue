@@ -49,17 +49,20 @@ onMounted(async () => {
                 description="Déclarez vos modules dans l’application avec AdminPhp::registerModules()."
             />
 
-            <ul v-else class="stat-grid">
+            <ul v-else class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
                 <li v-for="module in modulesStore.modules" :key="module.name">
-                    <UiCard class="stat-card">
-                        <div class="stat-card-head">
+                    <UiCard
+                        class="group h-full transition-[border-color] duration-[160ms] ease-out hover:border-ring-hover"
+                        body-class="flex h-full flex-col gap-3.5"
+                    >
+                        <div class="flex items-center gap-2.5">
                             <IconTile :name="module.icon" />
-                            <RouterLink :to="{ name: 'module.index', params: { module: module.name } }" class="stat-card-title stretched-link">
+                            <RouterLink :to="{ name: 'module.index', params: { module: module.name } }" class="stretched-link min-w-0 flex-1 font-semibold text-strong no-underline transition-[color] group-hover:text-brand">
                                 {{ module.title }}
                             </RouterLink>
                             <RouterLink
                                 :to="{ name: 'module.create', params: { module: module.name } }"
-                                class="icon-button stat-card-create"
+                                class="icon-button"
                                 :title="`Créer dans ${module.title}`"
                                 :aria-label="`Créer dans ${module.title}`"
                             >
@@ -67,32 +70,39 @@ onMounted(async () => {
                             </RouterLink>
                         </div>
 
-                        <p class="stat-card-count">{{ module.count }}</p>
+                        <p class="text-4xl leading-none font-semibold tracking-[-0.03em] text-strong tabular-nums">{{ module.count }}</p>
 
-                        <div class="stat-card-badges">
+                        <div class="mt-auto flex flex-wrap gap-1.5">
                             <template v-if="module.counts">
                                 <UiBadge v-if="module.counts.published > 0" tone="success" dot>{{ module.counts.published }} en ligne</UiBadge>
                                 <UiBadge v-if="module.counts.unpublished > 0" dot>{{ module.counts.unpublished }} hors ligne</UiBadge>
                                 <UiBadge v-if="module.counts.pendingChanges > 0" tone="warning" dot>{{ module.counts.pendingChanges }} à publier</UiBadge>
-                                <span v-if="module.count === 0" class="stat-card-hint">Rien encore, lancez-vous</span>
+                                <span v-if="module.count === 0" class="text-sm text-muted">Rien encore, lancez-vous</span>
                             </template>
-                            <span v-else class="stat-card-hint">{{ module.description || 'Contenus' }}</span>
+                            <span v-else class="text-sm text-muted">{{ module.description || 'Contenus' }}</span>
                         </div>
                     </UiCard>
                 </li>
             </ul>
 
             <UiCard title="Activité récente" description="Les derniers enregistrements et publications." :padded="false">
-                <ol v-if="activity.length > 0" class="activity">
-                    <li v-for="entry in activity" :key="entry.id">
+                <ol v-if="activity.length > 0" class="py-1.5">
+                    <li
+                        v-for="entry in activity"
+                        :key="entry.id"
+                        class="flex items-center gap-3 px-4.5 py-2.5 not-first:border-t not-first:border-t-line max-md:flex-wrap max-md:px-4 max-md:py-3"
+                    >
                         <span class="avatar is-small" aria-hidden="true">{{ initials(entry.userName ?? '?') }}</span>
-                        <p class="activity-text">
-                            <b>{{ entry.userName ?? 'Quelqu’un' }}</b>
+                        <p class="min-w-0 flex-1 text-muted max-md:basis-[calc(100%-40px)]">
+                            <b class="font-semibold text-strong">{{ entry.userName ?? 'Quelqu’un' }}</b>
                             {{ entry.action === 'published' ? 'a publié' : 'a enregistré des modifications sur' }}
-                            <RouterLink :to="{ name: 'module.edit', params: { module: entry.module, id: entry.itemId } }">{{ entry.itemTitle }}</RouterLink>
+                            <RouterLink
+                                :to="{ name: 'module.edit', params: { module: entry.module, id: entry.itemId } }"
+                                class="font-medium text-strong no-underline hover:underline hover:underline-offset-3"
+                            >{{ entry.itemTitle }}</RouterLink>
                         </p>
-                        <UiBadge class="activity-module"><UiIcon :name="entry.icon" :size="12" /> {{ entry.moduleTitle }}</UiBadge>
-                        <time class="activity-time" :datetime="entry.at">{{ formatRelative(entry.at) }}</time>
+                        <UiBadge><UiIcon :name="entry.icon" :size="12" /> {{ entry.moduleTitle }}</UiBadge>
+                        <time class="min-w-24 text-right text-sm whitespace-nowrap text-faint max-md:ml-auto max-md:min-w-0" :datetime="entry.at">{{ formatRelative(entry.at) }}</time>
                     </li>
                 </ol>
 

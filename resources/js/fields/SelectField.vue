@@ -31,12 +31,13 @@ function toggleOption(option: SelectOption): void {
 </script>
 
 <template>
-    <div v-if="field.multiple" class="choice-list" role="group" :aria-label="field.label">
+    <div v-if="field.multiple" class="flex flex-wrap gap-1.5" role="group" :aria-label="field.label">
         <button
             v-for="option in field.options"
             :key="option.value"
             type="button"
-            class="choice"
+            class="h-8 rounded-[999px] border border-ring-control bg-surface px-3.5 font-medium text-muted transition-[background,color,border-color]
+                aria-pressed:border-brand-ring aria-pressed:bg-brand-soft aria-pressed:text-brand hover:not-aria-pressed:bg-hover"
             :aria-pressed="selectedValues.includes(option.value)"
             @click="toggleOption(option)"
         >

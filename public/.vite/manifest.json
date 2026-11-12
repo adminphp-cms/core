@@ -8,12 +8,12 @@
     "src": "node_modules/@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2"
   },
   "resources/js/app.ts": {
-    "file": "assets/app-DzhLQw9M.js",
+    "file": "assets/app-mvEkDowE.js",
     "name": "app",
     "src": "resources/js/app.ts",
     "isEntry": true,
     "css": [
-      "assets/app-DPJyL4SM.css"
+      "assets/app-CpWDLutZ.css"
     ],
     "assets": [
       "assets/figtree-latin-ext-wght-normal-DCwSJGxG.woff2",

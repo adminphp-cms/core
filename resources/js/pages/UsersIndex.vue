@@ -86,13 +86,13 @@ function saved(user: ManagedUser, message: string): void {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="user in filteredUsers" :key="user.id" :class="{ 'is-muted': user.status === 'deactivated' }">
+                            <tr v-for="user in filteredUsers" :key="user.id">
                                 <td>
-                                    <span class="user-cell">
+                                    <span class="flex items-center gap-2.5" :class="{ 'opacity-55': user.status === 'deactivated' }">
                                         <span class="avatar is-small" aria-hidden="true">{{ initials(user.name) }}</span>
-                                        <span class="user-cell-text">
-                                            <button type="button" class="stretched-link link-button" @click="editedUser = user">{{ user.name }}</button>
-                                            <small>{{ user.email }}</small>
+                                        <span class="flex min-w-0 flex-col">
+                                            <button type="button" class="stretched-link link-button text-left text-base text-strong after:rounded-none" @click="editedUser = user">{{ user.name }}</button>
+                                            <small class="text-xs text-faint">{{ user.email }}</small>
                                         </span>
                                         <UiBadge v-if="user.id === session.user?.id" tone="brand">Vous</UiBadge>
                                     </span>

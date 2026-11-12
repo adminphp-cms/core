@@ -250,6 +250,20 @@ async function restoreRevision(revisionId: string): Promise<void> {
     }
 }
 
+/** Utility sets of the editor layout, shared by the loading skeleton and the loaded editor. */
+const canvasClass = 'px-7 pt-8 pb-30 max-md:px-3 max-md:pt-4 max-md:pb-15'
+const docClass = 'mx-auto max-w-[900px] rounded-xl border border-ring-card bg-surface pt-11 pr-11 pb-9 max-md:px-4 max-md:py-6'
+const skeletonClass =
+    'block rounded-[6px] bg-[linear-gradient(90deg,var(--accent-soft)_0%,var(--hover)_50%,var(--accent-soft)_100%)] bg-[length:200%_100%] animate-[shimmer_1.4s_linear_infinite]'
+const inspectorLayoutClass = 'grid grid-cols-[minmax(0,1fr)_320px] items-start max-xl:block'
+const localeButtonClass = [
+    'flex items-center gap-1.5 rounded-[7px] border border-transparent px-2.5',
+    'text-xs font-semibold tracking-[0.03em] text-muted transition-[background,color]',
+    'aria-pressed:border-ring-control aria-pressed:bg-surface aria-pressed:text-strong',
+]
+
+const saveStatusClass = computed(() => (saveStatus.value.isSaved ? 'text-muted before:bg-success' : 'text-warning before:bg-current'))
+
 onMounted(async () => {
     editor.locale = config.defaultLocale
     editor.errors = {}
@@ -270,7 +284,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <main class="page editor">
+    <main class="page">
         <header class="top">
             <div class="crumbs">
                 <RouterLink :to="{ name: 'module.index', params: { module } }">{{ schema?.title }}</RouterLink>
@@ -278,21 +292,22 @@ onMounted(async () => {
                 <strong>{{ itemTitle }}</strong>
             </div>
 
-            <div v-if="config.locales.length > 1" class="langs" role="group" aria-label="Langue de saisie">
+            <div v-if="config.locales.length > 1" class="flex h-8 gap-0.5 rounded-md bg-accent-soft p-[3px]" role="group" aria-label="Langue de saisie">
                 <button
                     v-for="locale in config.locales"
                     :key="locale"
                     type="button"
+                    :class="localeButtonClass"
                     :aria-pressed="editor.locale === locale"
                     @click="editor.locale = locale"
                 >
                     {{ locale.toUpperCase() }}
-                    <i v-if="localesWithGaps.includes(locale)" class="gap" title="Traduction incomplète" />
+                    <i v-if="localesWithGaps.includes(locale)" class="size-1.5 rounded-[50%] bg-warning" title="Traduction incomplète" />
                 </button>
             </div>
 
             <template v-if="isLoaded">
-                <span class="status" :class="{ saved: saveStatus.isSaved }">{{ saveStatus.label }}</span>
+                <span class="flex items-center gap-1.5 px-2 text-sm before:size-1.5 before:rounded-[50%]" :class="saveStatusClass">{{ saveStatus.label }}</span>
 
                 <template v-if="isPublishable">
                     <button type="button" class="btn" :disabled="isSaving" @click="save">Enregistrer</button>
@@ -306,18 +321,18 @@ onMounted(async () => {
             </template>
         </header>
 
-        <div v-if="!isLoaded" class="canvas" aria-busy="true">
-            <div class="doc doc-skeleton" aria-label="Chargement du contenu">
-                <span class="skeleton is-title" />
-                <span class="skeleton is-lead" />
-                <span class="skeleton" />
-                <span class="skeleton is-short" />
+        <div v-if="!isLoaded" :class="canvasClass" aria-busy="true">
+            <div :class="[docClass, 'flex flex-col gap-3.5 pl-49']" aria-label="Chargement du contenu">
+                <span :class="[skeletonClass, 'mb-1.5 h-8.5 w-[60%]']" />
+                <span :class="[skeletonClass, 'mb-3.5 h-4.5 w-[78%]']" />
+                <span :class="[skeletonClass, 'h-3.5 w-[92%]']" />
+                <span :class="[skeletonClass, 'h-3.5 w-[55%]']" />
             </div>
         </div>
 
-        <div v-else-if="schema" class="editor-body" :class="{ 'has-inspector': publication !== null }">
-            <div class="canvas">
-                <div class="doc">
+        <div v-else-if="schema" :class="{ [inspectorLayoutClass]: publication !== null }">
+            <div :class="canvasClass">
+                <div :class="[docClass, 'pl-5']">
                     <FieldRenderer
                         v-for="(field, index) in schema.fields"
                         :key="field.name"

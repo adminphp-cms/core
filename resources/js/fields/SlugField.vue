@@ -70,6 +70,11 @@ function regenerate(): void {
     input.value?.focus()
 }
 
+/**
+ * The page on the site, once the item is saved. Unpublished content answers "not found" there.
+ */
+const pageUrl = computed(() => (isNew.value || !value.value ? null : `${config.siteUrl.replace(/\/+$/, '')}${props.field.prefix}${value.value}`))
+
 const canRegenerate = computed(() => suggestion.value !== '' && suggestion.value !== (value.value ?? ''))
 </script>
 
@@ -95,6 +100,10 @@ const canRegenerate = computed(() => suggestion.value !== '' && suggestion.value
                 @blur="normalize"
             />
         </label>
+
+        <UiButton v-if="pageUrl" :href="pageUrl" target="_blank" rel="noopener" title="Ouvrir la page sur le site (visible une fois publiée)">
+            <UiIcon name="external-link" :size="14" /> Voir la page
+        </UiButton>
 
         <UiButton v-if="canRegenerate" title="Remplacer par l’adresse tirée du titre" @click="regenerate">
             <UiIcon name="refresh" :size="14" /> Depuis le titre

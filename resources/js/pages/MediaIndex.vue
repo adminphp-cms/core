@@ -98,7 +98,7 @@ onMounted(load)
                         </UiIconButton>
                     </template>
 
-                    <img :src="selected.url" :alt="selected.name" class="max-h-60 w-full rounded-md object-contain [background:repeating-conic-gradient(var(--accent-soft)_0%_25%,var(--surface)_0%_50%)_50%/16px_16px]" />
+                    <img :src="selected.thumbnailUrl" :alt="selected.name" class="max-h-60 w-full rounded-md object-contain [background:repeating-conic-gradient(var(--accent-soft)_0%_25%,var(--surface)_0%_50%)_50%/16px_16px]" />
                     <dl class="m-0 grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-sm">
                         <dt class="text-faint">Nom</dt>
                         <dd class="m-0 text-ink wrap-anywhere">{{ selected.name }}</dd>

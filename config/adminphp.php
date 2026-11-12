@@ -93,6 +93,30 @@ return [
         'directory' => 'adminphp',
         'max_size' => 10240,
         'mimes' => ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'],
+
+        /*
+        | Smaller copies made of every uploaded image, by name => width in px, for
+        | responsive images on the site ($asset->url('md'), $asset->srcset(),
+        | <x-adminphp::image>). An image is never enlarged: sizes wider than the
+        | original are skipped. Run php artisan adminphp:media:regenerate after
+        | changing them. GIFs (maybe animated) keep only their original.
+        */
+
+        'sizes' => [
+            'sm' => 480,
+            'md' => 960,
+            'lg' => 1600,
+            'xl' => 2400,
+        ],
+
+        'variant_format' => 'webp',
+        'variant_quality' => 80,
+
+        // "gd" or "imagick".
+        'driver' => env('ADMINPHP_IMAGE_DRIVER', 'gd'),
+
+        // Queue connection used to make the copies (null: the default one).
+        'queue' => env('ADMINPHP_MEDIA_QUEUE'),
     ],
 
 ];

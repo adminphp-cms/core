@@ -3,12 +3,14 @@
 namespace Gmarineau\AdminPhp\Actions;
 
 use Gmarineau\AdminPhp\AdminPhp;
+use Gmarineau\AdminPhp\Jobs\GenerateAssetVariantsJob;
 use Gmarineau\AdminPhp\Models\Asset;
 use Illuminate\Http\UploadedFile;
 
 /**
  * Adds an uploaded image to the media library. The file gets a random name on the
- * configured disk; its original name is only kept for display.
+ * configured disk; its original name is only kept for display. Smaller copies are
+ * made by a queued job.
  */
 class StoreAsset
 {
@@ -21,7 +23,7 @@ class StoreAsset
 
         [$width, $height] = $this->dimensions($file);
 
-        return Asset::query()->create([
+        $asset = Asset::query()->create([
             'disk' => $disk,
             'path' => $path,
             'name' => mb_substr($file->getClientOriginalName(), 0, 255),
@@ -31,6 +33,10 @@ class StoreAsset
             'height' => $height,
             'user_id' => $this->adminPhp->user()?->getKey(),
         ]);
+
+        GenerateAssetVariantsJob::dispatch($asset);
+
+        return $asset;
     }
 
     /**

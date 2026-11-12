@@ -106,6 +106,8 @@ export interface ImageFieldSchema extends BaseFieldSchema {
 export interface Asset {
     id: string
     url: string
+    /** The smallest copy, the original until it is made. */
+    thumbnailUrl: string
     name: string
     mimeType: string
     size: number

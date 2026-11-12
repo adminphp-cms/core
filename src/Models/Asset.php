@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
  * @property int $size In bytes.
  * @property int|null $width
  * @property int|null $height
+ * @property array<string, array{path: string, width: int, height: int}>|null $variants Smaller copies by size name.
  * @property string|null $user_id
  * @property Carbon $created_at
  */
@@ -35,6 +36,7 @@ class Asset extends Model
         'size',
         'width',
         'height',
+        'variants',
         'user_id',
     ];
 
@@ -52,15 +54,47 @@ class Asset extends Model
             'size' => 'integer',
             'width' => 'integer',
             'height' => 'integer',
+            'variants' => 'array',
         ];
     }
 
     /**
-     * Public address of the file, to use in an <img> on the site.
+     * Public address of the file, to use in an <img> on the site. With a size name from
+     * adminphp.media.sizes, the smaller copy; the original until it exists, or when the
+     * image is smaller than that size.
      */
-    public function url(): string
+    public function url(?string $size = null): string
     {
-        return Storage::disk($this->disk)->url($this->path);
+        $path = $size === null ? $this->path : ($this->variants[$size]['path'] ?? $this->path);
+
+        return Storage::disk($this->disk)->url($path);
+    }
+
+    /**
+     * The smallest size of adminphp.media.sizes, used for thumbnails in the admin.
+     */
+    protected function smallestSizeName(): ?string
+    {
+        $sizes = (array) config('adminphp.media.sizes', []);
+        asort($sizes);
+
+        return array_key_first($sizes);
+    }
+
+    /**
+     * Every available width of the image, smaller copies then the original, for <img srcset>.
+     */
+    public function srcset(): string
+    {
+        $candidates = collect($this->variants ?? [])
+            ->map(fn (array $variant): string => Storage::disk($this->disk)->url($variant['path']).' '.$variant['width'].'w')
+            ->values();
+
+        if ($this->width !== null) {
+            $candidates->push($this->url().' '.$this->width.'w');
+        }
+
+        return $candidates->implode(', ');
     }
 
     /**
@@ -74,13 +108,14 @@ class Asset extends Model
     }
 
     /**
-     * @return array{id: string, url: string, name: string, mimeType: string, size: int, width: int|null, height: int|null, createdAt: string}
+     * @return array{id: string, url: string, thumbnailUrl: string, name: string, mimeType: string, size: int, width: int|null, height: int|null, createdAt: string}
      */
     public function toAdminArray(): array
     {
         return [
             'id' => $this->id,
             'url' => $this->url(),
+            'thumbnailUrl' => $this->url($this->smallestSizeName()),
             'name' => $this->name,
             'mimeType' => $this->mime_type,
             'size' => $this->size,

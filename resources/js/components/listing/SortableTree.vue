@@ -86,12 +86,13 @@ function createSortables(): void {
 onMounted(createSortables)
 onBeforeUnmount(destroySortables)
 
-const rowClass = 'group/row relative flex min-h-12 items-center gap-3 border-b border-line bg-surface pr-5 hover:bg-hover'
-const handleClass = 'grid size-7 flex-none cursor-grab place-items-center rounded-[6px] text-faint hover:bg-nav-hover hover:text-ink active:cursor-grabbing'
+const rowClass = 'group/row relative flex min-h-12 items-center gap-3 border-t border-line bg-surface pr-5 hover:bg-hover'
+const handleClass = 'relative z-10 grid size-7 flex-none cursor-grab place-items-center rounded-[6px] text-faint hover:bg-nav-hover hover:text-ink active:cursor-grabbing'
 </script>
 
 <template>
-    <div ref="tree" :key="version" :class="{ 'is-dragging': isDragging }">
+    <!-- Rounded like .table-scroll so rows stay inside the card's corners; rows are separated by a top border, the first one has none. -->
+    <div ref="tree" :key="version" class="overflow-hidden rounded-b-[var(--round-card)] [&>ul>li:first-child>div]:border-t-0" :class="{ 'is-dragging': isDragging }">
         <ul data-list="roots">
             <li v-for="root in roots" :key="root.id" :data-id="root.id">
                 <div :class="[rowClass, 'pl-2.5']">

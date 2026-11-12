@@ -73,12 +73,16 @@ const canRegenerate = computed(() => suggestion.value !== '' && suggestion.value
 </script>
 
 <template>
-    <div class="slug-field">
-        <label class="slug-input">
+    <div class="flex flex-wrap items-center gap-2">
+        <label
+            class="flex h-[34px] max-w-[520px] min-w-60 flex-1 items-center gap-1.5 rounded-md border border-ring-control bg-surface px-2.5 text-icon transition-[border-color]
+                focus-within:border-brand focus-within:outline-3 focus-within:outline-offset-0 focus-within:outline-brand-soft max-md:min-w-0 max-md:basis-full"
+        >
             <UiIcon name="link" :size="14" />
-            <span class="slug-prefix">{{ field.prefix }}</span>
+            <span class="whitespace-nowrap text-faint">{{ field.prefix }}</span>
             <input
                 ref="input"
+                class="min-w-0 flex-1 border-none bg-transparent p-0 font-sans text-base leading-none font-normal text-ink outline-none placeholder:text-faint max-md:text-lg"
                 type="text"
                 :value="value ?? ''"
                 :maxlength="field.maxLength"
@@ -95,6 +99,6 @@ const canRegenerate = computed(() => suggestion.value !== '' && suggestion.value
             <UiIcon name="refresh" :size="14" /> Depuis le titre
         </button>
 
-        <p v-if="!value" class="slug-hint">Laissée vide, l’adresse sera tirée du titre à l’enregistrement.</p>
+        <p v-if="!value" class="basis-full text-xs text-faint">Laissée vide, l’adresse sera tirée du titre à l’enregistrement.</p>
     </div>
 </template>

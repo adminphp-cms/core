@@ -102,11 +102,11 @@ async function savePassword(): Promise<void> {
             <div class="crumbs"><strong>Mon compte</strong></div>
         </header>
 
-        <div class="page-body account">
+        <div class="page-body max-w-[760px]">
             <PageIntro title="Mon compte" :description="`Connecté en tant que ${roleLabel.toLocaleLowerCase()}.`" icon="user" />
 
             <UiCard title="Profil" description="Votre nom apparaît dans l’historique des versions.">
-                <form class="account-form" @submit.prevent="saveProfile">
+                <form class="flex max-w-[420px] flex-col gap-4" @submit.prevent="saveProfile">
                     <label class="form-field">
                         <span>Nom</span>
                         <input v-model="name" class="control-input" type="text" autocomplete="name" required maxlength="255" />
@@ -128,14 +128,14 @@ async function savePassword(): Promise<void> {
 
                     <p v-if="profileErrors.form" class="field-error" role="alert">{{ profileErrors.form[0] }}</p>
 
-                    <div class="account-actions">
+                    <div class="flex gap-2">
                         <button type="submit" class="btn primary" :disabled="isSavingProfile">{{ isSavingProfile ? 'Enregistrement…' : 'Enregistrer' }}</button>
                     </div>
                 </form>
             </UiCard>
 
             <UiCard title="Mot de passe" description="Vos autres navigateurs restés connectés seront déconnectés.">
-                <form class="account-form" @submit.prevent="savePassword">
+                <form class="flex max-w-[420px] flex-col gap-4" @submit.prevent="savePassword">
                     <!-- Lets password managers tie the new password to this account. -->
                     <input :value="session.user?.email" type="email" autocomplete="username" hidden />
 
@@ -159,7 +159,7 @@ async function savePassword(): Promise<void> {
 
                     <p v-if="passwordErrors.form" class="field-error" role="alert">{{ passwordErrors.form[0] }}</p>
 
-                    <div class="account-actions">
+                    <div class="flex gap-2">
                         <button type="submit" class="btn primary" :disabled="isSavingPassword">{{ isSavingPassword ? 'Enregistrement…' : 'Changer le mot de passe' }}</button>
                     </div>
                 </form>

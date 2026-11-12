@@ -58,12 +58,12 @@ async function submit(): Promise<void> {
                 <input v-model="password" type="password" autocomplete="current-password" required />
             </label>
 
-            <div class="login-options">
-                <label class="login-remember">
-                    <input v-model="remember" type="checkbox" />
+            <div class="flex items-center justify-between gap-3">
+                <label class="flex items-center gap-2 text-muted">
+                    <input v-model="remember" type="checkbox" class="accent-accent" />
                     Rester connecté
                 </label>
-                <RouterLink :to="{ name: 'password.forgot', query: email ? { email } : {} }">Mot de passe oublié ?</RouterLink>
+                <RouterLink :to="{ name: 'password.forgot', query: email ? { email } : {} }" class="font-medium text-ink underline decoration-ring-hover underline-offset-3">Mot de passe oublié ?</RouterLink>
             </div>
 
             <p v-if="error" class="field-error" role="alert">{{ error }}</p>

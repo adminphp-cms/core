@@ -1,0 +1,103 @@
+/*
+ * AdminPHP design tokens, exposed to Tailwind by theme.css.
+ *
+ * White cards on a very light grey canvas, outlined with a plain 1px border and no drop
+ * shadow; only popovers and toasts float. Figtree in light weights keeps the interface
+ * friendly without weight.
+ * One accent, the red of the logo, marks where you are; controls stay neutral.
+ * Motion is short, colour-only, and never bounces.
+ */
+:root {
+    /* Surfaces */
+    --canvas: #f7f7f8;
+    --surface: #ffffff;
+    --sunken: #fafafa;
+    --hover: #f6f6f7;
+    --pressed: #efeff1;
+    --nav-hover: rgba(9, 9, 11, 0.045);
+
+    /* Text */
+    --strong: #0b0b0f;
+    --ink: #27272a;
+    --muted: #6b6b73;
+    --faint: #9a9aa2;
+    --icon: #a1a1aa;
+
+    /* Lines and rings */
+    --line: #ececee;
+    --ring-card: #e4e4e7;
+    --ring-control: #dcdce0;
+    --ring-hover: #d1d1d6;
+
+    /* Accent: the brand red, for "you are here" */
+    --brand: #e5342b;
+    --brand-soft: rgba(229, 52, 43, 0.08);
+    --brand-ring: rgba(229, 52, 43, 0.28);
+    --focus: rgba(229, 52, 43, 0.45);
+
+    /* Neutral solid, for primary actions */
+    --accent: #18181b;
+    --accent-ink: #ffffff;
+    --accent-soft: #f2f2f4;
+
+    /* Tones */
+    --success: #0f8a5f;
+    --success-soft: #e9f7f0;
+    --warning: #b45309;
+    --warning-soft: #fdf3e5;
+    --danger: #d92d20;
+    --danger-soft: #fdeceb;
+
+    --border-card: 1px solid var(--ring-card);
+    --border-control: 1px solid var(--ring-control);
+    --border-line: 1px solid var(--line);
+    --popover-shadow: 0 12px 28px -6px rgba(9, 9, 11, 0.14), 0 2px 4px rgba(9, 9, 11, 0.05);
+
+    --round: 10px;
+    --round-card: 16px;
+
+    --sidebar-width: 256px;
+    --header-height: 60px;
+
+    --ease-snappy: cubic-bezier(0.23, 1, 0.32, 1);
+    --press: 120ms;
+
+    --sans: 'Figtree Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        --canvas: #0b0b0d;
+        --surface: #131316;
+        --sunken: #101013;
+        --hover: #18181c;
+        --pressed: #1e1e23;
+        --nav-hover: rgba(255, 255, 255, 0.05);
+        --strong: #fafafa;
+        --ink: #e4e4e7;
+        --muted: #9d9da8;
+        --faint: #6e6e78;
+        --icon: #74747e;
+        --line: #24242a;
+        --ring-card: #24242a;
+        --ring-control: #2e2e35;
+        --ring-hover: #3a3a42;
+        --brand: #ff5d53;
+        --brand-soft: rgba(255, 93, 83, 0.13);
+        --brand-ring: rgba(255, 93, 83, 0.35);
+        --focus: rgba(255, 93, 83, 0.55);
+        --accent: #fafafa;
+        --accent-ink: #09090b;
+        --accent-soft: #1d1d22;
+        --success: #34c38f;
+        --success-soft: rgba(52, 195, 143, 0.12);
+        --warning: #fbbf24;
+        --warning-soft: rgba(251, 191, 36, 0.12);
+        --danger: #ff6b6b;
+        --danger-soft: rgba(255, 107, 107, 0.12);
+        --popover-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.6);
+        color-scheme: dark;
+    }
+}

@@ -19,6 +19,11 @@ const isLoaded = ref(false)
 const selected = ref<Asset | null>(null)
 const copied = ref(false)
 
+/**
+ * Next to the details card the grid shrinks to a column; on narrow screens the details move above it.
+ */
+const detailLayoutClasses = 'grid grid-cols-[minmax(0,1fr)_300px] items-start gap-4 max-lg:flex max-lg:flex-col-reverse'
+
 async function load(): Promise<void> {
     const response = await api.assets(search.value.trim())
     response.data.forEach(assetsStore.remember)
@@ -62,7 +67,7 @@ onMounted(load)
 
             <UploadDropzone multiple @uploaded="onUploaded" />
 
-            <div class="media-layout" :class="{ 'has-detail': selected }">
+            <div :class="selected ? detailLayoutClasses : undefined">
                 <UiCard :title="`${total} ${total > 1 ? 'images' : 'image'}`">
                     <template #actions>
                         <label class="search-field">
@@ -80,25 +85,29 @@ onMounted(load)
                     />
                 </UiCard>
 
-                <UiCard v-if="selected" title="Détails" class="media-detail">
+                <UiCard
+                    v-if="selected"
+                    title="Détails"
+                    class="sticky top-[calc(var(--header-height)+16px)] max-lg:static [&_.ui-card-body]:flex [&_.ui-card-body]:flex-col [&_.ui-card-body]:gap-3.5"
+                >
                     <template #actions>
                         <button type="button" class="icon-button" aria-label="Fermer les détails" title="Fermer" @click="selected = null">
                             <UiIcon name="x" :size="14" />
                         </button>
                     </template>
 
-                    <img :src="selected.url" :alt="selected.name" class="media-detail-image" />
-                    <dl class="media-detail-list">
-                        <dt>Nom</dt>
-                        <dd>{{ selected.name }}</dd>
+                    <img :src="selected.url" :alt="selected.name" class="max-h-60 w-full rounded-md object-contain [background:repeating-conic-gradient(var(--accent-soft)_0%_25%,var(--surface)_0%_50%)_50%/16px_16px]" />
+                    <dl class="m-0 grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-sm">
+                        <dt class="text-faint">Nom</dt>
+                        <dd class="m-0 text-ink wrap-anywhere">{{ selected.name }}</dd>
                         <template v-if="selected.width && selected.height">
-                            <dt>Dimensions</dt>
-                            <dd>{{ selected.width }} × {{ selected.height }} px</dd>
+                            <dt class="text-faint">Dimensions</dt>
+                            <dd class="m-0 text-ink wrap-anywhere">{{ selected.width }} × {{ selected.height }} px</dd>
                         </template>
-                        <dt>Poids</dt>
-                        <dd>{{ formatBytes(selected.size) }}</dd>
-                        <dt>Ajoutée</dt>
-                        <dd>{{ formatDateTime(selected.createdAt) }}</dd>
+                        <dt class="text-faint">Poids</dt>
+                        <dd class="m-0 text-ink wrap-anywhere">{{ formatBytes(selected.size) }}</dd>
+                        <dt class="text-faint">Ajoutée</dt>
+                        <dd class="m-0 text-ink wrap-anywhere">{{ formatDateTime(selected.createdAt) }}</dd>
                     </dl>
                     <button type="button" class="btn" @click="copyUrl"><UiIcon name="link" :size="14" /> {{ copied ? 'Adresse copiée' : 'Copier l’adresse' }}</button>
                 </UiCard>

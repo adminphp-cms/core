@@ -1,0 +1,85 @@
+/*
+ * The Tailwind theme of the admin. Default scales are cleared so only the design
+ * system's values exist: colours come from tokens.css (and follow dark mode),
+ * sizes are in px because the interface is laid out on a 4px grid.
+ */
+@theme inline {
+    --color-*: initial;
+    --color-white: #ffffff;
+    --color-black: #000000;
+
+    --color-canvas: var(--canvas);
+    --color-surface: var(--surface);
+    --color-sunken: var(--sunken);
+    --color-hover: var(--hover);
+    --color-pressed: var(--pressed);
+    --color-nav-hover: var(--nav-hover);
+
+    --color-strong: var(--strong);
+    --color-ink: var(--ink);
+    --color-muted: var(--muted);
+    --color-faint: var(--faint);
+    --color-icon: var(--icon);
+
+    --color-line: var(--line);
+    --color-ring-card: var(--ring-card);
+    --color-ring-control: var(--ring-control);
+    --color-ring-hover: var(--ring-hover);
+
+    --color-brand: var(--brand);
+    --color-brand-soft: var(--brand-soft);
+    --color-brand-ring: var(--brand-ring);
+    --color-focus: var(--focus);
+
+    --color-accent: var(--accent);
+    --color-accent-ink: var(--accent-ink);
+    --color-accent-soft: var(--accent-soft);
+
+    --color-success: var(--success);
+    --color-success-soft: var(--success-soft);
+    --color-warning: var(--warning);
+    --color-warning-soft: var(--warning-soft);
+    --color-danger: var(--danger);
+    --color-danger-soft: var(--danger-soft);
+
+    --font-*: initial;
+    --font-sans: var(--sans);
+    --font-mono: var(--mono);
+
+    /* Font sizes only: line height is inherited unless a leading-* utility sets it. */
+    --text-*: initial;
+    --text-3xs: 10px;
+    --text-2xs: 11px;
+    --text-xs: 12px;
+    --text-sm: 13px;
+    --text-base: 14px;
+    --text-md: 15px;
+    --text-lg: 16px;
+    --text-xl: 18px;
+    --text-2xl: 22px;
+    --text-3xl: 28px;
+    --text-4xl: 34px;
+
+    --radius-*: initial;
+    --radius-xs: 4px;
+    --radius-sm: 8px;
+    --radius-md: 10px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 20px;
+
+    --shadow-*: initial;
+    --shadow-popover: var(--popover-shadow);
+
+    --ease-*: initial;
+    --ease-out: var(--ease-snappy);
+    --default-transition-duration: 120ms;
+    --default-transition-timing-function: ease;
+
+    /* The admin collapses below these widths, used as max-* variants. */
+    --breakpoint-*: initial;
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 760px;
+    --breakpoint-lg: 960px;
+    --breakpoint-xl: 1100px;
+}

@@ -99,11 +99,16 @@ function toggleActivation(): Promise<void> {
 
                 <fieldset class="form-field" :disabled="isCurrentUser">
                     <legend>Rôle</legend>
-                    <div class="role-options">
-                        <label v-for="option in roles" :key="option.value" class="role-option" :class="{ 'is-selected': role === option.value }">
-                            <input v-model="role" type="radio" name="role" :value="option.value" />
-                            <b>{{ option.label }}</b>
-                            <small>{{ option.description }}</small>
+                    <div class="grid grid-cols-2 gap-2 max-sm:grid-cols-1">
+                        <label
+                            v-for="option in roles"
+                            :key="option.value"
+                            class="relative flex cursor-pointer flex-col gap-0.5 rounded-lg border px-3 py-2.5 transition-[background,border-color] has-[input:focus-visible]:border-brand has-[input:focus-visible]:outline-3 has-[input:focus-visible]:outline-brand-soft in-[fieldset:disabled]:cursor-not-allowed in-[fieldset:disabled]:opacity-60"
+                            :class="role === option.value ? 'border-brand-ring bg-brand-soft' : 'border-ring-control hover:bg-hover'"
+                        >
+                            <input v-model="role" type="radio" name="role" :value="option.value" class="pointer-events-none absolute opacity-0" />
+                            <b class="font-semibold" :class="role === option.value ? 'text-brand' : 'text-strong'">{{ option.label }}</b>
+                            <small class="text-xs text-muted">{{ option.description }}</small>
                         </label>
                     </div>
                     <small v-if="isCurrentUser" class="form-hint">Vous ne pouvez pas changer votre propre rôle.</small>

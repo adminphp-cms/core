@@ -64,14 +64,40 @@ async function logout(): Promise<void> {
                         <small>{{ module.count }}</small>
                     </RouterLink>
                 </div>
+
+                <div class="nav-group">
+                    <h3>Ressources</h3>
+                    <RouterLink
+                        :to="{ name: 'media' }"
+                        class="nav-link"
+                        :class="{ 'is-active': $route.name === 'media' }"
+                        :aria-current="$route.name === 'media' ? 'page' : undefined"
+                    >
+                        <span class="nav-link-label"><UiIcon name="image" /> Médiathèque</span>
+                    </RouterLink>
+                </div>
+
+                <div v-if="session.user.canManageUsers" class="nav-group">
+                    <h3>Administration</h3>
+                    <RouterLink
+                        :to="{ name: 'users' }"
+                        class="nav-link"
+                        :class="{ 'is-active': $route.name === 'users' }"
+                        :aria-current="$route.name === 'users' ? 'page' : undefined"
+                    >
+                        <span class="nav-link-label"><UiIcon name="users" /> Utilisateurs</span>
+                    </RouterLink>
+                </div>
             </nav>
 
-            <div class="nav-profile">
-                <span class="avatar" aria-hidden="true">{{ initials }}</span>
-                <span class="nav-profile-text">
-                    <b>{{ session.user.name }}</b>
-                    <small>{{ session.user.email }}</small>
-                </span>
+            <div class="nav-profile" :class="{ 'is-active': $route.name === 'account' }">
+                <RouterLink :to="{ name: 'account' }" class="nav-profile-link" title="Mon compte" :aria-current="$route.name === 'account' ? 'page' : undefined">
+                    <span class="avatar" aria-hidden="true">{{ initials }}</span>
+                    <span class="nav-profile-text">
+                        <b>{{ session.user.name }}</b>
+                        <small>{{ session.user.email }}</small>
+                    </span>
+                </RouterLink>
                 <button type="button" class="icon-button" title="Se déconnecter" aria-label="Se déconnecter" @click="logout">
                     <UiIcon name="log-out" :size="14" />
                 </button>

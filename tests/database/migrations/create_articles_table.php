@@ -12,6 +12,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->jsonb('title');
             $table->jsonb('lead')->nullable();
+            $table->jsonb('slug')->nullable();
             $table->string('category', 50)->nullable();
             $table->jsonb('tags')->nullable();
             $table->boolean('is_featured')->default(false);

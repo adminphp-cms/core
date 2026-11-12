@@ -2,9 +2,11 @@
 
 namespace Gmarineau\AdminPhp\Console;
 
+use Gmarineau\AdminPhp\Enums\UserRole;
 use Gmarineau\AdminPhp\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'adminphp:user')]
@@ -13,9 +15,10 @@ class UserCommand extends Command
     protected $signature = 'adminphp:user
         {email? : Email of the admin user to create, or whose password to reset}
         {--name= : Name shown in the admin}
-        {--password= : Password (asked when omitted)}';
+        {--password= : Password (asked when omitted)}
+        {--role= : admin (default for a new user) or editor}';
 
-    protected $description = 'Create an admin user, or reset the password of an existing one';
+    protected $description = 'Create an admin user, or reset the password (and set the role) of an existing one';
 
     public function handle(): int
     {
@@ -25,12 +28,15 @@ class UserCommand extends Command
         $name = $this->option('name') ?? $user->name ?? $this->ask('Name');
         $password = $this->option('password') ?? $this->secret('Password (8 characters minimum)');
 
+        $role = $this->option('role') ?? $user?->role->value ?? UserRole::Admin->value;
+
         $validator = Validator::make(
-            ['email' => $email, 'name' => $name, 'password' => $password],
+            ['email' => $email, 'name' => $name, 'password' => $password, 'role' => $role],
             [
                 'email' => ['required', 'email', 'max:255'],
                 'name' => ['required', 'string', 'max:255'],
                 'password' => ['required', 'string', 'min:8'],
+                'role' => ['required', Rule::enum(UserRole::class)],
             ],
         );
 
@@ -45,7 +51,7 @@ class UserCommand extends Command
         $user ??= new User(['email' => $email]);
         $wasExisting = $user->exists;
 
-        $user->fill(['name' => $name, 'password' => $password])->save();
+        $user->fill(['name' => $name, 'password' => $password, 'role' => UserRole::from($role)])->save();
 
         $this->components->info(sprintf(
             '%s %s. Log in at %s',

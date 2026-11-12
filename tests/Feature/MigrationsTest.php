@@ -9,7 +9,7 @@ it('keeps every index name under the 64 character limit of MySQL', function (str
         ->all();
 
     expect($tooLongNames)->toBe([]);
-})->with(['adminphp_blocks', 'adminphp_revisions', 'adminphp_users', 'articles']);
+})->with(['adminphp_blocks', 'adminphp_revisions', 'adminphp_users', 'adminphp_password_reset_tokens', 'articles']);
 
 it('names the publication index after its table', function () {
     expect(collect(Schema::getIndexes('articles'))->pluck('name'))->toContain('articles_publication_index');

@@ -3,6 +3,7 @@
 namespace Gmarineau\AdminPhp\Http\Controllers;
 
 use Gmarineau\AdminPhp\AdminPhp;
+use Gmarineau\AdminPhp\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -40,8 +41,9 @@ class SessionController
             ])->status(429);
         }
 
-        $isAuthenticated = $this->adminPhp->guard()->attempt(
+        $isAuthenticated = $this->adminPhp->guard()->attemptWhen(
             ['email' => $credentials['email'], 'password' => $credentials['password']],
+            fn (User $user): bool => $user->isActive(),
             $request->boolean('remember'),
         );
 

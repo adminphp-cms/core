@@ -25,11 +25,18 @@ export const useSessionStore = defineStore('session', () => {
     }
 
     /**
+     * Uses the user the server just logged in, e.g. after choosing a password.
+     */
+    function set(loggedInUser: AdminUser): void {
+        user.value = loggedInUser
+    }
+
+    /**
      * Drops the user locally, e.g. when the server says the session has expired.
      */
     function forget(): void {
         user.value = null
     }
 
-    return { user, isLoaded, load, login, logout, forget }
+    return { user, isLoaded, load, login, logout, set, forget }
 })

@@ -4,6 +4,7 @@ namespace Gmarineau\AdminPhp\Blocks;
 
 use Gmarineau\AdminPhp\Fields\Blocks;
 use Gmarineau\AdminPhp\Fields\Field;
+use Gmarineau\AdminPhp\Fields\Slug;
 use Illuminate\Support\Str;
 use LogicException;
 
@@ -47,8 +48,8 @@ abstract class Block
         $fields = [];
 
         foreach ($this->form() as $field) {
-            if ($field instanceof Blocks) {
-                throw new LogicException(sprintf('Block [%s] cannot contain a Blocks field.', static::class));
+            if ($field instanceof Blocks || $field instanceof Slug) {
+                throw new LogicException(sprintf('Block [%s] cannot contain a %s field.', static::class, class_basename($field)));
             }
 
             $fields[$field->name] = $field;

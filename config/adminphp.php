@@ -33,6 +33,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Passwords
+    |--------------------------------------------------------------------------
+    |
+    | How long, in minutes, a "forgotten password" link and an invitation
+    | link stay valid. Both use the adminphp_password_reset_tokens table.
+    |
+    */
+
+    'passwords' => [
+        'reset_expire' => 60,
+        'invitation_expire' => 60 * 24 * 7,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Locales
     |--------------------------------------------------------------------------
     |
@@ -54,5 +69,24 @@ return [
     */
 
     'table_prefix' => 'adminphp_',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Media library
+    |--------------------------------------------------------------------------
+    |
+    | Where uploaded images are stored, and what is accepted. The disk must be
+    | public for images to show on the site (run php artisan storage:link
+    | with the "public" disk). max_size is in kilobytes. SVG is not accepted
+    | on purpose: it can carry scripts.
+    |
+    */
+
+    'media' => [
+        'disk' => env('ADMINPHP_MEDIA_DISK', 'public'),
+        'directory' => 'adminphp',
+        'max_size' => 10240,
+        'mimes' => ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'],
+    ],
 
 ];

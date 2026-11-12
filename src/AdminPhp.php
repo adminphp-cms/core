@@ -5,16 +5,27 @@ namespace Gmarineau\AdminPhp;
 use Closure;
 use Gmarineau\AdminPhp\Models\User;
 use Gmarineau\AdminPhp\Modules\Module;
+use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\HtmlString;
 use InvalidArgumentException;
 use RuntimeException;
 
 class AdminPhp
 {
+    /** Password broker of "forgotten password" links. */
+    public const PASSWORD_BROKER = 'adminphp_users';
+
+    /** Password broker of invitation links, valid longer. */
+    public const INVITATION_BROKER = 'adminphp_invitations';
+
+    /** Gate ability to manage the other admin users. */
+    public const MANAGE_USERS = 'adminphp.manage-users';
+
     /**
      * @var array<string, Module>
      */
@@ -62,6 +73,14 @@ class AdminPhp
         $user = $this->guard()->user();
 
         return $user instanceof User ? $user : null;
+    }
+
+    /**
+     * @param  self::PASSWORD_BROKER|self::INVITATION_BROKER  $name
+     */
+    public function passwordBroker(string $name = self::PASSWORD_BROKER): PasswordBroker
+    {
+        return Password::broker($name);
     }
 
     /**

@@ -37,9 +37,13 @@ class SaveModuleContent
 
         $fields = array_intersect_key($module->fields(), $validated);
 
-        return $model->getConnection()->transaction(function () use ($model, $fields, $validated): Model {
+        return $model->getConnection()->transaction(function () use ($module, $model, $fields, $validated): Model {
             foreach ($fields as $name => $field) {
                 $field->fillModel($model, $validated[$name] ?? null);
+            }
+
+            foreach ($module->fields() as $field) {
+                $field->beforeModelSave($model);
             }
 
             $model->save();

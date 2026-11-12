@@ -1,0 +1,45 @@
+<?php
+
+namespace Gmarineau\AdminPhp\Actions;
+
+use Gmarineau\AdminPhp\AdminPhp;
+use Gmarineau\AdminPhp\Models\Asset;
+use Illuminate\Http\UploadedFile;
+
+/**
+ * Adds an uploaded image to the media library. The file gets a random name on the
+ * configured disk; its original name is only kept for display.
+ */
+class StoreAsset
+{
+    public function __construct(protected AdminPhp $adminPhp) {}
+
+    public function handle(UploadedFile $file): Asset
+    {
+        $disk = (string) config('adminphp.media.disk', 'public');
+        $path = $file->store((string) config('adminphp.media.directory', 'adminphp'), $disk);
+
+        [$width, $height] = $this->dimensions($file);
+
+        return Asset::query()->create([
+            'disk' => $disk,
+            'path' => $path,
+            'name' => mb_substr($file->getClientOriginalName(), 0, 255),
+            'mime_type' => (string) $file->getMimeType(),
+            'size' => (int) $file->getSize(),
+            'width' => $width,
+            'height' => $height,
+            'user_id' => $this->adminPhp->user()?->getKey(),
+        ]);
+    }
+
+    /**
+     * @return array{0: int|null, 1: int|null}
+     */
+    protected function dimensions(UploadedFile $file): array
+    {
+        $size = @getimagesize($file->getRealPath());
+
+        return $size === false ? [null, null] : [$size[0], $size[1]];
+    }
+}

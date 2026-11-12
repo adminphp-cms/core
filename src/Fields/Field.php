@@ -161,6 +161,13 @@ abstract class Field
     }
 
     /**
+     * Last chance to complete the model before it is saved. Called on every save for every
+     * field of the form, even when the field was not submitted (partial update, new item),
+     * once the submitted values are filled in.
+     */
+    public function beforeModelSave(Model $model): void {}
+
+    /**
      * Persists what lives outside the model's own columns, once the model is saved.
      */
     public function afterModelSaved(Model $model, mixed $value): void {}

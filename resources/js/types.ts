@@ -5,10 +5,32 @@ export interface AdminConfig {
     defaultLocale: string
 }
 
+export type UserRole = 'admin' | 'editor'
+
 export interface AdminUser {
     id: string
     name: string
     email: string
+    role: UserRole
+    canManageUsers: boolean
+}
+
+/** A row of the users page. */
+export interface ManagedUser {
+    id: string
+    name: string
+    email: string
+    role: UserRole
+    roleLabel: string
+    status: 'active' | 'invited' | 'deactivated'
+    lastLoginAt: string | null
+    createdAt: string | null
+}
+
+export interface UserValues {
+    name: string
+    email: string
+    role: UserRole
 }
 
 export interface BaseFieldSchema {
@@ -38,6 +60,15 @@ export type RichTextTool =
     | 'link'
     | 'horizontalRule'
 
+export interface SlugFieldSchema extends BaseFieldSchema {
+    type: 'slug'
+    maxLength: number
+    /** Field the slug is made from. */
+    from: string
+    /** Shown before the slug, e.g. "/blog/". */
+    prefix: string
+}
+
 export interface RichTextFieldSchema extends BaseFieldSchema {
     type: 'rich-text'
     tools: RichTextTool[]
@@ -63,6 +94,21 @@ export interface DateFieldSchema extends BaseFieldSchema {
     withTime: boolean
 }
 
+export interface ImageFieldSchema extends BaseFieldSchema {
+    type: 'image'
+}
+
+export interface Asset {
+    id: string
+    url: string
+    name: string
+    mimeType: string
+    size: number
+    width: number | null
+    height: number | null
+    createdAt: string
+}
+
 export interface BlockSchema {
     type: string
     title: string
@@ -77,10 +123,12 @@ export interface BlocksFieldSchema extends BaseFieldSchema {
 
 export type FieldSchema =
     | TextFieldSchema
+    | SlugFieldSchema
     | RichTextFieldSchema
     | SelectFieldSchema
     | ToggleFieldSchema
     | DateFieldSchema
+    | ImageFieldSchema
     | BlocksFieldSchema
 
 export interface ModuleSchema {

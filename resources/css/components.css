@@ -1,6 +1,6 @@
 /*
- * Shared primitives used across many screens (buttons, inputs, listings, dialogs,
- * page shell, login card, toast) and the rich text content, which Tiptap renders
+ * Shared primitives used across many screens (listings, search field, page shell,
+ * login card, toast) and the rich text content, which Tiptap renders
  * and utilities cannot reach. Everything specific to one component lives in its
  * template as utilities.
  */
@@ -111,60 +111,6 @@
 }
 
 /* Controls */
-.btn,
-.icon-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: 32px;
-    border-radius: var(--round);
-    background: var(--surface);
-    color: var(--ink);
-    border: var(--border-control);
-    font-weight: 500;
-    line-height: 1;
-    text-decoration: none;
-    white-space: nowrap;
-    transition:
-        background var(--press),
-        color var(--press),
-        border-color var(--press);
-}
-
-.btn {
-    padding: 0 12px;
-}
-
-.icon-button {
-    position: relative;
-    z-index: 1;
-    width: 32px;
-    flex: none;
-    color: var(--muted);
-}
-
-.btn:active:not(:disabled),
-.icon-button:active:not(:disabled) {
-    background: var(--pressed);
-    border-color: var(--ring-control);
-}
-
-.btn.primary {
-    background: var(--accent);
-    color: var(--accent-ink);
-    border-color: var(--accent);
-}
-
-.btn.primary:active:not(:disabled) {
-    background: var(--accent);
-    opacity: 0.86;
-}
-
-.btn.danger {
-    color: var(--danger);
-}
-
 .link-button {
     border: 0;
     background: none;
@@ -214,19 +160,6 @@
 
     .crumbs a:hover {
         color: var(--ink);
-    }
-
-    .btn:hover:not(:disabled):not(.primary),
-    .icon-button:hover:not(:disabled) {
-        background: var(--hover);
-    }
-
-    .icon-button:hover:not(:disabled) {
-        color: var(--ink);
-    }
-
-    .btn.primary:hover:not(:disabled) {
-        background: color-mix(in srgb, var(--accent) 86%, var(--canvas));
     }
 
     .link-button:hover:not(:disabled) {
@@ -408,26 +341,6 @@
     }
 }
 
-/* Inputs */
-.control-input {
-    height: 34px;
-    font: 400 14px/1 var(--sans);
-    color: var(--ink);
-    background: var(--surface);
-    border-radius: var(--round);
-    border: var(--border-control);
-    padding: 0 10px;
-    max-width: 100%;
-    transition: border-color var(--press);
-}
-
-.control-input:focus,
-.login-field input:focus {
-    border-color: var(--brand);
-    outline: 3px solid var(--brand-soft);
-    outline-offset: 0;
-}
-
 /* Login */
 .login {
     min-height: 100vh;
@@ -487,10 +400,10 @@
     transition: border-color var(--press);
 }
 
-.login-card .btn {
-    height: 42px;
-    margin-top: 8px;
-    font-size: 15px;
+.login-field input:focus {
+    border-color: var(--brand);
+    outline: 3px solid var(--brand-soft);
+    outline-offset: 0;
 }
 
 .login-card .field-error a {
@@ -504,112 +417,6 @@
 .login-field input[readonly] {
     background: var(--sunken);
     color: var(--muted);
-}
-
-/* Dialog */
-.dialog {
-    width: min(520px, calc(100vw - 32px));
-    max-height: calc(100vh - 48px);
-    margin: auto;
-    padding: 0;
-    border-radius: 20px;
-    background: var(--surface);
-    color: var(--ink);
-    border: var(--border-card);
-    box-shadow: var(--popover-shadow);
-}
-
-.dialog[open] {
-    animation: pop-in 180ms var(--ease-snappy);
-}
-
-.dialog::backdrop {
-    background: rgba(9, 9, 11, 0.32);
-    backdrop-filter: blur(2px);
-}
-
-.dialog-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 16px 14px 20px;
-    border-bottom: var(--border-line);
-}
-
-.dialog-header h2 {
-    flex: 1;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--strong);
-}
-
-.dialog-body {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 20px;
-}
-
-.dialog-lead {
-    color: var(--muted);
-}
-
-.dialog-footer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 8px;
-    padding: 14px 20px;
-    border-top: var(--border-line);
-    background: var(--sunken);
-}
-
-.dialog-footer-start {
-    display: flex;
-    gap: 8px;
-    margin-right: auto;
-}
-
-/* Form fields outside the editor */
-.form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 0;
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
-.form-field > span,
-.form-field > legend {
-    padding: 0;
-    margin-bottom: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink);
-}
-
-.form-field > span {
-    margin-bottom: 0;
-}
-
-.form-field .control-input {
-    width: 100%;
-}
-
-.form-hint {
-    font-size: 12px;
-    color: var(--faint);
-}
-
-/* Dialog footer on phones */
-
-@media (max-width: 640px) {
-
-    .dialog-footer-start {
-        width: 100%;
-    }
 }
 
 /* Toast */
@@ -655,7 +462,6 @@
     }
 
     /* 16px inputs stop iOS from zooming on focus. */
-    .control-input,
     .login-field input,
     .search-field input {
         font-size: 16px;

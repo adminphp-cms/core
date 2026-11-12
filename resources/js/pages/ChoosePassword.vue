@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { api, ApiError } from '../api'
 import BrandLogo from '../components/BrandLogo.vue'
 import { useSessionStore } from '../stores/session'
+import UiButton from '../components/ui/UiButton.vue'
 
 /**
  * Where a user chooses their password, from an invitation or a "forgotten password" link.
@@ -93,9 +94,9 @@ async function submit(): Promise<void> {
                 <template v-else>Demandez à un administrateur de vous renvoyer l’invitation.</template>
             </p>
 
-            <button type="submit" class="btn primary" :disabled="isSubmitting">
+            <UiButton type="submit" variant="primary" size="lg" :disabled="isSubmitting">
                 {{ isSubmitting ? 'Enregistrement…' : isInvitation ? 'Accéder à l’administration' : 'Enregistrer et se connecter' }}
-            </button>
+            </UiButton>
         </form>
     </main>
 </template>

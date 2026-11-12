@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import MediaPicker from '../components/media/MediaPicker.vue'
 import UploadDropzone from '../components/media/UploadDropzone.vue'
+import UiButton from '../components/ui/UiButton.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
 import { formatBytes } from '../format'
 import { useAssetsStore } from '../stores/assets'
@@ -53,8 +54,8 @@ function choose(chosen: Asset): void {
                     <template v-if="asset.width && asset.height">{{ asset.width }} × {{ asset.height }} px · </template>{{ formatBytes(asset.size) }}
                 </p>
                 <div class="mt-2.5 flex flex-wrap gap-2">
-                    <button type="button" class="btn" @click="isPickerOpen = true"><UiIcon name="image" :size="14" /> Remplacer</button>
-                    <button type="button" class="btn danger" @click="emit('update:modelValue', null)"><UiIcon name="x" :size="14" /> Retirer</button>
+                    <UiButton @click="isPickerOpen = true"><UiIcon name="image" :size="14" /> Remplacer</UiButton>
+                    <UiButton variant="danger" @click="emit('update:modelValue', null)"><UiIcon name="x" :size="14" /> Retirer</UiButton>
                 </div>
             </div>
         </div>
@@ -63,7 +64,7 @@ function choose(chosen: Asset): void {
 
         <div v-if="!asset" class="flex flex-col items-start gap-2.5 [&_.dropzone]:self-stretch">
             <UploadDropzone compact @uploaded="choose" />
-            <button type="button" class="btn" @click="isPickerOpen = true"><UiIcon name="image" :size="14" /> Choisir dans la médiathèque</button>
+            <UiButton @click="isPickerOpen = true"><UiIcon name="image" :size="14" /> Choisir dans la médiathèque</UiButton>
         </div>
 
         <MediaPicker v-if="isPickerOpen" :selected-id="assetId" @pick="choose" @close="isPickerOpen = false" />

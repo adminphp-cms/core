@@ -6,52 +6,55 @@
  * friendly without weight.
  * One accent, the red of the logo, marks where you are; controls stay neutral.
  * Motion is short, colour-only, and never bounces.
+ *
+ * Colours give their light and dark value with light-dark(): the system setting decides,
+ * unless the user picked a theme in the admin (data-theme on <html>).
  */
 :root {
     /* Surfaces */
-    --canvas: #f7f7f8;
-    --surface: #ffffff;
-    --sunken: #fafafa;
-    --hover: #f6f6f7;
-    --pressed: #efeff1;
-    --nav-hover: rgba(9, 9, 11, 0.045);
+    --canvas: light-dark(#f7f7f8, #0b0b0d);
+    --surface: light-dark(#ffffff, #131316);
+    --sunken: light-dark(#fafafa, #101013);
+    --hover: light-dark(#f6f6f7, #18181c);
+    --pressed: light-dark(#efeff1, #1e1e23);
+    --nav-hover: light-dark(rgba(9, 9, 11, 0.045), rgba(255, 255, 255, 0.05));
 
     /* Text */
-    --strong: #0b0b0f;
-    --ink: #27272a;
-    --muted: #6b6b73;
-    --faint: #9a9aa2;
-    --icon: #a1a1aa;
+    --strong: light-dark(#0b0b0f, #fafafa);
+    --ink: light-dark(#27272a, #e4e4e7);
+    --muted: light-dark(#6b6b73, #9d9da8);
+    --faint: light-dark(#9a9aa2, #6e6e78);
+    --icon: light-dark(#a1a1aa, #74747e);
 
     /* Lines and rings */
-    --line: #ececee;
-    --ring-card: #e4e4e7;
-    --ring-control: #dcdce0;
-    --ring-hover: #d1d1d6;
+    --line: light-dark(#ececee, #24242a);
+    --ring-card: light-dark(#e4e4e7, #24242a);
+    --ring-control: light-dark(#dcdce0, #2e2e35);
+    --ring-hover: light-dark(#d1d1d6, #3a3a42);
 
     /* Accent: the brand red, for "you are here" */
-    --brand: #e5342b;
-    --brand-soft: rgba(229, 52, 43, 0.08);
-    --brand-ring: rgba(229, 52, 43, 0.28);
-    --focus: rgba(229, 52, 43, 0.45);
+    --brand: light-dark(#e5342b, #ff5d53);
+    --brand-soft: light-dark(rgba(229, 52, 43, 0.08), rgba(255, 93, 83, 0.13));
+    --brand-ring: light-dark(rgba(229, 52, 43, 0.28), rgba(255, 93, 83, 0.35));
+    --focus: light-dark(rgba(229, 52, 43, 0.45), rgba(255, 93, 83, 0.55));
 
     /* Neutral solid, for primary actions */
-    --accent: #18181b;
-    --accent-ink: #ffffff;
-    --accent-soft: #f2f2f4;
+    --accent: light-dark(#18181b, #fafafa);
+    --accent-ink: light-dark(#ffffff, #09090b);
+    --accent-soft: light-dark(#f2f2f4, #1d1d22);
 
     /* Tones */
-    --success: #0f8a5f;
-    --success-soft: #e9f7f0;
-    --warning: #b45309;
-    --warning-soft: #fdf3e5;
-    --danger: #d92d20;
-    --danger-soft: #fdeceb;
+    --success: light-dark(#0f8a5f, #34c38f);
+    --success-soft: light-dark(#e9f7f0, rgba(52, 195, 143, 0.12));
+    --warning: light-dark(#b45309, #fbbf24);
+    --warning-soft: light-dark(#fdf3e5, rgba(251, 191, 36, 0.12));
+    --danger: light-dark(#d92d20, #ff6b6b);
+    --danger-soft: light-dark(#fdeceb, rgba(255, 107, 107, 0.12));
 
     --border-card: 1px solid var(--ring-card);
     --border-control: 1px solid var(--ring-control);
     --border-line: 1px solid var(--line);
-    --popover-shadow: 0 12px 28px -6px rgba(9, 9, 11, 0.14), 0 2px 4px rgba(9, 9, 11, 0.05);
+    --popover-shadow: 0 12px 28px -6px light-dark(rgba(9, 9, 11, 0.14), rgba(0, 0, 0, 0.6)), 0 2px 4px light-dark(rgba(9, 9, 11, 0.05), transparent);
 
     --round: 10px;
     --round-card: 16px;
@@ -64,40 +67,14 @@
 
     --sans: 'Figtree Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
     --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+    color-scheme: light dark;
+}
+
+:root[data-theme='light'] {
     color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) {
-        --canvas: #0b0b0d;
-        --surface: #131316;
-        --sunken: #101013;
-        --hover: #18181c;
-        --pressed: #1e1e23;
-        --nav-hover: rgba(255, 255, 255, 0.05);
-        --strong: #fafafa;
-        --ink: #e4e4e7;
-        --muted: #9d9da8;
-        --faint: #6e6e78;
-        --icon: #74747e;
-        --line: #24242a;
-        --ring-card: #24242a;
-        --ring-control: #2e2e35;
-        --ring-hover: #3a3a42;
-        --brand: #ff5d53;
-        --brand-soft: rgba(255, 93, 83, 0.13);
-        --brand-ring: rgba(255, 93, 83, 0.35);
-        --focus: rgba(255, 93, 83, 0.55);
-        --accent: #fafafa;
-        --accent-ink: #09090b;
-        --accent-soft: #1d1d22;
-        --success: #34c38f;
-        --success-soft: rgba(52, 195, 143, 0.12);
-        --warning: #fbbf24;
-        --warning-soft: rgba(251, 191, 36, 0.12);
-        --danger: #ff6b6b;
-        --danger-soft: rgba(255, 107, 107, 0.12);
-        --popover-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.6);
-        color-scheme: dark;
-    }
+:root[data-theme='dark'] {
+    color-scheme: dark;
 }

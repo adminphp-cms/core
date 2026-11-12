@@ -7,6 +7,7 @@ use Gmarineau\AdminPhp\Console\UserCommand;
 use Gmarineau\AdminPhp\Enums\PublicationStatus;
 use Gmarineau\AdminPhp\Models\Block;
 use Gmarineau\AdminPhp\Models\User;
+use Gmarineau\AdminPhp\Settings\SettingsStore;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
@@ -23,6 +24,7 @@ class AdminPhpServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/adminphp.php', 'adminphp');
 
         $this->app->singleton(AdminPhp::class);
+        $this->app->scoped(SettingsStore::class);
 
         $this->registerGuard();
     }
@@ -109,11 +111,12 @@ class AdminPhpServiceProvider extends ServiceProvider
     }
 
     /**
-     * Only admins manage the other admin users.
+     * Only admins manage the other admin users and the site settings.
      */
     protected function registerGates(): void
     {
         Gate::define(AdminPhp::MANAGE_USERS, fn (mixed $user): bool => $user instanceof User && $user->isAdmin() && $user->isActive());
+        Gate::define(AdminPhp::MANAGE_SETTINGS, fn (mixed $user): bool => $user instanceof User && $user->isAdmin() && $user->isActive());
     }
 
     /**

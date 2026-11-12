@@ -122,7 +122,7 @@ class User extends Model implements AuthenticatableContract, CanResetPassword
     /**
      * The logged in user, as the admin front knows it.
      *
-     * @return array{id: string, name: string, email: string, role: string, canManageUsers: bool}
+     * @return array{id: string, name: string, email: string, role: string, canManageUsers: bool, canManageSettings: bool}
      */
     public function toAdminArray(): array
     {
@@ -132,6 +132,7 @@ class User extends Model implements AuthenticatableContract, CanResetPassword
             'email' => $this->email,
             'role' => $this->role->value,
             'canManageUsers' => $this->isAdmin(),
+            'canManageSettings' => $this->isAdmin(),
         ];
     }
 

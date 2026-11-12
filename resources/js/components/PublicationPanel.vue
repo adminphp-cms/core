@@ -2,6 +2,7 @@
 import { formatDateTime, visibilityBadges } from '../format'
 import type { Publication, RevisionSummary } from '../types'
 import UiBadge from './ui/UiBadge.vue'
+import UiButton from './ui/UiButton.vue'
 import UiCard from './ui/UiCard.vue'
 import UiIcon from './ui/UiIcon.vue'
 
@@ -61,12 +62,12 @@ const dateInputClass = [
             <p class="text-xs text-faint">Les dates s’appliquent à la prochaine publication. Vides : en ligne dès la publication, sans fin.</p>
 
             <div class="flex flex-col gap-2">
-                <button v-if="publication.hasDraft" type="button" class="btn" :disabled="isBusy" @click="emit('discardDraft')">
+                <UiButton v-if="publication.hasDraft" :disabled="isBusy" @click="emit('discardDraft')">
                     Abandonner les modifications
-                </button>
-                <button v-if="publication.status === 'published'" type="button" class="btn danger" :disabled="isBusy" @click="emit('unpublish')">
+                </UiButton>
+                <UiButton v-if="publication.status === 'published'" variant="danger" :disabled="isBusy" @click="emit('unpublish')">
                     Dépublier
-                </button>
+                </UiButton>
             </div>
         </UiCard>
 

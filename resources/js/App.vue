@@ -3,6 +3,9 @@ import { computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import BrandLogo from './components/BrandLogo.vue'
 import UiIcon from './components/ui/UiIcon.vue'
+import UiToaster from './components/ui/UiToaster.vue'
+import UiIconButton from './components/ui/UiIconButton.vue'
+import { config } from './config'
 import { initials as initialsOf } from './format'
 import { useModulesStore } from './stores/modules'
 import { useSessionStore } from './stores/session'
@@ -20,6 +23,8 @@ watch(
     },
     { immediate: true },
 )
+
+const canManageSettings = computed(() => config.hasSettings && session.user?.canManageSettings === true)
 
 const initials = computed(() => initialsOf(session.user?.name ?? ''))
 
@@ -57,6 +62,15 @@ async function logout(): Promise<void> {
                 >
                     <BrandLogo />
                 </RouterLink>
+                <a
+                    :href="config.siteUrl"
+                    target="_blank"
+                    rel="noopener"
+                    class="ml-auto inline-flex items-center gap-1 rounded-[6px] px-1.5 py-1 text-xs font-medium text-muted no-underline transition-colors hover:bg-nav-hover hover:text-ink"
+                    title="Ouvrir le site dans un nouvel onglet"
+                >
+                    <span class="max-md:sr-only">Voir le site</span> <UiIcon name="external-link" :size="12" />
+                </a>
             </div>
 
             <nav class="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pt-2 pb-4 max-md:flex-row max-md:overflow-visible max-md:p-0" aria-label="Navigation principale">
@@ -87,9 +101,22 @@ async function logout(): Promise<void> {
                     </RouterLink>
                 </div>
 
-                <div v-if="session.user.canManageUsers" :class="navGroupClasses">
+                <div v-if="session.user.canManageUsers || canManageSettings" :class="navGroupClasses">
                     <h3 :class="navHeadingClasses">Administration</h3>
-                    <RouterLink :to="{ name: 'users' }" :class="navLinkClasses" :aria-current="$route.name === 'users' ? 'page' : undefined">
+                    <RouterLink
+                        v-if="canManageSettings"
+                        :to="{ name: 'settings' }"
+                        :class="navLinkClasses"
+                        :aria-current="$route.name === 'settings' ? 'page' : undefined"
+                    >
+                        <span :class="navLabelClasses"><UiIcon name="settings" :class="navIconClasses" /> Réglages</span>
+                    </RouterLink>
+                    <RouterLink
+                        v-if="session.user.canManageUsers"
+                        :to="{ name: 'users' }"
+                        :class="navLinkClasses"
+                        :aria-current="$route.name === 'users' ? 'page' : undefined"
+                    >
                         <span :class="navLabelClasses"><UiIcon name="users" :class="navIconClasses" /> Utilisateurs</span>
                     </RouterLink>
                 </div>
@@ -110,9 +137,9 @@ async function logout(): Promise<void> {
                         <small class="truncate text-xs text-muted">{{ session.user.email }}</small>
                     </span>
                 </RouterLink>
-                <button type="button" class="icon-button" title="Se déconnecter" aria-label="Se déconnecter" @click="logout">
+                <UiIconButton label="Se déconnecter" @click="logout">
                     <UiIcon name="log-out" :size="14" />
-                </button>
+                </UiIconButton>
             </div>
         </aside>
 
@@ -121,4 +148,6 @@ async function logout(): Promise<void> {
 
     <!-- Only public pages render without a user, so a page never loads data while logged out. -->
     <RouterView v-else-if="$route.meta.isPublic" />
+
+    <UiToaster />
 </template>

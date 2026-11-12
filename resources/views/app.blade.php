@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>AdminPHP</title>
+    {{-- Applies the theme chosen in "Mon compte" before the first paint. --}}
+    <script>try { const theme = localStorage.getItem('adminphp.theme'); if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme } catch (error) {}</script>
     {{ app(\Gmarineau\AdminPhp\AdminPhp::class)->assets() }}
 </head>
 <body>

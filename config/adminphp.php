@@ -16,6 +16,12 @@ return [
 
     'domain' => env('ADMINPHP_DOMAIN'),
 
+    /*
+    | Where "Voir le site" in the admin leads. Defaults to the application URL.
+    */
+
+    'site_url' => env('ADMINPHP_SITE_URL'),
+
     'middleware' => ['web'],
 
     /*

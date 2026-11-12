@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import UiButton from '../components/ui/UiButton.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
 import { useFormContext } from '../composables/useFormContext'
 import { useLocalizedValue } from '../composables/useLocalizedValue'
@@ -95,9 +96,9 @@ const canRegenerate = computed(() => suggestion.value !== '' && suggestion.value
             />
         </label>
 
-        <button v-if="canRegenerate" type="button" class="btn" title="Remplacer par l’adresse tirée du titre" @click="regenerate">
+        <UiButton v-if="canRegenerate" title="Remplacer par l’adresse tirée du titre" @click="regenerate">
             <UiIcon name="refresh" :size="14" /> Depuis le titre
-        </button>
+        </UiButton>
 
         <p v-if="!value" class="basis-full text-xs text-faint">Laissée vide, l’adresse sera tirée du titre à l’enregistrement.</p>
     </div>

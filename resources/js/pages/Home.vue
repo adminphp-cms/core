@@ -7,6 +7,7 @@ import PageIntro from '../components/ui/PageIntro.vue'
 import UiBadge from '../components/ui/UiBadge.vue'
 import UiCard from '../components/ui/UiCard.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
+import UiIconButton from '../components/ui/UiIconButton.vue'
 import { formatLongDate, formatRelative, initials } from '../format'
 import { useModulesStore } from '../stores/modules'
 import { useSessionStore } from '../stores/session'
@@ -60,14 +61,9 @@ onMounted(async () => {
                             <RouterLink :to="{ name: 'module.index', params: { module: module.name } }" class="stretched-link min-w-0 flex-1 font-semibold text-strong no-underline transition-[color] group-hover:text-brand">
                                 {{ module.title }}
                             </RouterLink>
-                            <RouterLink
-                                :to="{ name: 'module.create', params: { module: module.name } }"
-                                class="icon-button"
-                                :title="`Créer dans ${module.title}`"
-                                :aria-label="`Créer dans ${module.title}`"
-                            >
+                            <UiIconButton :label="`Créer dans ${module.title}`" :to="{ name: 'module.create', params: { module: module.name } }">
                                 <UiIcon name="plus" :size="14" />
-                            </RouterLink>
+                            </UiIconButton>
                         </div>
 
                         <p class="text-4xl leading-none font-semibold tracking-[-0.03em] text-strong tabular-nums">{{ module.count }}</p>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { controlClasses } from '../components/ui/controlClasses'
 import type { DateFieldSchema } from '../types'
 
 const props = defineProps<{
@@ -40,7 +41,7 @@ function update(event: Event): void {
 
 <template>
     <input
-        class="control-input"
+        :class="controlClasses"
         :type="field.withTime ? 'datetime-local' : 'date'"
         :value="inputValue"
         :aria-label="field.label"

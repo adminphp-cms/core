@@ -3,6 +3,7 @@
 namespace Gmarineau\AdminPhp\Fields;
 
 use BackedEnum;
+use Closure;
 use Gmarineau\AdminPhp\Fields\Concerns\IsNotTranslatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -10,8 +11,9 @@ use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 /**
- * A choice among fixed options, given as `value => label` or as a backed enum
- * (labels come from a `label()` method on the enum when it has one).
+ * A choice among options, given as `value => label`, as a backed enum (labels come
+ * from a `label()` method on the enum when it has one) or as a closure returning
+ * `value => label`, resolved only when the options are needed (e.g. records to pick from).
  * A multiple select stores a list: cast its column to `array` on the model.
  */
 class Select extends Field
@@ -19,9 +21,9 @@ class Select extends Field
     use IsNotTranslatable;
 
     /**
-     * @var array<string|int, string>
+     * @var array<string|int, string>|(Closure(): array<string|int, string>)
      */
-    protected array $options = [];
+    protected array|Closure $options = [];
 
     protected bool $isMultiple = false;
 
@@ -31,9 +33,9 @@ class Select extends Field
     }
 
     /**
-     * @param  array<string|int, string>|class-string<BackedEnum>  $options
+     * @param  array<string|int, string>|class-string<BackedEnum>|(Closure(): array<string|int, string>)  $options
      */
-    public function options(array|string $options): static
+    public function options(array|string|Closure $options): static
     {
         if (is_string($options)) {
             if (! is_subclass_of($options, BackedEnum::class)) {
@@ -50,6 +52,18 @@ class Select extends Field
         return $this;
     }
 
+    /**
+     * @return array<string|int, string>
+     */
+    public function resolvedOptions(): array
+    {
+        if ($this->options instanceof Closure) {
+            $this->options = ($this->options)();
+        }
+
+        return $this->options;
+    }
+
     public function multiple(bool $isMultiple = true): static
     {
         $this->isMultiple = $isMultiple;
@@ -59,7 +73,7 @@ class Select extends Field
 
     public function validationRules(string $path, mixed $value): array
     {
-        $optionRule = Rule::in(array_map(strval(...), array_keys($this->options)));
+        $optionRule = Rule::in(array_map(strval(...), array_keys($this->resolvedOptions())));
 
         if (! $this->isMultiple) {
             return [$path => [$this->isRequired ? 'required' : 'nullable', $optionRule, ...$this->rules]];
@@ -98,7 +112,7 @@ class Select extends Field
     {
         return [
             'multiple' => $this->isMultiple,
-            'options' => collect($this->options)
+            'options' => collect($this->resolvedOptions())
                 ->map(fn (string $label, string|int $value): array => ['value' => $value, 'label' => $label])
                 ->values()
                 ->all(),
@@ -107,7 +121,7 @@ class Select extends Field
 
     protected function optionKey(mixed $value): string|int
     {
-        foreach (array_keys($this->options) as $key) {
+        foreach (array_keys($this->resolvedOptions()) as $key) {
             if ((string) $key === (string) $value) {
                 return $key;
             }

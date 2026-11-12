@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ApiError } from '../api'
 import BrandLogo from '../components/BrandLogo.vue'
 import { useSessionStore } from '../stores/session'
+import UiButton from '../components/ui/UiButton.vue'
 
 const session = useSessionStore()
 const router = useRouter()
@@ -68,9 +69,9 @@ async function submit(): Promise<void> {
 
             <p v-if="error" class="field-error" role="alert">{{ error }}</p>
 
-            <button type="submit" class="btn primary" :disabled="isSubmitting">
+            <UiButton type="submit" variant="primary" size="lg" :disabled="isSubmitting">
                 {{ isSubmitting ? 'Connexion…' : 'Se connecter' }}
-            </button>
+            </UiButton>
         </form>
     </main>
 </template>

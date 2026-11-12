@@ -100,7 +100,12 @@ it('serves the admin page with the published assets for any admin path', functio
             ->assertOk()
             ->assertSee('<div id="adminphp"></div>', escape: false)
             ->assertSee('vendor/adminphp/assets/app.js')
-            ->assertSee('"apiUrl":"\/admin\/api"', escape: false);
+            ->assertSee('"apiUrl":"\/admin\/api"', escape: false)
+            ->assertSee('"siteUrl":'.json_encode(url('/')), escape: false);
+
+        config(['adminphp.site_url' => 'https://www.example.com']);
+
+        $this->get('/admin')->assertSee('"siteUrl":"https:\/\/www.example.com"', escape: false);
     } finally {
         File::deleteDirectory($publicPath);
     }

@@ -5,6 +5,7 @@ import { useAssetsStore } from '../../stores/assets'
 import type { Asset } from '../../types'
 import EmptyState from '../ui/EmptyState.vue'
 import UiIcon from '../ui/UiIcon.vue'
+import UiIconButton from '../ui/UiIconButton.vue'
 import AssetGrid from './AssetGrid.vue'
 import UploadDropzone from './UploadDropzone.vue'
 
@@ -56,9 +57,9 @@ onMounted(() => {
                 <UiIcon name="search" :size="14" />
                 <input v-model="search" type="search" placeholder="Rechercher une image" aria-label="Rechercher une image" />
             </label>
-            <button type="button" class="icon-button" aria-label="Fermer" title="Fermer" @click="dialog?.close()">
+            <UiIconButton label="Fermer" @click="dialog?.close()">
                 <UiIcon name="x" :size="14" />
-            </button>
+            </UiIconButton>
         </header>
 
         <div class="flex flex-col gap-4 overflow-y-auto px-5 pt-4 pb-5">

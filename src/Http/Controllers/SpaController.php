@@ -20,6 +20,8 @@ class SpaController
                 'apiUrl' => rtrim($basePath, '/').'/api',
                 'locales' => $adminPhp->locales(),
                 'defaultLocale' => $adminPhp->defaultLocale(),
+                'siteUrl' => config('adminphp.site_url') ?: url('/'),
+                'hasSettings' => $adminPhp->settingsForm() !== null,
             ],
         ]);
     }

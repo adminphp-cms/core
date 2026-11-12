@@ -9,6 +9,7 @@ import Login from './pages/Login.vue'
 import MediaIndex from './pages/MediaIndex.vue'
 import ModuleForm from './pages/ModuleForm.vue'
 import ModuleIndex from './pages/ModuleIndex.vue'
+import SettingsIndex from './pages/SettingsIndex.vue'
 import UsersIndex from './pages/UsersIndex.vue'
 import { useSessionStore } from './stores/session'
 
@@ -24,6 +25,7 @@ export const router = createRouter({
         // Before /:module, so they are never read as module names.
         { path: '/account', name: 'account', component: Account },
         { path: '/users', name: 'users', component: UsersIndex, meta: { requiresUserManagement: true } },
+        { path: '/settings', name: 'settings', component: SettingsIndex, meta: { requiresSettingsManagement: true } },
         { path: '/:module', name: 'module.index', component: ModuleIndex, props: true },
         { path: '/:module/create', name: 'module.create', component: ModuleForm, props: true },
         { path: '/:module/:id', name: 'module.edit', component: ModuleForm, props: true },
@@ -50,7 +52,11 @@ router.beforeEach(async (to) => {
         return { name: 'login', query: { redirect: to.fullPath } }
     }
 
-    return to.meta.requiresUserManagement && !session.user.canManageUsers ? { name: 'home' } : true
+    if (to.meta.requiresUserManagement && !session.user.canManageUsers) {
+        return { name: 'home' }
+    }
+
+    return to.meta.requiresSettingsManagement && !(session.user.canManageSettings && config.hasSettings) ? { name: 'home' } : true
 })
 
 handleUnauthorized(() => {

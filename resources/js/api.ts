@@ -1,5 +1,5 @@
 import { config } from './config'
-import type { ActivityEntry, AdminUser, Asset, FormValues, Item, ItemSummary, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, UserValues, ValidationErrors } from './types'
+import type { ActivityEntry, AdminUser, Asset, FormValues, Item, ItemSummary, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
 
 export class ApiError extends Error {
     constructor(
@@ -83,6 +83,10 @@ export const api = {
 
     updatePassword: (values: { current_password: string; password: string; password_confirmation: string }) =>
         request<{ data: AdminUser }>('PUT', 'account/password', values).then((response) => response.data),
+
+    settings: () => request<{ data: SettingsData }>('GET', 'settings').then((response) => response.data),
+
+    updateSettings: (values: FormValues) => request<{ data: SettingsData }>('PUT', 'settings', values).then((response) => response.data),
 
     users: () => request<{ data: ManagedUser[] }>('GET', 'users').then((response) => response.data),
 

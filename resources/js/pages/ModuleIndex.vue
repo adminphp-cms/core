@@ -4,6 +4,7 @@ import { api } from '../api'
 import EmptyState from '../components/ui/EmptyState.vue'
 import PageIntro from '../components/ui/PageIntro.vue'
 import UiBadge from '../components/ui/UiBadge.vue'
+import UiButton from '../components/ui/UiButton.vue'
 import UiCard from '../components/ui/UiCard.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
 import { formatDateTime, visibilityBadges } from '../format'
@@ -39,9 +40,9 @@ onMounted(async () => {
         <div v-if="schema" class="page-body">
             <PageIntro :title="schema.title" :description="schema.description || undefined" :icon="schema.icon">
                 <template #actions>
-                    <RouterLink :to="{ name: 'module.create', params: { module } }" class="btn primary">
+                    <UiButton variant="primary" :to="{ name: 'module.create', params: { module } }">
                         <UiIcon name="plus" :size="14" /> Créer
-                    </RouterLink>
+                    </UiButton>
                 </template>
             </PageIntro>
 
@@ -51,9 +52,9 @@ onMounted(async () => {
                 :title="`Aucun contenu dans ${schema.title} pour l’instant`"
                 description="Créez le premier : vous pourrez le relire, le traduire et le publier quand il sera prêt."
             >
-                <RouterLink :to="{ name: 'module.create', params: { module } }" class="btn primary">
+                <UiButton variant="primary" :to="{ name: 'module.create', params: { module } }">
                     <UiIcon name="plus" :size="14" /> Créer le premier
-                </RouterLink>
+                </UiButton>
             </EmptyState>
 
             <UiCard v-else-if="!isLoading" :title="`${items.length} ${items.length > 1 ? 'éléments' : 'élément'}`" :padded="false">

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { controlClasses } from '../components/ui/controlClasses'
 import type { SelectFieldSchema, SelectOption } from '../types'
 
 const props = defineProps<{
@@ -45,7 +46,7 @@ function toggleOption(option: SelectOption): void {
         </button>
     </div>
 
-    <select v-else class="control-input" :value="selectedIndex" :aria-label="field.label" @change="selectIndex">
+    <select v-else :class="controlClasses" :value="selectedIndex" :aria-label="field.label" @change="selectIndex">
         <option :value="-1" :disabled="field.required && selectedIndex >= 0">—</option>
         <option v-for="(option, index) in field.options" :key="option.value" :value="index">{{ option.label }}</option>
     </select>

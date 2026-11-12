@@ -5,8 +5,10 @@ import AssetGrid from '../components/media/AssetGrid.vue'
 import UploadDropzone from '../components/media/UploadDropzone.vue'
 import EmptyState from '../components/ui/EmptyState.vue'
 import PageIntro from '../components/ui/PageIntro.vue'
+import UiButton from '../components/ui/UiButton.vue'
 import UiCard from '../components/ui/UiCard.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
+import UiIconButton from '../components/ui/UiIconButton.vue'
 import { formatBytes, formatDateTime } from '../format'
 import { useAssetsStore } from '../stores/assets'
 import type { Asset } from '../types'
@@ -91,9 +93,9 @@ onMounted(load)
                     class="sticky top-[calc(var(--header-height)+16px)] max-lg:static [&_.ui-card-body]:flex [&_.ui-card-body]:flex-col [&_.ui-card-body]:gap-3.5"
                 >
                     <template #actions>
-                        <button type="button" class="icon-button" aria-label="Fermer les détails" title="Fermer" @click="selected = null">
+                        <UiIconButton label="Fermer les détails" title="Fermer" @click="selected = null">
                             <UiIcon name="x" :size="14" />
-                        </button>
+                        </UiIconButton>
                     </template>
 
                     <img :src="selected.url" :alt="selected.name" class="max-h-60 w-full rounded-md object-contain [background:repeating-conic-gradient(var(--accent-soft)_0%_25%,var(--surface)_0%_50%)_50%/16px_16px]" />
@@ -109,7 +111,7 @@ onMounted(load)
                         <dt class="text-faint">Ajoutée</dt>
                         <dd class="m-0 text-ink wrap-anywhere">{{ formatDateTime(selected.createdAt) }}</dd>
                     </dl>
-                    <button type="button" class="btn" @click="copyUrl"><UiIcon name="link" :size="14" /> {{ copied ? 'Adresse copiée' : 'Copier l’adresse' }}</button>
+                    <UiButton @click="copyUrl"><UiIcon name="link" :size="14" /> {{ copied ? 'Adresse copiée' : 'Copier l’adresse' }}</UiButton>
                 </UiCard>
             </div>
         </div>

@@ -5,6 +5,8 @@ namespace Gmarineau\AdminPhp;
 use Closure;
 use Gmarineau\AdminPhp\Models\User;
 use Gmarineau\AdminPhp\Modules\Module;
+use Gmarineau\AdminPhp\Settings\Settings;
+use Gmarineau\AdminPhp\Settings\SettingsStore;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -26,10 +28,20 @@ class AdminPhp
     /** Gate ability to manage the other admin users. */
     public const MANAGE_USERS = 'adminphp.manage-users';
 
+    /** Gate ability to edit the site settings. */
+    public const MANAGE_SETTINGS = 'adminphp.manage-settings';
+
     /**
      * @var array<string, Module>
      */
     protected array $modules = [];
+
+    /**
+     * @var class-string<Settings>|null
+     */
+    protected ?string $settingsClass = null;
+
+    protected ?Settings $settings = null;
 
     /**
      * @var (Closure(Request): bool)|null
@@ -121,6 +133,43 @@ class AdminPhp
 
             Relation::morphMap([$module->name() => $module->modelClass()]);
         }
+    }
+
+    /**
+     * Registers the site settings edited on the admin's "Réglages" page.
+     *
+     * @param  class-string<Settings>|null  $settingsClass  null removes the settings page.
+     */
+    public function registerSettings(?string $settingsClass): void
+    {
+        $this->settingsClass = $settingsClass;
+        $this->settings = null;
+    }
+
+    /**
+     * The registered settings form, built on first use.
+     */
+    public function settingsForm(): ?Settings
+    {
+        if ($this->settingsClass === null) {
+            return null;
+        }
+
+        if ($this->settings === null) {
+            $this->settings = new $this->settingsClass;
+            $this->settings->ensureSupportedFields();
+        }
+
+        return $this->settings;
+    }
+
+    /**
+     * The value of a site setting, e.g. `setting('homepage')`. A translatable setting is
+     * read in the given locale (the app locale by default), with the default locale as fallback.
+     */
+    public function setting(string $key, mixed $default = null, ?string $locale = null): mixed
+    {
+        return app(SettingsStore::class)->get($key, $default, $locale);
     }
 
     /**

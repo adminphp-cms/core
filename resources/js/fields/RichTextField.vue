@@ -3,6 +3,7 @@ import { Placeholder } from '@tiptap/extensions'
 import StarterKit from '@tiptap/starter-kit'
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/vue-3'
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import UiButton from '../components/ui/UiButton.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
 import { useLocalizedValue } from '../composables/useLocalizedValue'
 import type { RichTextFieldSchema, RichTextTool } from '../types'
@@ -191,8 +192,8 @@ const toolButtonClass = [
                 aria-label="Adresse du lien"
                 @keydown.esc.prevent="linkUrl = null"
             />
-            <button type="submit" class="btn primary">Appliquer</button>
-            <button v-if="editor?.isActive('link')" type="button" class="btn" @click="removeLink">Retirer</button>
+            <UiButton type="submit" variant="primary">Appliquer</UiButton>
+            <UiButton v-if="editor?.isActive('link')" @click="removeLink">Retirer</UiButton>
         </form>
 
         <EditorContent :editor="editor" class="prose" />

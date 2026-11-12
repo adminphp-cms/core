@@ -10,6 +10,7 @@ use Gmarineau\AdminPhp\Http\Controllers\ModuleController;
 use Gmarineau\AdminPhp\Http\Controllers\ModuleItemController;
 use Gmarineau\AdminPhp\Http\Controllers\PasswordController;
 use Gmarineau\AdminPhp\Http\Controllers\SessionController;
+use Gmarineau\AdminPhp\Http\Controllers\SettingsController;
 use Gmarineau\AdminPhp\Http\Controllers\SpaController;
 use Gmarineau\AdminPhp\Http\Controllers\UserController;
 use Gmarineau\AdminPhp\Http\Middleware\Authorize;
@@ -29,6 +30,11 @@ Route::prefix('api')->name('api.')->group(function () {
         Route::put('account/password', [AccountController::class, 'updatePassword'])->middleware('throttle:10,1')->name('account.password');
 
         Route::get('activity', ActivityController::class)->name('activity');
+
+        Route::middleware('can:'.AdminPhp::MANAGE_SETTINGS)->group(function () {
+            Route::get('settings', [SettingsController::class, 'show'])->name('settings.show');
+            Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
+        });
 
         Route::middleware('can:'.AdminPhp::MANAGE_USERS)->group(function () {
             Route::get('users', [UserController::class, 'index'])->name('users.index');

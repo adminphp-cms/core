@@ -3,9 +3,11 @@ import { computed, onMounted, ref } from 'vue'
 import { api } from '../api'
 import UiBadge, { type BadgeTone } from '../components/ui/UiBadge.vue'
 import PageIntro from '../components/ui/PageIntro.vue'
+import UiButton from '../components/ui/UiButton.vue'
 import UiCard from '../components/ui/UiCard.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
 import UserDialog from '../components/users/UserDialog.vue'
+import { useToast } from '../composables/useToast'
 import { formatRelative, initials } from '../format'
 import { useSessionStore } from '../stores/session'
 import type { ManagedUser } from '../types'
@@ -17,7 +19,7 @@ const isLoading = ref(true)
 const search = ref('')
 /** `null` invites a new user; `undefined` means the dialog is closed. */
 const editedUser = ref<ManagedUser | null | undefined>(undefined)
-const toast = ref<string | null>(null)
+const toast = useToast()
 
 const statusBadges: Record<ManagedUser['status'], { label: string; tone: BadgeTone }> = {
     active: { label: 'Actif', tone: 'success' },
@@ -49,8 +51,7 @@ function saved(user: ManagedUser, message: string): void {
         session.set({ ...session.user, name: user.name, email: user.email })
     }
 
-    toast.value = message
-    setTimeout(() => (toast.value = null), 2500)
+    toast.success(message)
 }
 </script>
 
@@ -63,7 +64,7 @@ function saved(user: ManagedUser, message: string): void {
         <div class="page-body">
             <PageIntro title="Utilisateurs" description="Les personnes qui ont accès à l’administration, et ce qu’elles peuvent y faire." icon="users">
                 <template #actions>
-                    <button type="button" class="btn primary" @click="editedUser = null"><UiIcon name="user-plus" :size="14" /> Inviter</button>
+                    <UiButton variant="primary" @click="editedUser = null"><UiIcon name="user-plus" :size="14" /> Inviter</UiButton>
                 </template>
             </PageIntro>
 
@@ -114,6 +115,5 @@ function saved(user: ManagedUser, message: string): void {
 
         <UserDialog v-if="editedUser !== undefined" :user="editedUser" :is-current-user="editedUser?.id === session.user?.id" @saved="saved" @close="editedUser = undefined" />
 
-        <div class="toast" :class="{ on: toast }" role="status">{{ toast }}</div>
     </main>
 </template>

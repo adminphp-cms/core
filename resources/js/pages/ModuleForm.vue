@@ -6,6 +6,9 @@ import { isFilled } from '../composables/useLocalizedValue'
 import { config } from '../config'
 import PublicationPanel from '../components/PublicationPanel.vue'
 import { provideFormContext } from '../composables/useFormContext'
+import { useToast } from '../composables/useToast'
+import { useSaveShortcut, useUnsavedChanges } from '../composables/useUnsavedChanges'
+import UiButton from '../components/ui/UiButton.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
 import FieldRenderer from '../fields/FieldRenderer.vue'
 import { useEditorStore } from '../stores/editor'
@@ -27,7 +30,7 @@ const isSaving = ref(false)
 const isLoaded = ref(false)
 
 provideFormContext({ values, isNew: computed(() => !props.id) })
-const toast = ref<string | null>(null)
+const toast = useToast()
 const publication = ref<Publication | null>(null)
 const revisions = ref<RevisionSummary[]>([])
 const publishStartAt = ref('')
@@ -140,11 +143,6 @@ const localesWithGaps = computed(() =>
         : config.locales.filter((locale) => locale !== config.defaultLocale && hasMissingTranslation(schema.value!.fields, values.value, locale)),
 )
 
-function showToast(message: string): void {
-    toast.value = message
-    setTimeout(() => (toast.value = null), 2000)
-}
-
 async function applyItem(item: Item): Promise<void> {
     values.value = item.values
     itemTitle.value = item.title
@@ -173,20 +171,22 @@ async function run(action: () => Promise<Item>, successMessage: string): Promise
     try {
         const item = await action()
         await applyItem(item)
-        showToast(successMessage)
+        toast.success(successMessage)
         modulesStore.loadModules()
 
         return item
     } catch (error) {
         if (error instanceof ApiError && error.status === 422) {
             editor.errors = error.errors
-            showToast(error.errors.publishEndAt?.[0] ?? 'Certains champs sont à corriger')
+            toast.error(error.errors.publishEndAt?.[0] ?? 'Certains champs sont à corriger')
 
             return null
         }
 
-        showToast('L’opération a échoué')
-        throw error
+        console.error(error)
+        toast.error('L’opération a échoué. Réessayez dans un instant.')
+
+        return null
     } finally {
         isSaving.value = false
     }
@@ -208,6 +208,13 @@ async function save(): Promise<void> {
         await goToItem(item.id)
     }
 }
+
+useUnsavedChanges(isDirty)
+useSaveShortcut(() => {
+    if (isLoaded.value && !isSaving.value) {
+        save()
+    }
+})
 
 async function publish(): Promise<void> {
     const options = { publishStartAt: fromLocalInput(publishStartAt.value), publishEndAt: fromLocalInput(publishEndAt.value) }
@@ -310,14 +317,14 @@ onMounted(async () => {
                 <span class="flex items-center gap-1.5 px-2 text-sm before:size-1.5 before:rounded-[50%]" :class="saveStatusClass">{{ saveStatus.label }}</span>
 
                 <template v-if="isPublishable">
-                    <button type="button" class="btn" :disabled="isSaving" @click="save">Enregistrer</button>
-                    <button type="button" class="btn primary" :disabled="isSaving || !hasSomethingToPublish" @click="publish">
+                    <UiButton :disabled="isSaving" @click="save">Enregistrer</UiButton>
+                    <UiButton variant="primary" :disabled="isSaving || !hasSomethingToPublish" @click="publish">
                         <UiIcon name="send" :size="14" /> {{ publishLabel }}
-                    </button>
+                    </UiButton>
                 </template>
-                <button v-else type="button" class="btn primary" :disabled="isSaving" @click="save">
+                <UiButton v-else variant="primary" :disabled="isSaving" @click="save">
                     {{ isSaving ? 'Enregistrement…' : 'Enregistrer' }}
-                </button>
+                </UiButton>
             </template>
         </header>
 
@@ -357,6 +364,5 @@ onMounted(async () => {
             />
         </div>
 
-        <div class="toast" :class="{ on: toast }" role="status">{{ toast }}</div>
     </main>
 </template>

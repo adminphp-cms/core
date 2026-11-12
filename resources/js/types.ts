@@ -3,6 +3,10 @@ export interface AdminConfig {
     apiUrl: string
     locales: string[]
     defaultLocale: string
+    /** The public site, linked from the sidebar. */
+    siteUrl: string
+    /** Whether the application declares site settings ("Réglages"). */
+    hasSettings: boolean
 }
 
 export type UserRole = 'admin' | 'editor'
@@ -13,6 +17,7 @@ export interface AdminUser {
     email: string
     role: UserRole
     canManageUsers: boolean
+    canManageSettings: boolean
 }
 
 /** A row of the users page. */
@@ -138,6 +143,17 @@ export interface ModuleSchema {
     icon: string
     publishable: boolean
     fields: FieldSchema[]
+}
+
+export interface SettingsSchema {
+    title: string
+    description: string
+    fields: FieldSchema[]
+}
+
+export interface SettingsData {
+    schema: SettingsSchema
+    values: FormValues
 }
 
 export interface ModuleSummary {

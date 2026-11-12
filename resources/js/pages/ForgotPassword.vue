@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { api, ApiError } from '../api'
 import BrandLogo from '../components/BrandLogo.vue'
+import UiButton from '../components/ui/UiButton.vue'
 
 const route = useRoute()
 
@@ -53,9 +54,9 @@ async function submit(): Promise<void> {
 
                 <p v-if="error" class="field-error" role="alert">{{ error }}</p>
 
-                <button type="submit" class="btn primary" :disabled="isSubmitting">
+                <UiButton type="submit" variant="primary" size="lg" :disabled="isSubmitting">
                     {{ isSubmitting ? 'Envoi…' : 'Envoyer le lien' }}
-                </button>
+                </UiButton>
             </template>
 
             <RouterLink :to="{ name: 'login' }" class="self-center text-sm font-medium text-muted underline decoration-ring-hover underline-offset-3">Retour à la connexion</RouterLink>

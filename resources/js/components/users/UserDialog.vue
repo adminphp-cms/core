@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { api, ApiError } from '../../api'
 import type { ManagedUser, UserRole, ValidationErrors } from '../../types'
+import UiButton from '../ui/UiButton.vue'
+import UiDialog from '../ui/UiDialog.vue'
+import UiField from '../ui/UiField.vue'
 import UiIcon from '../ui/UiIcon.vue'
+import UiInput from '../ui/UiInput.vue'
 
 /**
  * Invites a new user (no `user` given) or edits one: name, email, role,
@@ -20,7 +24,7 @@ const roles: { value: UserRole; label: string; description: string }[] = [
     { value: 'admin', label: 'Administrateur', description: 'Comme un éditeur, et gère les utilisateurs.' },
 ]
 
-const dialog = ref<HTMLDialogElement | null>(null)
+const dialog = ref<InstanceType<typeof UiDialog> | null>(null)
 const name = ref(props.user?.name ?? '')
 const email = ref(props.user?.email ?? '')
 const role = ref<UserRole>(props.user?.role ?? 'editor')
@@ -28,8 +32,6 @@ const errors = ref<ValidationErrors>({})
 const busyAction = ref<string | null>(null)
 
 const isInvite = computed(() => props.user === null)
-
-onMounted(() => dialog.value?.showModal())
 
 async function run(action: string, call: () => Promise<ManagedUser>, message: string): Promise<void> {
     busyAction.value = action
@@ -73,67 +75,61 @@ function toggleActivation(): Promise<void> {
 </script>
 
 <template>
-    <dialog ref="dialog" class="dialog" aria-labelledby="user-dialog-title" @close="emit('close')">
-        <form class="dialog-form" @submit.prevent="submit">
-            <header class="dialog-header">
-                <h2 id="user-dialog-title">{{ isInvite ? 'Inviter un utilisateur' : 'Modifier l’utilisateur' }}</h2>
-                <button type="button" class="icon-button" aria-label="Fermer" title="Fermer" @click="dialog?.close()">
-                    <UiIcon name="x" :size="14" />
-                </button>
-            </header>
+    <UiDialog
+        ref="dialog"
+        :title="isInvite ? 'Inviter un utilisateur' : 'Modifier l’utilisateur'"
+        title-id="user-dialog-title"
+        :lead="isInvite ? 'La personne reçoit un email avec un lien pour choisir son mot de passe. Le lien est valable 7 jours.' : undefined"
+        form
+        @submit="submit"
+        @close="emit('close')"
+    >
+        <UiField label="Nom" :error="errors.name?.[0]">
+            <UiInput v-model="name" type="text" autocomplete="off" required maxlength="255" />
+        </UiField>
 
-            <div class="dialog-body">
-                <p v-if="isInvite" class="dialog-lead">La personne reçoit un email avec un lien pour choisir son mot de passe. Le lien est valable 7 jours.</p>
+        <UiField label="Email" :error="errors.email?.[0]">
+            <UiInput v-model="email" type="email" autocomplete="off" required maxlength="255" />
+        </UiField>
 
-                <label class="form-field">
-                    <span>Nom</span>
-                    <input v-model="name" class="control-input" type="text" autocomplete="off" required maxlength="255" />
-                    <small v-if="errors.name" class="field-error">{{ errors.name[0] }}</small>
+        <UiField
+            as="fieldset"
+            label="Rôle"
+            :hint="isCurrentUser ? 'Vous ne pouvez pas changer votre propre rôle.' : undefined"
+            :error="errors.role?.[0]"
+            :disabled="isCurrentUser"
+        >
+            <div class="grid grid-cols-2 gap-2 max-sm:grid-cols-1">
+                <label
+                    v-for="option in roles"
+                    :key="option.value"
+                    class="relative flex cursor-pointer flex-col gap-0.5 rounded-lg border px-3 py-2.5 transition-[background,border-color] has-[input:focus-visible]:border-brand has-[input:focus-visible]:outline-3 has-[input:focus-visible]:outline-brand-soft in-[fieldset:disabled]:cursor-not-allowed in-[fieldset:disabled]:opacity-60"
+                    :class="role === option.value ? 'border-brand-ring bg-brand-soft' : 'border-ring-control hover:bg-hover'"
+                >
+                    <input v-model="role" type="radio" name="role" :value="option.value" class="pointer-events-none absolute opacity-0" />
+                    <b class="font-semibold" :class="role === option.value ? 'text-brand' : 'text-strong'">{{ option.label }}</b>
+                    <small class="text-xs text-muted">{{ option.description }}</small>
                 </label>
-
-                <label class="form-field">
-                    <span>Email</span>
-                    <input v-model="email" class="control-input" type="email" autocomplete="off" required maxlength="255" />
-                    <small v-if="errors.email" class="field-error">{{ errors.email[0] }}</small>
-                </label>
-
-                <fieldset class="form-field" :disabled="isCurrentUser">
-                    <legend>Rôle</legend>
-                    <div class="grid grid-cols-2 gap-2 max-sm:grid-cols-1">
-                        <label
-                            v-for="option in roles"
-                            :key="option.value"
-                            class="relative flex cursor-pointer flex-col gap-0.5 rounded-lg border px-3 py-2.5 transition-[background,border-color] has-[input:focus-visible]:border-brand has-[input:focus-visible]:outline-3 has-[input:focus-visible]:outline-brand-soft in-[fieldset:disabled]:cursor-not-allowed in-[fieldset:disabled]:opacity-60"
-                            :class="role === option.value ? 'border-brand-ring bg-brand-soft' : 'border-ring-control hover:bg-hover'"
-                        >
-                            <input v-model="role" type="radio" name="role" :value="option.value" class="pointer-events-none absolute opacity-0" />
-                            <b class="font-semibold" :class="role === option.value ? 'text-brand' : 'text-strong'">{{ option.label }}</b>
-                            <small class="text-xs text-muted">{{ option.description }}</small>
-                        </label>
-                    </div>
-                    <small v-if="isCurrentUser" class="form-hint">Vous ne pouvez pas changer votre propre rôle.</small>
-                    <small v-if="errors.role" class="field-error">{{ errors.role[0] }}</small>
-                </fieldset>
-
-                <p v-if="errors.user" class="field-error" role="alert">{{ errors.user[0] }}</p>
             </div>
+        </UiField>
 
-            <footer class="dialog-footer">
-                <div v-if="user && !isCurrentUser" class="dialog-footer-start">
-                    <button v-if="user.status === 'invited'" type="button" class="btn" :disabled="busyAction !== null" @click="resendInvitation">
-                        <UiIcon name="send" :size="14" /> {{ busyAction === 'invite' ? 'Envoi…' : 'Renvoyer l’invitation' }}
-                    </button>
-                    <button type="button" class="btn" :class="{ danger: user.status !== 'deactivated' }" :disabled="busyAction !== null" @click="toggleActivation">
-                        {{ user.status === 'deactivated' ? 'Réactiver' : 'Désactiver' }}
-                    </button>
-                </div>
+        <p v-if="errors.user" class="field-error" role="alert">{{ errors.user[0] }}</p>
 
-                <button type="button" class="btn" @click="dialog?.close()">Annuler</button>
-                <button type="submit" class="btn primary" :disabled="busyAction !== null">
-                    <template v-if="isInvite"><UiIcon name="send" :size="14" /> {{ busyAction === 'save' ? 'Envoi…' : 'Envoyer l’invitation' }}</template>
-                    <template v-else>{{ busyAction === 'save' ? 'Enregistrement…' : 'Enregistrer' }}</template>
-                </button>
-            </footer>
-        </form>
-    </dialog>
+        <template v-if="user && !isCurrentUser" #footer-start>
+            <UiButton v-if="user.status === 'invited'" :disabled="busyAction !== null" @click="resendInvitation">
+                <UiIcon name="send" :size="14" /> {{ busyAction === 'invite' ? 'Envoi…' : 'Renvoyer l’invitation' }}
+            </UiButton>
+            <UiButton :variant="user.status !== 'deactivated' ? 'danger' : 'default'" :disabled="busyAction !== null" @click="toggleActivation">
+                {{ user.status === 'deactivated' ? 'Réactiver' : 'Désactiver' }}
+            </UiButton>
+        </template>
+
+        <template #footer>
+            <UiButton @click="dialog?.close()">Annuler</UiButton>
+            <UiButton type="submit" variant="primary" :disabled="busyAction !== null">
+                <template v-if="isInvite"><UiIcon name="send" :size="14" /> {{ busyAction === 'save' ? 'Envoi…' : 'Envoyer l’invitation' }}</template>
+                <template v-else>{{ busyAction === 'save' ? 'Enregistrement…' : 'Enregistrer' }}</template>
+            </UiButton>
+        </template>
+    </UiDialog>
 </template>

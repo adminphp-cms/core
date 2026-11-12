@@ -52,14 +52,14 @@ const gutterStateClass = computed(() =>
             <span v-if="field.translatable" class="mt-0.5 inline-block text-3xs font-semibold tracking-[0.06em] uppercase">{{ editor.locale }}</span>
         </div>
         <div class="min-w-0 pt-1 pb-5">
-            <FieldInput :field="field" :model-value="modelValue" :variant="variant" :autofocus="autofocus" @update:model-value="emit('update:modelValue', $event)" />
+            <FieldInput :field="field" :model-value="modelValue" :path="path" :variant="variant" :autofocus="autofocus" @update:model-value="emit('update:modelValue', $event)" />
             <p v-if="error" class="field-error">{{ error }}</p>
         </div>
     </section>
 
     <div v-else>
         <span class="mb-1.5 block text-xs font-medium text-muted">{{ field.label }}<i v-if="field.required" class="ml-0.5 text-brand not-italic">*</i></span>
-        <FieldInput :field="field" :model-value="modelValue" :variant="variant" :autofocus="autofocus" @update:model-value="emit('update:modelValue', $event)" />
+        <FieldInput :field="field" :model-value="modelValue" :path="path" :variant="variant" :autofocus="autofocus" @update:model-value="emit('update:modelValue', $event)" />
         <p v-if="error" class="field-error">{{ error }}</p>
     </div>
 </template>

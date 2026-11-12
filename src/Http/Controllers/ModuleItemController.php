@@ -16,14 +16,19 @@ class ModuleItemController
 
     public function __construct(protected AdminPhp $adminPhp) {}
 
-    public function index(string $module): JsonResponse
+    /**
+     * Items of a module, last updated first. `?search=` filters them by title.
+     */
+    public function index(Request $request, string $module): JsonResponse
     {
         $moduleDefinition = $this->findModule($module);
+        $search = trim((string) $request->query('search', ''));
         $locale = $this->adminPhp->defaultLocale();
         $isPublishable = $moduleDefinition->isPublishable();
 
         $items = $moduleDefinition->modelClass()::query()
             ->when($isPublishable, fn ($query) => $query->withExists('draftRevision as has_draft'))
+            ->when($search !== '', fn ($query) => $moduleDefinition->search($query, $search))
             ->latest('updated_at')
             ->paginate(30);
 

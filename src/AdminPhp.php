@@ -208,4 +208,30 @@ class AdminPhp
     {
         return config('adminphp.table_prefix', 'adminphp_').$name;
     }
+
+    /**
+     * Picks a value out of its translations (['fr' => …, 'en' => …]): the given locale
+     * (current one by default), else the default locale, else the first filled one.
+     * A value that is not a translations array is returned as is, an empty one gives null.
+     */
+    public function translate(mixed $value, ?string $locale = null): mixed
+    {
+        if ($value === []) {
+            return null;
+        }
+
+        if (! is_array($value) || array_is_list($value)) {
+            return $value;
+        }
+
+        $locales = array_unique([$locale ?? app()->getLocale(), $this->defaultLocale(), ...$this->locales()]);
+
+        foreach ($locales as $candidate) {
+            if (filled($value[$candidate] ?? null)) {
+                return $value[$candidate];
+            }
+        }
+
+        return null;
+    }
 }

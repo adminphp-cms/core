@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('is_featured')->default(false);
             $table->date('event_on')->nullable();
             $table->timestamp('event_at')->nullable();
+            $table->jsonb('faq')->nullable();
             $table->publication();
             $table->timestamps();
         });

@@ -9,6 +9,7 @@ use Gmarineau\AdminPhp\Http\Controllers\ItemRevisionController;
 use Gmarineau\AdminPhp\Http\Controllers\ModuleController;
 use Gmarineau\AdminPhp\Http\Controllers\ModuleItemController;
 use Gmarineau\AdminPhp\Http\Controllers\PasswordController;
+use Gmarineau\AdminPhp\Http\Controllers\ReferenceController;
 use Gmarineau\AdminPhp\Http\Controllers\SessionController;
 use Gmarineau\AdminPhp\Http\Controllers\SettingsController;
 use Gmarineau\AdminPhp\Http\Controllers\SpaController;
@@ -48,6 +49,8 @@ Route::prefix('api')->name('api.')->group(function () {
         Route::get('assets', [AssetController::class, 'index'])->name('assets.index');
         Route::post('assets', [AssetController::class, 'store'])->name('assets.store');
         Route::get('assets/{id}', [AssetController::class, 'show'])->name('assets.show');
+
+        Route::get('references', [ReferenceController::class, 'index'])->name('references.index');
 
         Route::get('modules', [ModuleController::class, 'index'])->name('modules.index');
         Route::get('modules/{module}', [ModuleController::class, 'show'])->name('modules.show');

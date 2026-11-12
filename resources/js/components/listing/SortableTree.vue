@@ -87,7 +87,7 @@ onMounted(createSortables)
 onBeforeUnmount(destroySortables)
 
 const rowClass = 'group/row relative flex min-h-12 items-center gap-3 border-b border-line bg-surface pr-5 hover:bg-hover'
-const handleClass = 'grid size-7 flex-none cursor-grab place-items-center rounded-[6px] text-faint hover:bg-nav-hover hover:text-ink active:cursor-grabbing'
+const handleClass = 'relative z-10 grid size-7 flex-none cursor-grab place-items-center rounded-[6px] text-faint hover:bg-nav-hover hover:text-ink active:cursor-grabbing'
 </script>
 
 <template>

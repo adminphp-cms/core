@@ -39,6 +39,7 @@ class InstallCommand extends Command
         $this->components->bulletList([
             'Register your modules, e.g. in AppServiceProvider::boot(): app(\Gmarineau\AdminPhp\AdminPhp::class)->registerModules([ArticleModule::class]);',
             'Create an admin user: php artisan adminphp:user',
+            'Make uploaded images public: php artisan storage:link (with the default "public" media disk)',
             sprintf('Open %s', url(config('adminphp.path'))),
         ]);
 

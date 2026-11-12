@@ -12,6 +12,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 use Illuminate\Foundation\Http\Middleware\TrimStrings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,6 +30,8 @@ class AdminPhpServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap(['adminphp_block' => Block::class]);
+
+        $this->registerGates();
 
         $this->registerBlueprintMacros();
 
@@ -69,8 +72,9 @@ class AdminPhpServiceProvider extends ServiceProvider
     }
 
     /**
-     * Adds the admin session guard and its user provider to the auth config,
-     * unless the application defines them itself.
+     * Adds the admin session guard, its user provider and its password brokers
+     * (forgotten passwords and invitations) to the auth config, unless the
+     * application defines them itself.
      */
     protected function registerGuard(): void
     {
@@ -84,6 +88,32 @@ class AdminPhpServiceProvider extends ServiceProvider
         if (! $config->has("auth.guards.{$guard}")) {
             $config->set("auth.guards.{$guard}", ['driver' => 'session', 'provider' => 'adminphp_users']);
         }
+
+        $tokensTable = $config->get('adminphp.table_prefix', 'adminphp_').'password_reset_tokens';
+
+        $brokers = [
+            AdminPhp::PASSWORD_BROKER => (int) $config->get('adminphp.passwords.reset_expire', 60),
+            AdminPhp::INVITATION_BROKER => (int) $config->get('adminphp.passwords.invitation_expire', 10080),
+        ];
+
+        foreach ($brokers as $broker => $expireMinutes) {
+            if (! $config->has("auth.passwords.{$broker}")) {
+                $config->set("auth.passwords.{$broker}", [
+                    'provider' => 'adminphp_users',
+                    'table' => $tokensTable,
+                    'expire' => $expireMinutes,
+                    'throttle' => 60,
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Only admins manage the other admin users.
+     */
+    protected function registerGates(): void
+    {
+        Gate::define(AdminPhp::MANAGE_USERS, fn (mixed $user): bool => $user instanceof User && $user->isAdmin() && $user->isActive());
     }
 
     /**

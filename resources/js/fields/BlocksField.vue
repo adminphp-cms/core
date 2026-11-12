@@ -78,7 +78,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenu))
 
         <template v-for="(block, index) in blocks" :key="block.id">
             <div v-if="index === 0" class="insert">
-                <button type="button" aria-haspopup="menu" @click="toggleMenu(-1)"><UiIcon name="plus" :size="13" /> Ajouter un bloc</button>
+                <button type="button" aria-haspopup="menu" :aria-expanded="openMenuAt === -1" @click="toggleMenu(-1)"><UiIcon name="plus" :size="15" /> Ajouter un bloc</button>
                 <div v-if="openMenuAt === -1" class="menu" role="menu">
                     <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" @click="insert(schema, -1)">
                         <b>{{ schema.title }}</b>
@@ -113,7 +113,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenu))
             </section>
 
             <div class="insert">
-                <button type="button" aria-haspopup="menu" @click="toggleMenu(index)"><UiIcon name="plus" :size="13" /> Ajouter un bloc</button>
+                <button type="button" aria-haspopup="menu" :aria-expanded="openMenuAt === index" @click="toggleMenu(index)"><UiIcon name="plus" :size="15" /> Ajouter un bloc</button>
                 <div v-if="openMenuAt === index" class="menu" role="menu">
                     <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" @click="insert(schema, index)">
                         <b>{{ schema.title }}</b>
@@ -123,7 +123,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenu))
         </template>
 
         <div v-if="blocks.length === 0" class="insert is-empty">
-            <button type="button" aria-haspopup="menu" @click="toggleMenu(-1)"><UiIcon name="plus" :size="13" /> Ajouter un premier bloc</button>
+            <button type="button" aria-haspopup="menu" :aria-expanded="openMenuAt === -1" @click="toggleMenu(-1)"><UiIcon name="plus" :size="15" /> Ajouter un premier bloc</button>
             <div v-if="openMenuAt === -1" class="menu" role="menu">
                 <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" @click="insert(schema, -1)">
                     <b>{{ schema.title }}</b>

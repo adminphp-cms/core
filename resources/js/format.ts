@@ -54,6 +54,20 @@ export const visibilityBadges: Record<Visibility, { label: string; tone: BadgeTo
     expired: { label: 'Expiré', tone: 'danger' },
 }
 
+const byteUnits = ['o', 'Ko', 'Mo', 'Go']
+
+export function formatBytes(bytes: number): string {
+    let size = bytes
+    let unit = 0
+
+    while (size >= 1024 && unit < byteUnits.length - 1) {
+        size /= 1024
+        unit++
+    }
+
+    return `${new Intl.NumberFormat(interfaceLocale, { maximumFractionDigits: unit === 0 ? 0 : 1 }).format(size)} ${byteUnits[unit]}`
+}
+
 export function initials(name: string): string {
     return name
         .split(/\s+/)

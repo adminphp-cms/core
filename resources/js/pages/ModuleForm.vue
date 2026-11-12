@@ -5,6 +5,7 @@ import { api, ApiError } from '../api'
 import { isFilled } from '../composables/useLocalizedValue'
 import { config } from '../config'
 import PublicationPanel from '../components/PublicationPanel.vue'
+import { provideFormContext } from '../composables/useFormContext'
 import UiIcon from '../components/ui/UiIcon.vue'
 import FieldRenderer from '../fields/FieldRenderer.vue'
 import { useEditorStore } from '../stores/editor'
@@ -24,6 +25,8 @@ const isDirty = ref(false)
 const isSaving = ref(false)
 /** The editor only shows once the schema and the item are there, so nothing empty can be saved. */
 const isLoaded = ref(false)
+
+provideFormContext({ values, isNew: computed(() => !props.id) })
 const toast = ref<string | null>(null)
 const publication = ref<Publication | null>(null)
 const revisions = ref<RevisionSummary[]>([])

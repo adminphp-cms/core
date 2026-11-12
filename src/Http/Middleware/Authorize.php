@@ -8,13 +8,24 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Runs the AdminPhp::auth() callback once the admin user is authenticated.
+ * Logs deactivated admin users out, then runs the AdminPhp::auth() callback
+ * once the admin user is authenticated.
  */
 class Authorize
 {
     public function handle(Request $request, Closure $next): Response
     {
-        abort_unless(app(AdminPhp::class)->check($request), 403);
+        $adminPhp = app(AdminPhp::class);
+
+        if ($adminPhp->user()?->isActive() === false) {
+            $adminPhp->guard()->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            abort(401);
+        }
+
+        abort_unless($adminPhp->check($request), 403);
 
         return $next($request);
     }

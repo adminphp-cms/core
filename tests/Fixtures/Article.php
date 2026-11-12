@@ -18,7 +18,7 @@ class Article extends Model
     /**
      * @var array<int, string>
      */
-    public array $translatable = ['title', 'lead'];
+    public array $translatable = ['title', 'lead', 'slug'];
 
     /**
      * @return array<string, string>

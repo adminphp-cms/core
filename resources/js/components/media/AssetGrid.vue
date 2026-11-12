@@ -18,7 +18,7 @@ const emit = defineEmits<{ select: [asset: Asset] }>()
                 @click="emit('select', asset)"
             >
                 <span class="mb-1 block aspect-[4/3] overflow-hidden rounded-sm border border-line [background:repeating-conic-gradient(var(--accent-soft)_0%_25%,var(--surface)_0%_50%)_50%/16px_16px]">
-                    <img :src="asset.url" :alt="asset.name" loading="lazy" class="block h-full w-full object-cover" />
+                    <img :src="asset.thumbnailUrl" :alt="asset.name" loading="lazy" class="block h-full w-full object-cover" />
                 </span>
                 <span class="truncate text-sm font-medium text-ink">{{ asset.name }}</span>
                 <span class="text-xs text-faint tabular-nums">

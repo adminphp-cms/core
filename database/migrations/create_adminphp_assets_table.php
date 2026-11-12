@@ -20,6 +20,8 @@ return new class extends Migration
             $table->unsignedBigInteger('size');
             $table->unsignedInteger('width')->nullable();
             $table->unsignedInteger('height')->nullable();
+            // Smaller copies by size name: {"md": {"path": …, "width": …, "height": …}}.
+            $table->jsonb('variants')->nullable();
             $table->ulid('user_id')->nullable()->index();
             $table->timestamps();
 

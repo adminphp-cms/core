@@ -45,7 +45,7 @@ function choose(chosen: Asset): void {
         <div v-if="asset" class="flex items-center gap-4 rounded-lg border border-ring-control bg-surface p-2.5 max-md:flex-col max-md:items-stretch">
             <img
                 class="h-28 w-[168px] flex-none rounded-sm bg-accent-soft object-cover max-md:aspect-[3/2] max-md:h-auto max-md:w-full"
-                :src="asset.url"
+                :src="asset.thumbnailUrl"
                 :alt="asset.name"
             />
             <div class="flex min-w-0 flex-col gap-0.5">

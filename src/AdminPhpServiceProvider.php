@@ -3,6 +3,7 @@
 namespace Gmarineau\AdminPhp;
 
 use Gmarineau\AdminPhp\Console\InstallCommand;
+use Gmarineau\AdminPhp\Console\RegenerateMediaCommand;
 use Gmarineau\AdminPhp\Console\UserCommand;
 use Gmarineau\AdminPhp\Enums\PublicationStatus;
 use Gmarineau\AdminPhp\Models\Block;
@@ -44,7 +45,7 @@ class AdminPhpServiceProvider extends ServiceProvider
         $this->registerRoutes();
 
         if ($this->app->runningInConsole()) {
-            $this->commands([InstallCommand::class, UserCommand::class]);
+            $this->commands([InstallCommand::class, UserCommand::class, RegenerateMediaCommand::class]);
 
             $this->publishes([
                 __DIR__.'/../config/adminphp.php' => config_path('adminphp.php'),

@@ -149,7 +149,7 @@ it('splits a publishable module into publication views and counts them', functio
     expect(listedTitles(listArticles(['view' => 'unpublished'])))->toBe(['Brouillon'])
         ->and(listedTitles(listArticles(['view' => 'pending'])))->toBe(['Modifié'])
         ->and(listArticles(['view' => 'published'])->json('meta.total'))->toBe(2)
-        ->and(listArticles()->json('meta.counts'))->toBe(['all' => 3, 'published' => 2, 'unpublished' => 1, 'pending' => 1]);
+        ->and(listArticles()->json('meta.counts'))->toBe(['all' => 3, 'published' => 2, 'unpublished' => 1, 'pending' => 1, 'trash' => 0]);
 });
 
 it('pages the listing by thirty', function () {

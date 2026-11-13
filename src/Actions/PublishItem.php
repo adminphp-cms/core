@@ -41,8 +41,12 @@ class PublishItem
 
         return $model->getConnection()->transaction(function () use ($module, $model, $input, $publishStartAt, $publishEndAt): Model {
             $draft = $model->draftRevision()->lockForUpdate()->first();
+            $changes = [...($draft->payload ?? []), ...$input];
 
-            $this->saveModuleContent->handle($module, [...($draft->payload ?? []), ...$input], $model);
+            // What goes online must be complete, not only the fields changed since the last save.
+            $module->validate([...$this->getFormData->handle($module, $model), ...$changes]);
+
+            $this->saveModuleContent->handle($module, $changes, $model);
 
             $model->forceFill([
                 'status' => PublicationStatus::Published,

@@ -192,6 +192,8 @@ export interface ModuleSchema {
     sortable: boolean
     /** How many levels items can be nested under others (0: a flat list). */
     nestingDepth: number
+    /** Deleted items go to a trash, from where they can be restored. */
+    trashable: boolean
     listing: ListingSchema
     fields: FieldSchema[]
 }
@@ -219,7 +221,7 @@ export interface ListingSchema {
 }
 
 /** Publication views of a publishable module, shown as tabs. */
-export type ListingView = 'all' | 'published' | 'unpublished' | 'pending'
+export type ListingView = 'all' | 'published' | 'unpublished' | 'pending' | 'trash'
 
 export interface ListingQuery {
     search: string
@@ -237,8 +239,8 @@ export interface ListingMeta {
     sort: string | null
     view: ListingView | null
     filters: Record<string, string>
-    /** Items per publication view, null when the module is not publishable. */
-    counts: Record<ListingView, number> | null
+    /** Items per view the module has (publication views, trash), null when it has none. */
+    counts: Partial<Record<ListingView, number>> | null
     /** The whole module in its hand-made order, to drag around. */
     isTree: boolean
 }
@@ -289,6 +291,8 @@ export interface ItemSummary {
     /** Values of the listing columns, by column name. */
     cells: Record<string, unknown>
 }
+
+export type BulkAction = 'publish' | 'unpublish' | 'trash' | 'restore' | 'delete'
 
 /** An item at its new place, as saved after a drag and drop. */
 export interface ItemPlacement {

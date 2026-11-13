@@ -10,6 +10,7 @@ use Gmarineau\AdminPhp\Fields\Field;
 use Gmarineau\AdminPhp\Forms\HasFields;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use LogicException;
 
@@ -206,6 +207,14 @@ abstract class Module
     }
 
     /**
+     * Whether deleted items go to a trash, from where they can be restored (SoftDeletes).
+     */
+    public function isTrashable(): bool
+    {
+        return in_array(SoftDeletes::class, class_uses_recursive($this->model), true);
+    }
+
+    /**
      * Whether editors order the items by hand (HasPosition).
      */
     public function isSortable(): bool
@@ -237,6 +246,7 @@ abstract class Module
             'icon' => $this->icon(),
             'publishable' => $this->isPublishable(),
             'sortable' => $this->isSortable(),
+            'trashable' => $this->isTrashable(),
             'nestingDepth' => $this->nestingDepth(),
             'listing' => [
                 'columns' => array_values(array_map(fn (Column $column): array => $column->toSchema($this), $this->listingColumns())),

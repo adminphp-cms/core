@@ -13,7 +13,7 @@ import { controlClasses } from '../components/ui/controlClasses'
 import { useToast } from '../composables/useToast'
 import { formatDate, formatDateTime, visibilityBadges } from '../format'
 import { useModulesStore } from '../stores/modules'
-import type { ItemPlacement, ItemSummary, ListingColumn, ListingMeta, ListingQuery, ListingView, ModuleSchema } from '../types'
+import type { BulkAction, ItemPlacement, ItemSummary, ListingColumn, ListingMeta, ListingQuery, ListingView, ModuleSchema } from '../types'
 
 const props = defineProps<{ module: string }>()
 
@@ -32,7 +32,11 @@ const views: { value: ListingView; label: string }[] = [
     { value: 'published', label: 'Publiés' },
     { value: 'unpublished', label: 'Hors ligne' },
     { value: 'pending', label: 'À publier' },
+    { value: 'trash', label: 'Corbeille' },
 ]
+
+/** The views the module has, as the server counted them. */
+const availableViews = computed(() => views.filter((view) => meta.value?.counts?.[view.value] !== undefined))
 
 /** The listing state lives in the address, so a reload or the back button keeps it. */
 function queryFromRoute(routeQuery: LocationQuery): ListingQuery {
@@ -112,6 +116,83 @@ async function load(): Promise<void> {
     items.value = response.data
     meta.value = response.meta
     isLoading.value = false
+    selectedIds.value = selectedIds.value.filter((id) => response.data.some((item) => item.id === id))
+}
+
+const selectedIds = ref<string[]>([])
+const isRunningBulk = ref(false)
+const isTrashView = computed(() => query.value.view === 'trash')
+
+/** Rows can be selected when the module offers at least one action on several items. */
+const isSelectable = computed(() => schema.value !== null && (schema.value.publishable || schema.value.trashable))
+const isAllSelected = computed(() => items.value.length > 0 && items.value.every((item) => selectedIds.value.includes(item.id)))
+
+function toggleAll(): void {
+    selectedIds.value = isAllSelected.value ? [] : items.value.map((item) => item.id)
+}
+
+function toggleSelected(id: string): void {
+    selectedIds.value = selectedIds.value.includes(id) ? selectedIds.value.filter((selected) => selected !== id) : [...selectedIds.value, id]
+}
+
+const bulkActions = computed<{ action: BulkAction; label: string; icon: string; isDanger?: boolean }[]>(() => {
+    if (!schema.value) {
+        return []
+    }
+
+    if (isTrashView.value) {
+        return [
+            { action: 'restore', label: 'Restaurer', icon: 'rotate-ccw' },
+            { action: 'delete', label: 'Supprimer définitivement', icon: 'trash', isDanger: true },
+        ]
+    }
+
+    return [
+        ...(schema.value.publishable
+            ? [
+                  { action: 'publish' as const, label: 'Publier', icon: 'send' },
+                  { action: 'unpublish' as const, label: 'Dépublier', icon: 'minus' },
+              ]
+            : []),
+        ...(schema.value.trashable ? [{ action: 'trash' as const, label: 'Mettre à la corbeille', icon: 'trash', isDanger: true }] : []),
+    ]
+})
+
+const bulkMessages: Record<BulkAction, { confirm?: string; done: string }> = {
+    publish: { done: 'publié(s)' },
+    unpublish: { confirm: 'Retirer du site les éléments sélectionnés ?', done: 'retiré(s) du site' },
+    trash: { done: 'mis à la corbeille' },
+    restore: { done: 'restauré(s)' },
+    delete: { confirm: 'Supprimer définitivement les éléments sélectionnés ? Cette action est irréversible.', done: 'supprimé(s) définitivement' },
+}
+
+async function runBulk(action: BulkAction): Promise<void> {
+    const message = bulkMessages[action]
+
+    if (message.confirm && !window.confirm(message.confirm)) {
+        return
+    }
+
+    isRunningBulk.value = true
+
+    try {
+        const result = await api.bulkItems(props.module, action, selectedIds.value)
+
+        if (result.failed.length > 0) {
+            toast.error(`${result.done} ${message.done}, ${result.failed.length} à compléter avant publication`)
+            selectedIds.value = result.failed
+        } else {
+            toast.success(`${result.done} ${message.done}`)
+            selectedIds.value = []
+        }
+
+        await load()
+        modulesStore.loadModules()
+    } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'L’opération a échoué.')
+    } finally {
+        isRunningBulk.value = false
+    }
 }
 
 watch([() => props.module, query], load, { immediate: true })
@@ -208,7 +289,7 @@ const headerButtonClass = 'inline-flex items-center gap-1 rounded-xs hover:text-
             <template v-else-if="!isLoading && meta">
                 <nav v-if="meta.counts" class="mb-3 flex flex-wrap gap-1" aria-label="Vues">
                     <button
-                        v-for="view in views"
+                        v-for="view in availableViews"
                         :key="view.value"
                         type="button"
                         :class="[tabClass, query.view === view.value ? 'bg-surface text-strong [box-shadow:inset_0_0_0_1px_var(--ring-control)]' : 'text-muted hover:bg-nav-hover hover:text-ink']"
@@ -222,7 +303,20 @@ const headerButtonClass = 'inline-flex items-center gap-1 rounded-xs hover:text-
 
                 <UiCard :title="cardTitle" :padded="false">
                     <template #actions>
-                        <div class="flex flex-wrap items-center justify-end gap-2">
+                        <div v-if="selectedIds.length" class="flex flex-wrap items-center justify-end gap-2">
+                            <span class="text-sm text-muted tabular-nums">{{ selectedIds.length }} sélectionné{{ selectedIds.length > 1 ? 's' : '' }}</span>
+                            <UiButton
+                                v-for="bulk in bulkActions"
+                                :key="bulk.action"
+                                :variant="bulk.isDanger ? 'danger' : 'default'"
+                                :disabled="isRunningBulk"
+                                @click="runBulk(bulk.action)"
+                            >
+                                <UiIcon :name="bulk.icon" :size="14" /> {{ bulk.label }}
+                            </UiButton>
+                            <UiButton :disabled="isRunningBulk" @click="selectedIds = []">Annuler</UiButton>
+                        </div>
+                        <div v-else class="flex flex-wrap items-center justify-end gap-2">
                             <select
                                 v-for="filter in schema.listing.filters"
                                 :key="filter.name"
@@ -254,6 +348,9 @@ const headerButtonClass = 'inline-flex items-center gap-1 rounded-xs hover:text-
                         <table class="listing">
                             <thead>
                                 <tr>
+                                    <th v-if="isSelectable" class="w-10">
+                                        <input type="checkbox" class="size-4 accent-[var(--brand)]" :checked="isAllSelected" aria-label="Tout sélectionner" @change="toggleAll" />
+                                    </th>
                                     <th
                                         v-for="column in columns"
                                         :key="column.name"
@@ -271,14 +368,25 @@ const headerButtonClass = 'inline-flex items-center gap-1 rounded-xs hover:text-
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="item in items" :key="item.id">
+                                <tr v-for="item in items" :key="item.id" :class="{ 'bg-brand-soft/40': selectedIds.includes(item.id) }">
+                                    <td v-if="isSelectable" class="relative z-10 w-10">
+                                        <input
+                                            type="checkbox"
+                                            class="size-4 accent-[var(--brand)]"
+                                            :checked="selectedIds.includes(item.id)"
+                                            :aria-label="`Sélectionner ${item.title}`"
+                                            @change="toggleSelected(item.id)"
+                                        />
+                                    </td>
                                     <td
                                         v-for="column in columns"
                                         :key="column.name"
                                         :class="{ 'listing-status': column.type === 'status', 'listing-date': column.type === 'date' || column.type === 'datetime' }"
                                     >
-                                        <RouterLink v-if="column.type === 'title'" :to="{ name: 'module.edit', params: { module, id: item.id } }" class="stretched-link">{{ item.title }}</RouterLink>
+                                        <span v-if="column.type === 'title' && isTrashView" class="text-muted">{{ item.title }}</span>
+                                        <RouterLink v-else-if="column.type === 'title'" :to="{ name: 'module.edit', params: { module, id: item.id } }" class="stretched-link">{{ item.title }}</RouterLink>
 
+                                        <UiBadge v-else-if="column.type === 'status' && isTrashView">À la corbeille</UiBadge>
                                         <template v-else-if="column.type === 'status'">
                                             <UiBadge v-if="item.visibility" :tone="visibilityBadges[item.visibility].tone" dot>{{ visibilityBadges[item.visibility].label }}</UiBadge>
                                             <UiBadge v-if="item.hasDraft" tone="warning">À publier</UiBadge>
@@ -298,9 +406,12 @@ const headerButtonClass = 'inline-flex items-center gap-1 rounded-xs hover:text-
                                     </td>
                                 </tr>
                                 <tr v-if="items.length === 0">
-                                    <td :colspan="columns.length" class="listing-empty">
-                                        Aucun résultat<template v-if="query.search"> pour « {{ query.search }} »</template>.
-                                        <button type="button" class="ml-1 font-medium text-ink underline underline-offset-3" @click="clearCriteria">Tout afficher</button>
+                                    <td :colspan="columns.length + (isSelectable ? 1 : 0)" class="listing-empty">
+                                        <template v-if="isTrashView && !query.search && Object.keys(query.filters).length === 0">La corbeille est vide.</template>
+                                        <template v-else>
+                                            Aucun résultat<template v-if="query.search"> pour « {{ query.search }} »</template>.
+                                            <button type="button" class="ml-1 font-medium text-ink underline underline-offset-3" @click="clearCriteria">Tout afficher</button>
+                                        </template>
                                     </td>
                                 </tr>
                             </tbody>

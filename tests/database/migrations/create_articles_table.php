@@ -22,6 +22,7 @@ return new class extends Migration
             $table->ulid('cover')->nullable();
             $table->publication();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

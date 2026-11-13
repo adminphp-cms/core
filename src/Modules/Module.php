@@ -33,6 +33,12 @@ abstract class Module
     protected string $titleField = 'title';
 
     /**
+     * Initial order of the listing: a column name, with a leading "-" for descending order.
+     * Modules ordered by hand (HasPosition) are listed in their order instead.
+     */
+    protected string $defaultSort = '-updated_at';
+
+    /**
      * Short sentence shown under the module title in the admin.
      */
     protected string $description = '';
@@ -75,6 +81,68 @@ abstract class Module
     public function icon(): string
     {
         return $this->icon;
+    }
+
+    /**
+     * Columns of the admin listing: the title, the publication status and the last change by default.
+     *
+     * @return array<int, Column>
+     */
+    public function columns(): array
+    {
+        return [
+            Column::make($this->titleField)->sortable(),
+            ...($this->isPublishable() ? [Column::status()] : []),
+            Column::make('updated_at')->label('Modifié')->sortable(),
+        ];
+    }
+
+    /**
+     * Filters of the admin listing, made from Select and Toggle fields.
+     *
+     * @return array<int, Filter>
+     */
+    public function filters(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array<string, Column>
+     */
+    public function listingColumns(): array
+    {
+        $columns = [];
+
+        foreach ($this->columns() as $column) {
+            $columns[$column->name] = $column;
+        }
+
+        return $columns;
+    }
+
+    /**
+     * @return array<string, Filter>
+     */
+    public function listingFilters(): array
+    {
+        $filters = [];
+
+        foreach ($this->filters() as $filter) {
+            $filters[$filter->name] = $filter;
+        }
+
+        return $filters;
+    }
+
+    public function defaultSort(): string
+    {
+        return $this->defaultSort;
+    }
+
+    public function titleField(): string
+    {
+        return $this->titleField;
     }
 
     /**
@@ -170,6 +238,11 @@ abstract class Module
             'publishable' => $this->isPublishable(),
             'sortable' => $this->isSortable(),
             'nestingDepth' => $this->nestingDepth(),
+            'listing' => [
+                'columns' => array_values(array_map(fn (Column $column): array => $column->toSchema($this), $this->listingColumns())),
+                'filters' => array_values(array_map(fn (Filter $filter): array => $filter->toSchema($this), $this->listingFilters())),
+                'defaultSort' => $this->defaultSort,
+            ],
             'fields' => array_values(array_map(fn (Field $field): array => $field->toSchema(), $this->fields())),
         ];
     }

@@ -32,6 +32,11 @@ class Browser extends Field
         return 'browser';
     }
 
+    public function listingType(): ?string
+    {
+        return null;
+    }
+
     /**
      * Modules whose contents can be chosen.
      *

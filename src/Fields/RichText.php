@@ -38,6 +38,11 @@ class RichText extends Field
         return 'rich-text';
     }
 
+    public function listingType(): ?string
+    {
+        return null;
+    }
+
     /**
      * Limits the toolbar to the given tools, e.g. ['bold', 'italic', 'link'] for a short text.
      * Formatting left out is also refused by the editor (shortcuts, pasted content).

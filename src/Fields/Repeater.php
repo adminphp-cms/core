@@ -35,6 +35,11 @@ class Repeater extends Field
         return 'repeater';
     }
 
+    public function listingType(): ?string
+    {
+        return null;
+    }
+
     /**
      * Fields of each item.
      *

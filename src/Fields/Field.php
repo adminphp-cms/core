@@ -187,6 +187,25 @@ abstract class Field
     }
 
     /**
+     * How the value is shown in a listing column: text, boolean, date, datetime or image.
+     * Null when the field cannot be shown as a column (rich text, blocks, lists…).
+     */
+    public function listingType(): ?string
+    {
+        return 'text';
+    }
+
+    /**
+     * The value shown in a listing column, in the given locale (with a fallback on the others).
+     */
+    public function listingValue(Model $model, string $locale): mixed
+    {
+        $value = app(AdminPhp::class)->translate($this->valueFromModel($model), $locale);
+
+        return is_scalar($value) ? (string) $value : null;
+    }
+
+    /**
      * Description of the field sent to the admin front.
      *
      * @return array<string, mixed>

@@ -1,5 +1,5 @@
 import { config } from './config'
-import type { ActivityEntry, AdminUser, Asset, FormValues, Item, ItemPlacement, ItemSummary, ContentReference, ReferencedContent, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
+import type { ActivityEntry, AdminUser, Asset, FormValues, Item, ItemPlacement, ItemSummary, ListingMeta, ListingQuery, ContentReference, ReferencedContent, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
 
 export class ApiError extends Error {
     constructor(
@@ -126,6 +126,27 @@ export const api = {
         request<{ data: ReferencedContent[] }>('GET', `references?${references.map((reference) => `items[]=${encodeURIComponent(`${reference.type}:${reference.id}`)}`).join('&')}`).then(
             (response) => response.data,
         ),
+
+    /** One page of the admin listing of a module. */
+    listItems: (module: string, query: ListingQuery) => {
+        const params = new URLSearchParams()
+
+        const entries: [string, string | null][] = [
+            ['search', query.search.trim() || null],
+            ['view', query.view === 'all' ? null : query.view],
+            ['sort', query.sort],
+            ['page', query.page > 1 ? String(query.page) : null],
+            ...Object.entries(query.filters).map(([name, value]): [string, string | null] => [`filters[${name}]`, value || null]),
+        ]
+
+        entries.forEach(([name, value]) => {
+            if (value !== null) {
+                params.set(name, value)
+            }
+        })
+
+        return request<{ data: ItemSummary[]; meta: ListingMeta }>('GET', `modules/${module}/items${params.size ? `?${params}` : ''}`)
+    },
 
     /** Saves the order of a sortable module: every item in its new order, parents before their children. */
     reorderItems: (module: string, items: ItemPlacement[]) => request<unknown>('PUT', `modules/${module}/items/order`, { items }),

@@ -37,6 +37,16 @@ class Toggle extends Field
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 
+    public function listingType(): string
+    {
+        return 'boolean';
+    }
+
+    public function listingValue(Model $model, string $locale): bool
+    {
+        return $this->valueFromModel($model);
+    }
+
     public function valueFromModel(Model $model): bool
     {
         return (bool) $model->getAttribute($this->name);

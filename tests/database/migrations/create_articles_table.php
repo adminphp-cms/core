@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('event_on')->nullable();
             $table->timestamp('event_at')->nullable();
             $table->jsonb('faq')->nullable();
+            $table->ulid('cover')->nullable();
             $table->publication();
             $table->timestamps();
         });

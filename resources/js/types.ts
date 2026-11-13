@@ -114,6 +114,22 @@ export interface Asset {
     width: number | null
     height: number | null
     createdAt: string
+    /** How many contents use the image (listing and details only). */
+    usageCount?: number
+    /** The contents using the image (details only). */
+    usages?: AssetUsage[]
+}
+
+/**
+ * A content showing an image: an item of a module, or the settings (no id).
+ */
+export interface AssetUsage {
+    type: string
+    id: string | null
+    title: string
+    moduleTitle: string
+    icon: string
+    isTrashed: boolean
 }
 
 export interface RepeaterFieldSchema extends BaseFieldSchema {

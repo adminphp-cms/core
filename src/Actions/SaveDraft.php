@@ -22,6 +22,7 @@ class SaveDraft
         protected SaveModuleContent $saveModuleContent,
         protected GetFormData $getFormData,
         protected AdminPhp $adminPhp,
+        protected SyncAssetUsages $syncAssetUsages,
     ) {}
 
     /**
@@ -56,6 +57,8 @@ class SaveDraft
             } else {
                 $draft->update(['payload' => $payload, 'user_id' => $userId]);
             }
+
+            $this->syncAssetUsages->forItem($module, $model);
         });
 
         return $model;

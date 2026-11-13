@@ -117,6 +117,22 @@ class Blocks extends Field
         return $attributes;
     }
 
+    public function assetIds(mixed $value): array
+    {
+        $ids = [];
+
+        foreach (is_array($value) ? $value : [] as $item) {
+            $block = is_array($item) && is_string($item['type'] ?? null) ? $this->block($item['type']) : null;
+            $content = is_array($item['content'] ?? null) ? $item['content'] : [];
+
+            foreach ($block?->fields() ?? [] as $name => $field) {
+                $ids = [...$ids, ...$field->assetIds($content[$name] ?? null)];
+            }
+        }
+
+        return $ids;
+    }
+
     public function fillModel(Model $model, mixed $value): void {}
 
     /**

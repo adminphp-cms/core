@@ -109,6 +109,8 @@ export const api = {
 
     asset: (id: string) => request<{ data: Asset }>('GET', `assets/${id}`).then((response) => response.data),
 
+    deleteAsset: (id: string) => request<unknown>('DELETE', `assets/${id}`),
+
     uploadAsset: (file: File) => {
         const body = new FormData()
         body.append('file', file)

@@ -53,6 +53,7 @@ Route::prefix('api')->name('api.')->group(function () {
         Route::get('assets', [AssetController::class, 'index'])->name('assets.index');
         Route::post('assets', [AssetController::class, 'store'])->name('assets.store');
         Route::get('assets/{id}', [AssetController::class, 'show'])->name('assets.show');
+        Route::delete('assets/{id}', [AssetController::class, 'destroy'])->name('assets.destroy');
 
         Route::get('references', [ReferenceController::class, 'index'])->name('references.index');
 

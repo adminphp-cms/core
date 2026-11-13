@@ -6,6 +6,8 @@ use Gmarineau\AdminPhp\Models\Related;
 use Gmarineau\AdminPhp\Models\Revision;
 use Gmarineau\AdminPhp\Tests\Fixtures\Article;
 use Gmarineau\AdminPhp\Tests\Fixtures\MenuLinkModule;
+use Gmarineau\AdminPhp\Tests\Fixtures\Page;
+use Gmarineau\AdminPhp\Tests\Fixtures\PageModule;
 use Illuminate\Testing\TestResponse;
 
 beforeEach(function () {
@@ -115,4 +117,70 @@ it('publishes several items at once and reports the ones whose content is not va
 
 it('refuses an unknown bulk action', function () {
     bulkArticles('archive', [createArticleItem()])->assertUnprocessable()->assertJsonValidationErrors(['action']);
+});
+
+it('keeps the slug of a trashed item for when it is restored', function () {
+    $trashed = createArticleItem(['title' => ['fr' => 'Charpente']]);
+    $this->deleteJson("/admin/api/modules/article/items/{$trashed}")->assertNoContent();
+
+    $other = createArticleItem(['title' => ['fr' => 'Charpente']]);
+    bulkArticles('restore', [$trashed])->assertOk();
+
+    expect(Article::query()->find($other)->getTranslation('slug', 'fr'))->toBe('charpente-2')
+        ->and(Article::query()->find($trashed)->getTranslation('slug', 'fr'))->toBe('charpente');
+});
+
+/**
+ * Creates a page through the admin API, under the given parent, and returns its id.
+ */
+function createPage(string $title, ?string $parentId = null): string
+{
+    $id = test()->postJson('/admin/api/modules/page/items', ['title' => ['fr' => $title]])->assertCreated()->json('data.id');
+
+    Page::query()->whereKey($id)->update(['parent_id' => $parentId]);
+
+    return $id;
+}
+
+/**
+ * @param  array<int, string>  $ids
+ */
+function bulkPages(string $action, array $ids): TestResponse
+{
+    return test()->postJson('/admin/api/modules/page/items/bulk', ['action' => $action, 'ids' => $ids]);
+}
+
+it('trashes a nested item with its descendants and restores those trashed with it', function () {
+    app(AdminPhp::class)->registerModules([PageModule::class]);
+    $parent = createPage('Atelier');
+    $child = createPage('Machines', $parent);
+    $grandChild = createPage('Scie', $child);
+    $trashedBefore = createPage('Ancienne page', $parent);
+    $this->deleteJson("/admin/api/modules/page/items/{$trashedBefore}")->assertNoContent();
+    $this->travel(1)->minute();
+
+    $this->deleteJson("/admin/api/modules/page/items/{$parent}")->assertNoContent();
+
+    expect(Page::query()->count())->toBe(0);
+
+    bulkPages('restore', [$parent])->assertOk();
+
+    expect(Page::query()->pluck('id')->sort()->values()->all())->toBe(collect([$parent, $child, $grandChild])->sort()->values()->all())
+        ->and(Page::query()->find($grandChild)->parent_id)->toBe($child)
+        ->and(Page::onlyTrashed()->pluck('id')->all())->toBe([$trashedBefore]);
+});
+
+it('moves an item restored without its parent to the top of the tree', function () {
+    app(AdminPhp::class)->registerModules([PageModule::class]);
+    $root = createPage('Accueil');
+    $parent = createPage('Atelier');
+    $child = createPage('Machines', $parent);
+    $this->deleteJson("/admin/api/modules/page/items/{$parent}")->assertNoContent();
+
+    bulkPages('restore', [$child])->assertOk();
+
+    $restored = Page::query()->find($child);
+
+    expect($restored->parent_id)->toBeNull()
+        ->and($restored->position)->toBeGreaterThan(Page::query()->find($root)->position);
 });

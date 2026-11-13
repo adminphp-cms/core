@@ -3,6 +3,7 @@
 namespace Gmarineau\AdminPhp\Http\Controllers;
 
 use Gmarineau\AdminPhp\Actions\PublishItem;
+use Gmarineau\AdminPhp\Actions\SyncAssetUsages;
 use Gmarineau\AdminPhp\Actions\UnpublishItem;
 use Gmarineau\AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
 use Illuminate\Http\JsonResponse;
@@ -53,13 +54,14 @@ class ItemPublicationController
     /**
      * Drops the pending changes: the item goes back to its published values.
      */
-    public function discardDraft(string $module, string $id): JsonResponse
+    public function discardDraft(SyncAssetUsages $syncAssetUsages, string $module, string $id): JsonResponse
     {
         $moduleDefinition = $this->findPublishableModule($module);
         $item = $this->findItem($moduleDefinition, $id);
         $this->ensureNotLockedByOther($item);
 
         $item->draftRevision()->delete();
+        $syncAssetUsages->forItem($moduleDefinition, $item);
 
         return $this->itemResponse($moduleDefinition, $item);
     }

@@ -37,5 +37,9 @@ export const useAssetsStore = defineStore('assets', () => {
         return pending.get(id)!
     }
 
-    return { byId, remember, find }
+    function forget(id: string): void {
+        delete byId.value[id]
+    }
+
+    return { byId, remember, find, forget }
 })

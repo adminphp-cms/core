@@ -196,6 +196,17 @@ abstract class Field
     }
 
     /**
+     * Ids of the media library assets the value uses, so an image is not deleted while
+     * a content shows it. Fields holding other fields (blocks, repeaters) collect theirs.
+     *
+     * @return array<int, string>
+     */
+    public function assetIds(mixed $value): array
+    {
+        return [];
+    }
+
+    /**
      * How the value is shown in a listing column: text, boolean, date, datetime or image.
      * Null when the field cannot be shown as a column (rich text, blocks, lists…).
      */

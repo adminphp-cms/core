@@ -6,6 +6,7 @@ use Gmarineau\AdminPhp\AdminPhp;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
@@ -105,6 +106,28 @@ class Asset extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Contents showing the asset.
+     *
+     * @return HasMany<AssetUsage, $this>
+     */
+    public function usages(): HasMany
+    {
+        return $this->hasMany(AssetUsage::class);
+    }
+
+    /**
+     * Removes the original file and its smaller copies from the disk, then the asset.
+     */
+    public function deleteWithFiles(): void
+    {
+        $paths = [$this->path, ...array_column($this->variants ?? [], 'path')];
+
+        $this->delete();
+
+        Storage::disk($this->disk)->delete($paths);
     }
 
     /**

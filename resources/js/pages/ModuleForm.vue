@@ -9,6 +9,7 @@ import { provideFormContext } from '../composables/useFormContext'
 import { useToast } from '../composables/useToast'
 import { useSaveShortcut, useUnsavedChanges } from '../composables/useUnsavedChanges'
 import UiButton from '../components/ui/UiButton.vue'
+import UiIconButton from '../components/ui/UiIconButton.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
 import FieldRenderer from '../fields/FieldRenderer.vue'
 import { useEditorStore } from '../stores/editor'
@@ -247,6 +248,48 @@ async function discardDraft(): Promise<void> {
     }
 }
 
+async function duplicate(): Promise<void> {
+    if (!props.id || (isDirty.value && !window.confirm('Dupliquer la dernière version enregistrée ? Les modifications non enregistrées ne seront pas copiées.'))) {
+        return
+    }
+
+    isSaving.value = true
+
+    try {
+        const copy = await api.duplicateItem(props.module, props.id)
+        isDirty.value = false
+        modulesStore.loadModules()
+        await router.push({ name: 'module.edit', params: { module: props.module, id: copy.id } })
+        toast.success('Copie créée, hors ligne')
+    } catch (error) {
+        console.error(error)
+        toast.error('La copie a échoué. Réessayez dans un instant.')
+    } finally {
+        isSaving.value = false
+    }
+}
+
+async function trash(): Promise<void> {
+    if (!props.id || !window.confirm('Mettre ce contenu à la corbeille ? Il disparaîtra du site et pourra être restauré depuis la corbeille.')) {
+        return
+    }
+
+    isSaving.value = true
+
+    try {
+        await api.trashItem(props.module, props.id)
+        isDirty.value = false
+        modulesStore.loadModules()
+        await router.push({ name: 'module.index', params: { module: props.module } })
+        toast.success('Mis à la corbeille')
+    } catch (error) {
+        console.error(error)
+        toast.error('La suppression a échoué. Réessayez dans un instant.')
+    } finally {
+        isSaving.value = false
+    }
+}
+
 async function restoreRevision(revisionId: string): Promise<void> {
     const message = isDirty.value
         ? 'Restaurer cette version ? Les modifications non enregistrées seront perdues.'
@@ -315,6 +358,11 @@ onMounted(async () => {
 
             <template v-if="isLoaded">
                 <span class="flex items-center gap-1.5 px-2 text-sm before:size-1.5 before:rounded-[50%]" :class="saveStatusClass">{{ saveStatus.label }}</span>
+
+                <template v-if="id">
+                    <UiIconButton label="Dupliquer" :disabled="isSaving" @click="duplicate"><UiIcon name="copy" :size="14" /></UiIconButton>
+                    <UiIconButton v-if="schema?.trashable" label="Mettre à la corbeille" :disabled="isSaving" @click="trash"><UiIcon name="trash" :size="14" /></UiIconButton>
+                </template>
 
                 <template v-if="isPublishable">
                     <UiButton :disabled="isSaving" @click="save">Enregistrer</UiButton>

@@ -1,5 +1,5 @@
 import { config } from './config'
-import type { ActivityEntry, AdminUser, Asset, FormValues, Item, ItemPlacement, ItemSummary, ListingMeta, ListingQuery, ContentReference, ReferencedContent, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
+import type { ActivityEntry, AdminUser, Asset, FormValues, BulkAction, Item, ItemPlacement, ItemSummary, ListingMeta, ListingQuery, ContentReference, ReferencedContent, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
 
 export class ApiError extends Error {
     constructor(
@@ -147,6 +147,15 @@ export const api = {
 
         return request<{ data: ItemSummary[]; meta: ListingMeta }>('GET', `modules/${module}/items${params.size ? `?${params}` : ''}`)
     },
+
+    /** Moves an item to the trash. */
+    trashItem: (module: string, id: string) => request<unknown>('DELETE', `modules/${module}/items/${id}`),
+
+    duplicateItem: (module: string, id: string) => request<{ data: Item }>('POST', `modules/${module}/items/${id}/duplicate`).then((response) => response.data),
+
+    /** Applies a listing action to several items; the ones that could not take it are listed in `failed`. */
+    bulkItems: (module: string, action: BulkAction, ids: string[]) =>
+        request<{ data: { done: number; failed: string[] } }>('POST', `modules/${module}/items/bulk`, { action, ids }).then((response) => response.data),
 
     /** Saves the order of a sortable module: every item in its new order, parents before their children. */
     reorderItems: (module: string, items: ItemPlacement[]) => request<unknown>('PUT', `modules/${module}/items/order`, { items }),

@@ -7,6 +7,7 @@ use Gmarineau\AdminPhp\Concerns\HasPublication;
 use Gmarineau\AdminPhp\Concerns\HasRelated;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Translatable\HasTranslations;
 
 class Article extends Model
@@ -16,6 +17,7 @@ class Article extends Model
     use HasRelated;
     use HasTranslations;
     use HasUlids;
+    use SoftDeletes;
 
     /**
      * @var array<int, string>

@@ -143,7 +143,8 @@ async function logout(): Promise<void> {
             </div>
         </aside>
 
-        <RouterView :key="$route.fullPath" />
+        <!-- Keyed by path, not full path: a listing keeps its search and filters in the query and must not remount on each change. -->
+        <RouterView :key="$route.path" />
     </div>
 
     <!-- Only public pages render without a user, so a page never loads data while logged out. -->

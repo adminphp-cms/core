@@ -22,7 +22,7 @@ class ListModuleItems
     public const PER_PAGE = 30;
 
     /** Publication views of a publishable module, as tabs above the listing. */
-    public const VIEWS = ['all', 'published', 'unpublished', 'pending'];
+    public const VIEWS = ['all', 'published', 'unpublished', 'pending', 'trash'];
 
     public function __construct(protected AdminPhp $adminPhp) {}
 
@@ -33,20 +33,19 @@ class ListModuleItems
     public function handle(Module $module, array $options = []): array
     {
         $search = trim($options['search'] ?? '');
-        $view = in_array($options['view'] ?? 'all', self::VIEWS, true) ? ($options['view'] ?? 'all') : 'all';
-        $requestedSort = $options['sort'] ?? null;
         $isPublishable = $module->isPublishable();
+        $isTrashable = $module->isTrashable();
+        $view = $this->view($options['view'] ?? 'all', $isPublishable, $isTrashable);
+        $requestedSort = $options['sort'] ?? null;
 
         $query = $module->modelClass()::query()
             ->when($isPublishable, fn (Builder $query) => $query->withExists('draftRevision as has_draft'))
             ->when($search !== '', fn (Builder $query) => $module->search($query, $search));
 
         $activeFilters = $this->applyFilters($query, $module, $options['filters'] ?? []);
-        $counts = $isPublishable ? $this->viewCounts(clone $query) : null;
+        $counts = $isPublishable || $isTrashable ? $this->viewCounts(clone $query, $isPublishable, $isTrashable) : null;
 
-        if ($isPublishable) {
-            $this->applyView($query, $view);
-        }
+        $this->applyView($query, $view);
 
         $isTree = $module->isSortable() && $search === '' && $activeFilters === [] && $view === 'all' && $requestedSort === null;
 
@@ -66,7 +65,7 @@ class ListModuleItems
                 'lastPage' => $paginator->lastPage(),
                 'total' => $paginator->total(),
                 'sort' => $sort,
-                'view' => $isPublishable ? $view : null,
+                'view' => $counts !== null ? $view : null,
                 'filters' => (object) $activeFilters,
                 'counts' => $counts,
                 'isTree' => $isTree,
@@ -96,11 +95,22 @@ class ListModuleItems
     }
 
     /**
+     * The requested view when the module has it, else all items.
+     */
+    protected function view(string $requested, bool $isPublishable, bool $isTrashable): string
+    {
+        $available = ['all', ...($isPublishable ? ['published', 'unpublished', 'pending'] : []), ...($isTrashable ? ['trash'] : [])];
+
+        return in_array($requested, $available, true) ? $requested : 'all';
+    }
+
+    /**
      * @param  Builder<Model>  $query
      */
     protected function applyView(Builder $query, string $view): void
     {
         match ($view) {
+            'trash' => $query->onlyTrashed(),
             'published' => $query->where('status', PublicationStatus::Published->value),
             'unpublished' => $query->where('status', PublicationStatus::Draft->value),
             'pending' => $query->whereHas('draftRevision'),
@@ -109,21 +119,24 @@ class ListModuleItems
     }
 
     /**
-     * How many items each view holds, with the search and filters applied.
+     * How many items each view of the module holds, with the search and filters applied.
      *
      * @param  Builder<Model>  $query
-     * @return array{all: int, published: int, unpublished: int, pending: int}
+     * @return array<string, int>
      */
-    protected function viewCounts(Builder $query): array
+    protected function viewCounts(Builder $query, bool $isPublishable, bool $isTrashable): array
     {
         $query->withoutEagerLoads();
         $query->getQuery()->columns = null;
 
         return [
             'all' => (clone $query)->count(),
-            'published' => (clone $query)->where('status', PublicationStatus::Published->value)->count(),
-            'unpublished' => (clone $query)->where('status', PublicationStatus::Draft->value)->count(),
-            'pending' => (clone $query)->whereHas('draftRevision')->count(),
+            ...($isPublishable ? [
+                'published' => (clone $query)->where('status', PublicationStatus::Published->value)->count(),
+                'unpublished' => (clone $query)->where('status', PublicationStatus::Draft->value)->count(),
+                'pending' => (clone $query)->whereHas('draftRevision')->count(),
+            ] : []),
+            ...($isTrashable ? ['trash' => (clone $query)->onlyTrashed()->count()] : []),
         ];
     }
 

@@ -111,7 +111,7 @@ export interface ImageFieldSchema extends BaseFieldSchema {
     type: 'image'
 }
 
-export interface Asset {
+export interface Media {
     id: string
     url: string
     /** The smallest copy, the original until it is made. */
@@ -125,13 +125,13 @@ export interface Asset {
     /** How many contents use the image (listing and details only). */
     usageCount?: number
     /** The contents using the image (details only). */
-    usages?: AssetUsage[]
+    usages?: MediaUsage[]
 }
 
 /**
  * A content showing an image: an item of a module, or the settings (no id).
  */
-export interface AssetUsage {
+export interface MediaUsage {
     type: string
     id: string | null
     title: string

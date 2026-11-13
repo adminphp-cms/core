@@ -117,7 +117,7 @@ class Blocks extends Field
         return $attributes;
     }
 
-    public function assetIds(mixed $value): array
+    public function mediaIds(mixed $value): array
     {
         $ids = [];
 
@@ -126,7 +126,7 @@ class Blocks extends Field
             $content = is_array($item['content'] ?? null) ? $item['content'] : [];
 
             foreach ($block?->fields() ?? [] as $name => $field) {
-                $ids = [...$ids, ...$field->assetIds($content[$name] ?? null)];
+                $ids = [...$ids, ...$field->mediaIds($content[$name] ?? null)];
             }
         }
 

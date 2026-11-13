@@ -1,8 +1,8 @@
 <?php
 
 use Gmarineau\AdminPhp\Fields\Image;
-use Gmarineau\AdminPhp\Models\Asset;
 use Gmarineau\AdminPhp\Models\Block;
+use Gmarineau\AdminPhp\Models\Media;
 use Gmarineau\AdminPhp\Tests\Fixtures\Article;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +16,7 @@ beforeEach(function () {
 
 function uploadImage(UploadedFile $file): TestResponse
 {
-    return test()->post('/admin/api/assets', ['file' => $file], ['Accept' => 'application/json']);
+    return test()->post('/admin/api/medias', ['file' => $file], ['Accept' => 'application/json']);
 }
 
 it('stores an uploaded image with a random name and remembers its details', function () {
@@ -27,20 +27,20 @@ it('stores an uploaded image with a random name and remembers its details', func
         ->assertJsonPath('data.height', 800)
         ->assertJsonPath('data.mimeType', 'image/jpeg');
 
-    $asset = Asset::query()->findOrFail($response->json('data.id'));
+    $media = Media::query()->findOrFail($response->json('data.id'));
 
-    Storage::disk('public')->assertExists($asset->path);
+    Storage::disk('public')->assertExists($media->path);
 
-    expect($asset->path)->toStartWith('adminphp/')
+    expect($media->path)->toStartWith('adminphp/')
         ->not->toContain('Façade')
-        ->and($asset->user_id)->toBe($this->admin->id)
-        ->and($response->json('data.url'))->toEndWith($asset->path);
+        ->and($media->user_id)->toBe($this->admin->id)
+        ->and($response->json('data.url'))->toEndWith($media->path);
 });
 
 it('refuses files that are not accepted images', function (UploadedFile $file) {
     uploadImage($file)->assertUnprocessable()->assertJsonValidationErrors(['file']);
 
-    expect(Asset::query()->count())->toBe(0);
+    expect(Media::query()->count())->toBe(0);
 })->with([
     'SVG, which can carry scripts' => fn () => UploadedFile::fake()->createWithContent('logo.svg', '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'),
     'PDF' => fn () => UploadedFile::fake()->create('devis.pdf', 100, 'application/pdf'),
@@ -52,12 +52,12 @@ it('lists the newest images first and searches them by name', function () {
     $this->travel(1)->minute();
     uploadImage(UploadedFile::fake()->image('charpente.png'));
 
-    $this->getJson('/admin/api/assets')
+    $this->getJson('/admin/api/medias')
         ->assertOk()
         ->assertJsonPath('data.0.name', 'charpente.png')
         ->assertJsonPath('meta.total', 2);
 
-    $this->getJson('/admin/api/assets?search=JARD')
+    $this->getJson('/admin/api/medias?search=JARD')
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.name', 'jardin.png');
 });
@@ -65,33 +65,33 @@ it('lists the newest images first and searches them by name', function () {
 it('shows one image and answers 404 for an unknown one', function () {
     $id = uploadImage(UploadedFile::fake()->image('jardin.png'))->json('data.id');
 
-    $this->getJson("/admin/api/assets/{$id}")->assertOk()->assertJsonPath('data.id', $id);
-    $this->getJson('/admin/api/assets/'.Str::ulid())->assertNotFound();
+    $this->getJson("/admin/api/medias/{$id}")->assertOk()->assertJsonPath('data.id', $id);
+    $this->getJson('/admin/api/medias/'.Str::ulid())->assertNotFound();
 });
 
 it('keeps the media library for logged in admins only', function () {
     auth('adminphp')->logout();
 
-    $this->getJson('/admin/api/assets')->assertUnauthorized();
+    $this->getJson('/admin/api/medias')->assertUnauthorized();
     uploadImage(UploadedFile::fake()->image('jardin.png'))->assertUnauthorized();
 });
 
-it('saves an image block and gives the site its asset', function () {
-    $assetId = uploadImage(UploadedFile::fake()->image('jardin.png'))->json('data.id');
+it('saves an image block and gives the site its media', function () {
+    $mediaId = uploadImage(UploadedFile::fake()->image('jardin.png'))->json('data.id');
 
     $this->postJson('/admin/api/modules/article/items', [
         'title' => ['fr' => 'Un jardin'],
-        'content' => [['type' => 'image', 'content' => ['image' => $assetId, 'alt' => ['fr' => 'Un massif fleuri']]]],
-    ])->assertCreated()->assertJsonPath('data.values.content.0.content.image', $assetId);
+        'content' => [['type' => 'image', 'content' => ['image' => $mediaId, 'alt' => ['fr' => 'Un massif fleuri']]]],
+    ])->assertCreated()->assertJsonPath('data.values.content.0.content.image', $mediaId);
 
     $block = Article::query()->sole()->blocks()->sole();
 
-    expect($block->asset('image')?->id)->toBe($assetId)
+    expect($block->media('image')?->id)->toBe($mediaId)
         ->and($block->translated('alt'))->toBe('Un massif fleuri')
-        ->and($block->asset('alt'))->toBeNull();
+        ->and($block->media('alt'))->toBeNull();
 });
 
-it('refuses an image block pointing to an unknown asset', function () {
+it('refuses an image block pointing to an unknown media', function () {
     $this->postJson('/admin/api/modules/article/items', [
         'title' => ['fr' => 'Un jardin'],
         'content' => [['type' => 'image', 'content' => ['image' => (string) Str::ulid()]]],
@@ -102,6 +102,6 @@ it('cannot make an image translatable', function () {
     Image::make('image')->translatable();
 })->throws(LogicException::class);
 
-it('returns no asset for an empty image field', function () {
-    expect((new Block(['content' => ['image' => null]]))->asset('image'))->toBeNull();
+it('returns no media for an empty image field', function () {
+    expect((new Block(['content' => ['image' => null]]))->media('image'))->toBeNull();
 });

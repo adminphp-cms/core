@@ -2,7 +2,7 @@
 
 namespace Gmarineau\AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Models\Asset;
+use Gmarineau\AdminPhp\Models\Media;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Image\Image;
@@ -11,27 +11,27 @@ use Throwable;
 
 /**
  * Makes the smaller copies of an image declared in adminphp.media.sizes, on the
- * asset's own disk, and replaces the ones made before. Never enlarges an image.
+ * media's own disk, and replaces the ones made before. Never enlarges an image.
  * When an image cannot be read, it keeps its original only and the site uses it.
  */
-class GenerateAssetVariants
+class GenerateMediaVariants
 {
-    public function handle(Asset $asset): Asset
+    public function handle(Media $media): Media
     {
-        $disk = Storage::disk($asset->disk);
-        $previousPaths = array_column($asset->variants ?? [], 'path');
+        $disk = Storage::disk($media->disk);
+        $previousPaths = array_column($media->variants ?? [], 'path');
         $variants = [];
 
-        if ($this->canResize($asset)) {
+        if ($this->canResize($media)) {
             $workDirectory = (new TemporaryDirectory)->create();
 
             try {
-                $source = $workDirectory->path('source.'.pathinfo($asset->path, PATHINFO_EXTENSION));
-                file_put_contents($source, $disk->get($asset->path));
+                $source = $workDirectory->path('source.'.pathinfo($media->path, PATHINFO_EXTENSION));
+                file_put_contents($source, $disk->get($media->path));
 
-                $variants = $this->resize($asset, $source, $workDirectory);
+                $variants = $this->resize($media, $source, $workDirectory);
             } catch (Throwable $exception) {
-                Log::warning("AdminPhp could not resize asset [{$asset->id}]: {$exception->getMessage()}");
+                Log::warning("AdminPhp could not resize media [{$media->id}]: {$exception->getMessage()}");
                 $variants = [];
             } finally {
                 $workDirectory->delete();
@@ -44,22 +44,22 @@ class GenerateAssetVariants
             $disk->delete(array_values($stalePaths));
         }
 
-        $asset->forceFill(['variants' => $variants === [] ? null : $variants])->save();
+        $media->forceFill(['variants' => $variants === [] ? null : $variants])->save();
 
-        return $asset;
+        return $media;
     }
 
     /**
      * @return array<string, array{path: string, width: int, height: int}>
      */
-    protected function resize(Asset $asset, string $source, TemporaryDirectory $workDirectory): array
+    protected function resize(Media $media, string $source, TemporaryDirectory $workDirectory): array
     {
-        $disk = Storage::disk($asset->disk);
+        $disk = Storage::disk($media->disk);
         $format = (string) config('adminphp.media.variant_format', 'webp');
         $variants = [];
 
         foreach ($this->sizes() as $name => $width) {
-            if ($asset->width !== null && $width >= $asset->width) {
+            if ($media->width !== null && $width >= $media->width) {
                 continue;
             }
 
@@ -74,7 +74,7 @@ class GenerateAssetVariants
                 ->save($target);
 
             [$variantWidth, $variantHeight] = getimagesize($target) ?: [$width, null];
-            $path = $this->variantPath($asset, $name, $format);
+            $path = $this->variantPath($media, $name, $format);
 
             $disk->put($path, (string) file_get_contents($target));
 
@@ -84,9 +84,9 @@ class GenerateAssetVariants
         return $variants;
     }
 
-    protected function canResize(Asset $asset): bool
+    protected function canResize(Media $media): bool
     {
-        return str_starts_with($asset->mime_type, 'image/') && $asset->mime_type !== 'image/gif' && $asset->width !== null;
+        return str_starts_with($media->mime_type, 'image/') && $media->mime_type !== 'image/gif' && $media->width !== null;
     }
 
     /**
@@ -101,12 +101,12 @@ class GenerateAssetVariants
     }
 
     /**
-     * Next to the original: adminphp/variants/{asset id}/md.webp
+     * Next to the original: adminphp/variants/{media id}/md.webp
      */
-    protected function variantPath(Asset $asset, string $name, string $format): string
+    protected function variantPath(Media $media, string $name, string $format): string
     {
         $directory = trim((string) config('adminphp.media.directory', 'adminphp'), '/');
 
-        return "{$directory}/variants/{$asset->id}/{$name}.{$format}";
+        return "{$directory}/variants/{$media->id}/{$name}.{$format}";
     }
 }

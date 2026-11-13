@@ -1,7 +1,7 @@
 <?php
 
 use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\Asset;
+use Gmarineau\AdminPhp\Models\Media;
 use Gmarineau\AdminPhp\Modules\Column;
 use Gmarineau\AdminPhp\Modules\Filter;
 use Gmarineau\AdminPhp\Tests\Fixtures\Article;
@@ -88,11 +88,11 @@ it('refuses a column for a field that has no listing format and a filter on a te
 
 it('shows each cell in the format of its field', function () {
     Carbon::setTestNow('2026-11-13 09:30:00');
-    $asset = Asset::query()->forceCreate(['disk' => 'public', 'path' => 'adminphp/cover.jpg', 'name' => 'cover.jpg', 'mime_type' => 'image/jpeg', 'size' => 1000]);
+    $media = Media::query()->forceCreate(['disk' => 'public', 'path' => 'adminphp/cover.jpg', 'name' => 'cover.jpg', 'mime_type' => 'image/jpeg', 'size' => 1000]);
 
     Article::query()->forceCreate([
         'title' => ['en' => 'English only'],
-        'cover' => $asset->id,
+        'cover' => $media->id,
         'category' => 'garden',
         'tags' => [3, 1],
         'is_featured' => true,
@@ -100,7 +100,7 @@ it('shows each cell in the format of its field', function () {
     ]);
 
     expect(listArticles()->json('data.0.cells'))->toBe([
-        'cover' => $asset->url(),
+        'cover' => $media->url(),
         'title' => 'English only',
         'status' => null,
         'category' => 'Jardin',

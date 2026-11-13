@@ -245,12 +245,12 @@ abstract class Field
     }
 
     /**
-     * Ids of the media library assets the value uses, so an image is not deleted while
+     * Ids of the medias of the library the value uses, so an image is not deleted while
      * a content shows it. Fields holding other fields (blocks, repeaters) collect theirs.
      *
      * @return array<int, string>
      */
-    public function assetIds(mixed $value): array
+    public function mediaIds(mixed $value): array
     {
         return [];
     }

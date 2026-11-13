@@ -87,14 +87,14 @@ class Block extends Model
     }
 
     /**
-     * Media library asset chosen in an Image field of the block, e.g. to render
-     * <img src="{{ $block->asset('image')?->url() }}">.
+     * Media chosen in an Image field of the block, e.g. to render
+     * <img src="{{ $block->media('image')?->url() }}">.
      */
-    public function asset(string $field): ?Asset
+    public function media(string $field): ?Media
     {
         $id = $this->content[$field] ?? null;
 
-        return is_string($id) && $id !== '' ? Asset::query()->find($id) : null;
+        return is_string($id) && $id !== '' ? Media::query()->find($id) : null;
     }
 
     /**

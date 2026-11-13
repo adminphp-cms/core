@@ -18,7 +18,7 @@ use LogicException;
  */
 class DeleteItemsPermanently
 {
-    public function __construct(protected SyncAssetUsages $syncAssetUsages) {}
+    public function __construct(protected SyncMediaUsages $syncMediaUsages) {}
 
     /**
      * @param  array<int, string>  $ids
@@ -41,7 +41,7 @@ class DeleteItemsPermanently
                 Block::query()->whereMorphedTo('blockable', $item)->delete();
                 Revision::query()->whereMorphedTo('revisionable', $item)->delete();
                 Lock::query()->whereMorphedTo('lockable', $item)->delete();
-                $this->syncAssetUsages->forget($module, $item);
+                $this->syncMediaUsages->forget($module, $item);
                 Related::query()
                     ->where(fn (Builder $query) => $query->whereMorphedTo('subject', $item)->orWhereMorphedTo('related', $item))
                     ->delete();

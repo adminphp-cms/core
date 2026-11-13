@@ -2,7 +2,7 @@
 
 namespace Gmarineau\AdminPhp\Console;
 
-use Gmarineau\AdminPhp\Actions\SyncAssetUsages;
+use Gmarineau\AdminPhp\Actions\SyncMediaUsages;
 use Gmarineau\AdminPhp\AdminPhp;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +15,7 @@ class SyncMediaUsagesCommand extends Command
 
     protected $description = 'Record again which contents use each media library image, e.g. after installing this feature or importing content';
 
-    public function handle(AdminPhp $adminPhp, SyncAssetUsages $syncAssetUsages): int
+    public function handle(AdminPhp $adminPhp, SyncMediaUsages $syncMediaUsages): int
     {
         $total = 0;
 
@@ -28,13 +28,13 @@ class SyncMediaUsagesCommand extends Command
 
             foreach ($query->lazyById() as $item) {
                 /** @var Model $item */
-                $syncAssetUsages->forItem($module, $item);
+                $syncMediaUsages->forItem($module, $item);
                 $total++;
             }
         }
 
         if (($settings = $adminPhp->settingsForm()) !== null) {
-            $syncAssetUsages->forSettings($settings);
+            $syncMediaUsages->forSettings($settings);
         }
 
         $this->components->info("Checked {$total} ".str('content')->plural($total).'.');

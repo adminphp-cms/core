@@ -1,5 +1,5 @@
 import { config } from './config'
-import type { ActivityEntry, AdminUser, Asset, FormValues, BulkAction, EditLock, Item, ItemPlacement, ItemSummary, ListingMeta, ListingQuery, ContentReference, ReferencedContent, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
+import type { ActivityEntry, AdminUser, Media, FormValues, BulkAction, EditLock, Item, ItemPlacement, ItemSummary, ListingMeta, ListingQuery, ContentReference, ReferencedContent, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
 
 export class ApiError extends Error {
     constructor(
@@ -104,18 +104,18 @@ export const api = {
 
     activateUser: (id: string) => request<{ data: ManagedUser }>('POST', `users/${id}/activate`).then((response) => response.data),
 
-    assets: (search = '') =>
-        request<{ data: Asset[]; meta: { total: number } }>('GET', `assets${search ? `?search=${encodeURIComponent(search)}` : ''}`),
+    medias: (search = '') =>
+        request<{ data: Media[]; meta: { total: number } }>('GET', `medias${search ? `?search=${encodeURIComponent(search)}` : ''}`),
 
-    asset: (id: string) => request<{ data: Asset }>('GET', `assets/${id}`).then((response) => response.data),
+    media: (id: string) => request<{ data: Media }>('GET', `medias/${id}`).then((response) => response.data),
 
-    deleteAsset: (id: string) => request<unknown>('DELETE', `assets/${id}`),
+    deleteMedia: (id: string) => request<unknown>('DELETE', `medias/${id}`),
 
-    uploadAsset: (file: File) => {
+    uploadMedia: (file: File) => {
         const body = new FormData()
         body.append('file', file)
 
-        return request<{ data: Asset }>('POST', 'assets', body).then((response) => response.data)
+        return request<{ data: Media }>('POST', 'medias', body).then((response) => response.data)
     },
 
     activity: () => request<{ data: ActivityEntry[] }>('GET', 'activity').then((response) => response.data),

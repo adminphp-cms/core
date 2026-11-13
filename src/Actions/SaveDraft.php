@@ -22,7 +22,7 @@ class SaveDraft
         protected SaveModuleContent $saveModuleContent,
         protected GetFormData $getFormData,
         protected AdminPhp $adminPhp,
-        protected SyncAssetUsages $syncAssetUsages,
+        protected SyncMediaUsages $syncMediaUsages,
     ) {}
 
     /**
@@ -58,7 +58,7 @@ class SaveDraft
                 $draft->update(['payload' => $payload, 'user_id' => $userId]);
             }
 
-            $this->syncAssetUsages->forItem($module, $model);
+            $this->syncMediaUsages->forItem($module, $model);
         });
 
         return $model;

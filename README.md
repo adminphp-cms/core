@@ -128,16 +128,16 @@ Text::make('rooms')->number(min: 1, max: 20, step: 1)->default(1), // Stored as 
 Your models stay regular Eloquent models:
 
 ```php
-use Gmarineau\AdminPhp\Models\Asset;
+use Gmarineau\AdminPhp\Models\Media;
 
 $project = Project::query()->published()->where('slug', $slug)->firstOrFail();
-$cover = Asset::query()->find($project->cover); // An Image field stores the id of its asset.
+$cover = Media::query()->find($project->cover); // An Image field stores the id of its media.
 ```
 
 ```blade
 <h1>{{ $project->title }}</h1>
 
-<x-adminphp::image :asset="$cover" sizes="100vw" />
+<x-adminphp::image :media="$cover" sizes="100vw" />
 
 @foreach ($project->blocks as $block)
     @if ($block->type === 'text')

@@ -96,7 +96,7 @@ return [
 
         /*
         | Smaller copies made of every uploaded image, by name => width in px, for
-        | responsive images on the site ($asset->url('md'), $asset->srcset(),
+        | responsive images on the site ($media->url('md'), $media->srcset(),
         | <x-adminphp::image>). An image is never enlarged: sizes wider than the
         | original are skipped. Run php artisan adminphp:media:regenerate after
         | changing them. GIFs (maybe animated) keep only their original.

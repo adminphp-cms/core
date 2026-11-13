@@ -1,28 +1,28 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { api } from '../../api'
-import { useAssetsStore } from '../../stores/assets'
-import type { Asset } from '../../types'
+import { useMediasStore } from '../../stores/medias'
+import type { Media } from '../../types'
 import EmptyState from '../ui/EmptyState.vue'
 import UiIcon from '../ui/UiIcon.vue'
 import UiIconButton from '../ui/UiIconButton.vue'
-import AssetGrid from './AssetGrid.vue'
+import MediaGrid from './MediaGrid.vue'
 import UploadDropzone from './UploadDropzone.vue'
 
 defineProps<{ selectedId?: string | null }>()
 
-const emit = defineEmits<{ pick: [asset: Asset]; close: [] }>()
+const emit = defineEmits<{ pick: [media: Media]; close: [] }>()
 
-const assetsStore = useAssetsStore()
+const mediasStore = useMediasStore()
 const dialog = ref<HTMLDialogElement | null>(null)
-const assets = ref<Asset[]>([])
+const medias = ref<Media[]>([])
 const search = ref('')
 const isLoaded = ref(false)
 
 async function load(): Promise<void> {
-    const response = await api.assets(search.value.trim())
-    response.data.forEach(assetsStore.remember)
-    assets.value = response.data
+    const response = await api.medias(search.value.trim())
+    response.data.forEach(mediasStore.remember)
+    medias.value = response.data
     isLoaded.value = true
 }
 
@@ -33,8 +33,8 @@ watch(search, () => {
     searchTimer = setTimeout(load, 250)
 })
 
-function pick(asset: Asset): void {
-    emit('pick', asset)
+function pick(media: Media): void {
+    emit('pick', media)
     dialog.value?.close()
 }
 
@@ -65,7 +65,7 @@ onMounted(() => {
         <div class="flex flex-col gap-4 overflow-y-auto px-5 pt-4 pb-5">
             <UploadDropzone compact @uploaded="pick" />
 
-            <AssetGrid v-if="assets.length" :assets="assets" :selected-id="selectedId" @select="pick" />
+            <MediaGrid v-if="medias.length" :medias="medias" :selected-id="selectedId" @select="pick" />
             <EmptyState
                 v-else-if="isLoaded"
                 icon="image"

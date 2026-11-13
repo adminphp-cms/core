@@ -8,16 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * An asset shown by a content: an item of a module (its live values or its pending draft)
+ * A media shown by a content: an item of a module (its live values or its pending draft)
  * or the settings. Kept up to date on every save, so the media library knows what an image
  * is used by before deleting it.
  *
  * @property string $id
- * @property string $asset_id
+ * @property string $media_id
  * @property string $usable_type A module name, or "settings".
  * @property string $usable_id The id of the item, or "settings".
  */
-class AssetUsage extends Model
+class MediaUsage extends Model
 {
     use HasUlids;
 
@@ -26,21 +26,21 @@ class AssetUsage extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'asset_id',
+        'media_id',
         'usable_type',
         'usable_id',
     ];
 
     public function getTable(): string
     {
-        return app(AdminPhp::class)->table('asset_usages');
+        return app(AdminPhp::class)->table('media_usages');
     }
 
     /**
-     * @return BelongsTo<Asset, $this>
+     * @return BelongsTo<Media, $this>
      */
-    public function asset(): BelongsTo
+    public function media(): BelongsTo
     {
-        return $this->belongsTo(Asset::class);
+        return $this->belongsTo(Media::class);
     }
 }

@@ -134,6 +134,16 @@ class Browser extends Field
 
     public function fillModel(Model $model, mixed $value): void {}
 
+    /**
+     * HasRelated::related() reads the previewed choices instead of the stored ones.
+     */
+    public function fillPreview(Model $model, mixed $value): void
+    {
+        if (method_exists($model, 'setPreviewRelated')) {
+            $model->setPreviewRelated($this->name, $this->dehydrate($value));
+        }
+    }
+
     public function afterModelSaved(Model $model, mixed $value): void
     {
         app(SyncRelated::class)->handle($model, $this, $this->dehydrate($value));

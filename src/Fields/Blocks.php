@@ -5,7 +5,9 @@ namespace Gmarineau\AdminPhp\Fields;
 use Gmarineau\AdminPhp\Actions\SyncBlocks;
 use Gmarineau\AdminPhp\Blocks\Block as BlockDefinition;
 use Gmarineau\AdminPhp\Models\Block;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use LogicException;
 
@@ -116,6 +118,36 @@ class Blocks extends Field
     }
 
     public function fillModel(Model $model, mixed $value): void {}
+
+    /**
+     * Shows the blocks of the zone through the model's `blocks` relation (HasBlocks),
+     * after the blocks of the zones filled before it.
+     */
+    public function fillPreview(Model $model, mixed $value): void
+    {
+        $blocks = $model->relationLoaded('blocks') ? $model->getRelation('blocks') : new Collection;
+
+        foreach (array_values(is_array($value) ? $value : []) as $position => $item) {
+            $definition = is_array($item) && is_string($item['type'] ?? null) ? $this->block($item['type']) : null;
+
+            if ($definition === null) {
+                continue;
+            }
+
+            $block = new Block([
+                'editor_name' => $this->name,
+                'type' => $item['type'],
+                'schema_version' => $definition->version(),
+                'position' => $position,
+                'content' => $definition->dehydrate(is_array($item['content'] ?? null) ? $item['content'] : []),
+            ]);
+            $block->id = is_string($item['id'] ?? null) ? $item['id'] : (string) Str::ulid();
+
+            $blocks->push($block);
+        }
+
+        $model->setRelation('blocks', $blocks);
+    }
 
     public function afterModelSaved(Model $model, mixed $value): void
     {

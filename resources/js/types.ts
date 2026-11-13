@@ -194,6 +194,8 @@ export interface ModuleSchema {
     nestingDepth: number
     /** Deleted items go to a trash, from where they can be restored. */
     trashable: boolean
+    /** The site can show an item with unsaved changes. */
+    previewable: boolean
     listing: ListingSchema
     fields: FieldSchema[]
 }

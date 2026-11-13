@@ -148,6 +148,10 @@ export const api = {
         return request<{ data: ItemSummary[]; meta: ListingMeta }>('GET', `modules/${module}/items${params.size ? `?${params}` : ''}`)
     },
 
+    /** Renders the site's page of an item with the form values, saved or not (no id: a new item). */
+    previewItem: (module: string, id: string | undefined, values: FormValues, locale: string) =>
+        request<{ data: { html: string } }>('POST', id ? `modules/${module}/items/${id}/preview` : `modules/${module}/preview`, { values, locale }).then((response) => response.data.html),
+
     /** Moves an item to the trash. */
     trashItem: (module: string, id: string) => request<unknown>('DELETE', `modules/${module}/items/${id}`),
 

@@ -5,6 +5,7 @@ use Gmarineau\AdminPhp\Http\Controllers\AccountController;
 use Gmarineau\AdminPhp\Http\Controllers\ActivityController;
 use Gmarineau\AdminPhp\Http\Controllers\AssetController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemOrderController;
+use Gmarineau\AdminPhp\Http\Controllers\ItemPreviewController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemPublicationController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemRevisionController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemTrashController;
@@ -60,6 +61,8 @@ Route::prefix('api')->name('api.')->group(function () {
         Route::get('modules/{module}/items', [ModuleItemController::class, 'index'])->name('items.index');
         Route::post('modules/{module}/items', [ModuleItemController::class, 'store'])->name('items.store');
         Route::put('modules/{module}/items/order', [ItemOrderController::class, 'update'])->name('items.order');
+        Route::post('modules/{module}/preview', ItemPreviewController::class)->name('items.preview.new');
+        Route::post('modules/{module}/items/{id}/preview', ItemPreviewController::class)->name('items.preview');
         Route::post('modules/{module}/items/bulk', [ItemTrashController::class, 'bulk'])->name('items.bulk');
         Route::get('modules/{module}/items/{id}', [ModuleItemController::class, 'show'])->name('items.show');
         Route::put('modules/{module}/items/{id}', [ModuleItemController::class, 'update'])->name('items.update');

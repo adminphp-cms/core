@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { api, ApiError } from '../api'
 import { isFilled } from '../composables/useLocalizedValue'
 import { config } from '../config'
+import PreviewPanel from '../components/PreviewPanel.vue'
 import PublicationPanel from '../components/PublicationPanel.vue'
 import { provideFormContext } from '../composables/useFormContext'
 import { useToast } from '../composables/useToast'
@@ -34,6 +35,7 @@ provideFormContext({ values, isNew: computed(() => !props.id) })
 const toast = useToast()
 const publication = ref<Publication | null>(null)
 const revisions = ref<RevisionSummary[]>([])
+const isPreviewOpen = ref(false)
 const publishStartAt = ref('')
 const publishEndAt = ref('')
 
@@ -359,6 +361,8 @@ onMounted(async () => {
             <template v-if="isLoaded">
                 <span class="flex items-center gap-1.5 px-2 text-sm before:size-1.5 before:rounded-[50%]" :class="saveStatusClass">{{ saveStatus.label }}</span>
 
+                <UiButton v-if="schema?.previewable" @click="isPreviewOpen = true"><UiIcon name="eye" :size="14" /> Aperçu</UiButton>
+
                 <template v-if="id">
                     <UiIconButton label="Dupliquer" :disabled="isSaving" @click="duplicate"><UiIcon name="copy" :size="14" /></UiIconButton>
                     <UiIconButton v-if="schema?.trashable" label="Mettre à la corbeille" :disabled="isSaving" @click="trash"><UiIcon name="trash" :size="14" /></UiIconButton>
@@ -412,5 +416,6 @@ onMounted(async () => {
             />
         </div>
 
+        <PreviewPanel v-if="isPreviewOpen" :module="module" :id="id" :values="values" :locale="editor.locale" @close="isPreviewOpen = false" />
     </main>
 </template>

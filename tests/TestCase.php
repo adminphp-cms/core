@@ -24,6 +24,7 @@ abstract class TestCase extends Orchestra
     protected function defineEnvironment($app): void
     {
         $app['config']->set('app.key', 'base64:'.base64_encode(str_repeat('a', 32)));
+        $app['config']->set('view.paths', [__DIR__.'/Fixtures/views']);
     }
 
     protected function defineDatabaseMigrations(): void

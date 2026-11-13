@@ -23,6 +23,8 @@ class ArticleModule extends Module
 
     protected string $icon = 'newspaper';
 
+    protected ?string $previewView = 'article-preview';
+
     public function columns(): array
     {
         return [

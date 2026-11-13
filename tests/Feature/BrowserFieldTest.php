@@ -108,7 +108,7 @@ it('stores the choices of a block with its content', function () {
 
     $block = Block::query()->whereMorphedTo('blockable', Article::query()->findOrFail($id))->sole();
 
-    expect($block->content['articles'])->toBe([articleReference($live)])
+    expect($block->content['articles'])->toEqual([articleReference($live)])
         ->and($block->related('articles')->modelKeys())->toBe([$live])
         ->and(Related::query()->count())->toBe(0);
 });

@@ -12,7 +12,9 @@ return new class extends Migration
         $table = app(AdminPhp::class)->table('blocks');
 
         Schema::create($table, function (Blueprint $blueprint) use ($table) {
-            $blueprint->ulid('id')->primary();
+            $blueprint->ulid('id');
+            // Declared before the foreign key to the same table: Postgres needs it first.
+            $blueprint->primary('id');
             $blueprint->string('blockable_type', 100);
             $blueprint->ulid('blockable_id');
             $blueprint->string('editor_name', 60)->default('default');

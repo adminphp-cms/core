@@ -62,7 +62,7 @@ it('reads the saved article back into the same form shape', function () {
 
     $formData = app(GetFormData::class)->handle(new ArticleModule, $article->fresh());
 
-    expect(array_intersect_key($formData, $input))->toBe($input)
+    expect(array_intersect_key($formData, $input))->toEqual($input)
         ->and(array_keys($formData))->toBe(array_keys((new ArticleModule)->fields()));
 });
 

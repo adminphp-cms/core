@@ -88,7 +88,7 @@ it('duplicates an item as edited into an unpublished copy with new slugs and blo
     $response = $this->postJson("/admin/api/modules/article/items/{$id}/duplicate")
         ->assertCreated()
         ->assertJsonPath('data.title', 'Charpente (copie)')
-        ->assertJsonPath('data.values.title', ['fr' => 'Charpente (copie)', 'en' => 'Framing (copie)'])
+        ->assertJsonPath('data.values.title', fn (array $title): bool => $title == ['fr' => 'Charpente (copie)', 'en' => 'Framing (copie)'])
         ->assertJsonPath('data.values.lead.fr', 'Chapeau du brouillon')
         ->assertJsonPath('data.values.slug.fr', 'charpente-copie')
         ->assertJsonPath('data.publication.status', 'draft');

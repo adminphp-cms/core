@@ -87,7 +87,9 @@ class Asset extends Model
      */
     public function srcset(): string
     {
+        // Sorted by width: MySQL does not keep the order of the keys of a JSON column.
         $candidates = collect($this->variants ?? [])
+            ->sortBy('width')
             ->map(fn (array $variant): string => Storage::disk($this->disk)->url($variant['path']).' '.$variant['width'].'w')
             ->values();
 

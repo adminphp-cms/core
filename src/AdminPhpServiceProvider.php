@@ -146,6 +146,15 @@ class AdminPhpServiceProvider extends ServiceProvider
 
         Blueprint::macro('nesting', function (): void {
             /** @var Blueprint $this */
+            // The foreign key points to the same table: Postgres needs its primary key first,
+            // while a primary key declared fluently (->primary()) would only come last.
+            foreach ($this->getColumns() as $column) {
+                if ($column->get('primary') === true) {
+                    $this->primary($column->get('name'));
+                    $column->offsetUnset('primary');
+                }
+            }
+
             $this->foreignUlid('parent_id')->nullable()->constrained($this->getTable())->nullOnDelete();
 
             $this->index(['parent_id', 'position'], "{$this->getTable()}_tree_index");

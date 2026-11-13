@@ -21,7 +21,7 @@ it('stores the items with their declared fields only and reads them back', funct
     $faq = Article::query()->findOrFail($id)->faq;
 
     expect($faq)->toHaveCount(2)
-        ->and($faq[0])->toBe(['id' => $itemId, 'question' => ['fr' => 'Combien ?'], 'answer' => ['fr' => 'Peu.']])
+        ->and($faq[0])->toEqual(['id' => $itemId, 'question' => ['fr' => 'Combien ?'], 'answer' => ['fr' => 'Peu.']])
         ->and(Str::isUlid($faq[1]['id']))->toBeTrue()
         ->and($faq[1]['answer'])->toBe([]);
 

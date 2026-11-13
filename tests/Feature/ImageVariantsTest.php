@@ -34,7 +34,7 @@ it('queues the smaller copies when an image is uploaded', function () {
 it('makes webp copies of every size smaller than the original, never larger', function () {
     $asset = uploadedAsset(1200, 800);
 
-    expect(array_keys($asset->variants))->toBe(['sm', 'md'])
+    expect(array_keys($asset->variants))->toEqualCanonicalizing(['sm', 'md'])
         ->and($asset->variants['sm'])->toMatchArray(['width' => 480, 'height' => 320])
         ->and($asset->variants['md'])->toMatchArray(['width' => 960, 'height' => 640])
         ->and($asset->variants['md']['path'])->toBe("adminphp/variants/{$asset->id}/md.webp");
@@ -82,7 +82,7 @@ it('regenerates the copies from the command', function () {
 
     $this->artisan('adminphp:media:regenerate')->assertSuccessful();
 
-    expect(array_keys($asset->fresh()->variants))->toBe(['sm', 'md']);
+    expect(array_keys($asset->fresh()->variants))->toEqualCanonicalizing(['sm', 'md']);
 });
 
 it('renders a responsive image with the blade component', function () {

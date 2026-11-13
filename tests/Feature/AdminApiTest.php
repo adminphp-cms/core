@@ -124,5 +124,5 @@ it('keeps the spaces around rich text nodes but trims plain text fields', functi
     ])
         ->assertCreated()
         ->assertJsonPath('data.values.title', ['fr' => 'Titre avec espaces'])
-        ->assertJsonPath('data.values.content.0.content.body.fr', $document);
+        ->assertJsonPath('data.values.content.0.content.body.fr', fn (array $body): bool => $body == $document);
 });

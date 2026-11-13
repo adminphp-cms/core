@@ -192,7 +192,15 @@ abstract class Module
 
         $query->where(function (Builder $query) use ($field, $pattern): void {
             foreach (app(AdminPhp::class)->locales() as $locale) {
-                $query->orWhereLike("{$field->name}->{$locale}", $pattern, caseSensitive: false);
+                $column = "{$field->name}->{$locale}";
+
+                // MySQL compares the text extracted from JSON with a binary collation, so
+                // its LIKE would be case sensitive: both sides are lowercased instead.
+                if (in_array($query->getConnection()->getDriverName(), ['mysql', 'mariadb'], true)) {
+                    $query->orWhereRaw('lower('.$query->getGrammar()->wrap($column).') like ?', [mb_strtolower($pattern)]);
+                } else {
+                    $query->orWhereLike($column, $pattern, caseSensitive: false);
+                }
             }
         });
     }

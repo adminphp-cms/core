@@ -59,7 +59,7 @@ it('generates one slug per locale from the translated title', function () {
         'title' => ['fr' => 'À propos de nous', 'en' => 'About us'],
     ]);
 
-    expect($article->fresh()->getTranslations('slug'))->toBe(['fr' => 'a-propos-de-nous', 'en' => 'about-us']);
+    expect($article->fresh()->getTranslations('slug'))->toEqual(['fr' => 'a-propos-de-nous', 'en' => 'about-us']);
 });
 
 it('only generates a translated slug where the title is translated, and keeps it unique per locale', function () {
@@ -70,7 +70,7 @@ it('only generates a translated slug where the title is translated, and keeps it
         'slug' => ['en' => 'Get in touch'],
     ]);
 
-    expect($article->fresh()->getTranslations('slug'))->toBe(['fr' => 'contact-2', 'en' => 'get-in-touch']);
+    expect($article->fresh()->getTranslations('slug'))->toEqual(['fr' => 'contact-2', 'en' => 'get-in-touch']);
 });
 
 it('generates the slug of an item created through the admin API', function () {

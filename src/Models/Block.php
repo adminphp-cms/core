@@ -3,12 +3,14 @@
 namespace Gmarineau\AdminPhp\Models;
 
 use Gmarineau\AdminPhp\AdminPhp;
+use Gmarineau\AdminPhp\RichTextRenderer;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\HtmlString;
 
 /**
  * @property string $id
@@ -61,6 +63,14 @@ class Block extends Model
     public function translated(string $field, ?string $locale = null): mixed
     {
         return app(AdminPhp::class)->translate($this->content[$field] ?? null, $locale);
+    }
+
+    /**
+     * HTML of a RichText field of the block, every text escaped, translated like translated().
+     */
+    public function richText(string $field, ?string $locale = null): HtmlString
+    {
+        return app(RichTextRenderer::class)->render($this->translated($field, $locale));
     }
 
     /**

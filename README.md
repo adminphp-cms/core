@@ -135,6 +135,14 @@ $cover = Asset::query()->find($project->cover); // An Image field stores the id 
 @endforeach
 ```
 
+A `RichText` field stores the JSON document of its editor. Render it as HTML, every text escaped and
+only safe links kept, with `$block->richText('body')` or with the component, which takes any stored
+document (a block field or a model attribute):
+
+```blade
+<x-adminphp::rich-text :content="$block->translated('body')" class="prose" />
+```
+
 Settings are read with `app(AdminPhp::class)->setting('site_name')`.
 
 ## Commands

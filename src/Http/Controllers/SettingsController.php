@@ -2,7 +2,7 @@
 
 namespace Gmarineau\AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\SyncAssetUsages;
+use Gmarineau\AdminPhp\Actions\SyncMediaUsages;
 use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Settings\Settings;
 use Gmarineau\AdminPhp\Settings\SettingsStore;
@@ -28,11 +28,11 @@ class SettingsController
         ]);
     }
 
-    public function update(Request $request, SyncAssetUsages $syncAssetUsages): JsonResponse
+    public function update(Request $request, SyncMediaUsages $syncMediaUsages): JsonResponse
     {
         $settings = $this->settings();
         $values = $this->store->save($settings, $request->all());
-        $syncAssetUsages->forSettings($settings);
+        $syncMediaUsages->forSettings($settings);
 
         return response()->json([
             'data' => [

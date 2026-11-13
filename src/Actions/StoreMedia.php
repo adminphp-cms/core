@@ -3,8 +3,8 @@
 namespace Gmarineau\AdminPhp\Actions;
 
 use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Jobs\GenerateAssetVariantsJob;
-use Gmarineau\AdminPhp\Models\Asset;
+use Gmarineau\AdminPhp\Jobs\GenerateMediaVariantsJob;
+use Gmarineau\AdminPhp\Models\Media;
 use Illuminate\Http\UploadedFile;
 
 /**
@@ -12,18 +12,18 @@ use Illuminate\Http\UploadedFile;
  * configured disk; its original name is only kept for display. Smaller copies are
  * made by a queued job.
  */
-class StoreAsset
+class StoreMedia
 {
     public function __construct(protected AdminPhp $adminPhp) {}
 
-    public function handle(UploadedFile $file): Asset
+    public function handle(UploadedFile $file): Media
     {
         $disk = (string) config('adminphp.media.disk', 'public');
         $path = $file->store((string) config('adminphp.media.directory', 'adminphp'), $disk);
 
         [$width, $height] = $this->dimensions($file);
 
-        $asset = Asset::query()->create([
+        $media = Media::query()->create([
             'disk' => $disk,
             'path' => $path,
             'name' => mb_substr($file->getClientOriginalName(), 0, 255),
@@ -34,9 +34,9 @@ class StoreAsset
             'user_id' => $this->adminPhp->user()?->getKey(),
         ]);
 
-        GenerateAssetVariantsJob::dispatch($asset);
+        GenerateMediaVariantsJob::dispatch($media);
 
-        return $asset;
+        return $media;
     }
 
     /**

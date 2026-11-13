@@ -43,12 +43,20 @@ export interface BaseFieldSchema {
     label: string
     translatable: boolean
     required: boolean
+    note: string | null
+    placeholder: string | null
+    /** Value of the field in a new content, in the shape the form edits. */
+    default: unknown
 }
 
 export interface TextFieldSchema extends BaseFieldSchema {
     type: 'text'
+    inputType: 'text' | 'email' | 'url' | 'tel' | 'number'
     multiline: boolean
     maxLength: number
+    min: number | null
+    max: number | null
+    step: number | null
 }
 
 export type RichTextTool =
@@ -103,7 +111,7 @@ export interface ImageFieldSchema extends BaseFieldSchema {
     type: 'image'
 }
 
-export interface Asset {
+export interface Media {
     id: string
     url: string
     /** The smallest copy, the original until it is made. */
@@ -117,13 +125,13 @@ export interface Asset {
     /** How many contents use the image (listing and details only). */
     usageCount?: number
     /** The contents using the image (details only). */
-    usages?: AssetUsage[]
+    usages?: MediaUsage[]
 }
 
 /**
  * A content showing an image: an item of a module, or the settings (no id).
  */
-export interface AssetUsage {
+export interface MediaUsage {
     type: string
     id: string | null
     title: string

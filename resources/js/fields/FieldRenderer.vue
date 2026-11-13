@@ -53,6 +53,7 @@ const gutterStateClass = computed(() =>
         </div>
         <div class="min-w-0 pt-1 pb-5">
             <FieldInput :field="field" :model-value="modelValue" :path="path" :variant="variant" :autofocus="autofocus" @update:model-value="emit('update:modelValue', $event)" />
+            <p v-if="field.note" class="mt-1 text-xs text-muted">{{ field.note }}</p>
             <p v-if="error" class="field-error">{{ error }}</p>
         </div>
     </section>
@@ -60,6 +61,7 @@ const gutterStateClass = computed(() =>
     <div v-else>
         <span class="mb-1.5 block text-xs font-medium text-muted">{{ field.label }}<i v-if="field.required" class="ml-0.5 text-brand not-italic">*</i></span>
         <FieldInput :field="field" :model-value="modelValue" :path="path" :variant="variant" :autofocus="autofocus" @update:model-value="emit('update:modelValue', $event)" />
+        <p v-if="field.note" class="mt-1 text-xs text-muted">{{ field.note }}</p>
         <p v-if="error" class="field-error">{{ error }}</p>
     </div>
 </template>

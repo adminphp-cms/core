@@ -1,8 +1,8 @@
 <?php
 
-use Gmarineau\AdminPhp\Actions\GenerateAssetVariants;
-use Gmarineau\AdminPhp\Jobs\GenerateAssetVariantsJob;
-use Gmarineau\AdminPhp\Models\Asset;
+use Gmarineau\AdminPhp\Actions\GenerateMediaVariants;
+use Gmarineau\AdminPhp\Jobs\GenerateMediaVariantsJob;
+use Gmarineau\AdminPhp\Models\Media;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Queue;
@@ -14,84 +14,84 @@ beforeEach(function () {
     actingAsAdmin();
 });
 
-function uploadedAsset(int $width, int $height, string $name = 'photo.jpg'): Asset
+function uploadedMedia(int $width, int $height, string $name = 'photo.jpg'): Media
 {
-    $id = test()->post('/admin/api/assets', ['file' => UploadedFile::fake()->image($name, $width, $height)], ['Accept' => 'application/json'])
+    $id = test()->post('/admin/api/medias', ['file' => UploadedFile::fake()->image($name, $width, $height)], ['Accept' => 'application/json'])
         ->assertCreated()
         ->json('data.id');
 
-    return Asset::query()->findOrFail($id);
+    return Media::query()->findOrFail($id);
 }
 
 it('queues the smaller copies when an image is uploaded', function () {
     Queue::fake();
 
-    $asset = uploadedAsset(1200, 800);
+    $media = uploadedMedia(1200, 800);
 
-    Queue::assertPushed(GenerateAssetVariantsJob::class, fn (GenerateAssetVariantsJob $job): bool => $job->asset->is($asset));
+    Queue::assertPushed(GenerateMediaVariantsJob::class, fn (GenerateMediaVariantsJob $job): bool => $job->media->is($media));
 });
 
 it('makes webp copies of every size smaller than the original, never larger', function () {
-    $asset = uploadedAsset(1200, 800);
+    $media = uploadedMedia(1200, 800);
 
-    expect(array_keys($asset->variants))->toEqualCanonicalizing(['sm', 'md'])
-        ->and($asset->variants['sm'])->toMatchArray(['width' => 480, 'height' => 320])
-        ->and($asset->variants['md'])->toMatchArray(['width' => 960, 'height' => 640])
-        ->and($asset->variants['md']['path'])->toBe("adminphp/variants/{$asset->id}/md.webp");
+    expect(array_keys($media->variants))->toEqualCanonicalizing(['sm', 'md'])
+        ->and($media->variants['sm'])->toMatchArray(['width' => 480, 'height' => 320])
+        ->and($media->variants['md'])->toMatchArray(['width' => 960, 'height' => 640])
+        ->and($media->variants['md']['path'])->toBe("adminphp/variants/{$media->id}/md.webp");
 
-    Storage::disk('public')->assertExists($asset->variants['md']['path']);
-    expect(getimagesizefromstring(Storage::disk('public')->get($asset->variants['md']['path']))['mime'])->toBe('image/webp');
+    Storage::disk('public')->assertExists($media->variants['md']['path']);
+    expect(getimagesizefromstring(Storage::disk('public')->get($media->variants['md']['path']))['mime'])->toBe('image/webp');
 });
 
 it('gives the url of a size, falling back to the original', function () {
-    $asset = uploadedAsset(1200, 800);
+    $media = uploadedMedia(1200, 800);
 
-    expect($asset->url('md'))->toEndWith("variants/{$asset->id}/md.webp")
-        ->and($asset->url('xl'))->toBe($asset->url())
-        ->and($asset->url())->toEndWith($asset->path)
-        ->and($asset->toAdminArray()['thumbnailUrl'])->toEndWith('sm.webp');
+    expect($media->url('md'))->toEndWith("variants/{$media->id}/md.webp")
+        ->and($media->url('xl'))->toBe($media->url())
+        ->and($media->url())->toEndWith($media->path)
+        ->and($media->toAdminArray()['thumbnailUrl'])->toEndWith('sm.webp');
 });
 
 it('lists every width for srcset, the original last', function () {
-    $asset = uploadedAsset(1200, 800);
+    $media = uploadedMedia(1200, 800);
 
-    expect($asset->srcset())->toBe(sprintf('%s 480w, %s 960w, %s 1200w', $asset->url('sm'), $asset->url('md'), $asset->url()));
+    expect($media->srcset())->toBe(sprintf('%s 480w, %s 960w, %s 1200w', $media->url('sm'), $media->url('md'), $media->url()));
 });
 
 it('keeps only the original of a gif or an image smaller than every size', function () {
-    expect(uploadedAsset(300, 200)->variants)->toBeNull()
-        ->and(uploadedAsset(1200, 800, 'anim.gif')->variants)->toBeNull();
+    expect(uploadedMedia(300, 200)->variants)->toBeNull()
+        ->and(uploadedMedia(1200, 800, 'anim.gif')->variants)->toBeNull();
 });
 
 it('replaces the copies and removes the stale ones when sizes change', function () {
-    $asset = uploadedAsset(1200, 800);
-    $oldSmallPath = $asset->variants['sm']['path'];
+    $media = uploadedMedia(1200, 800);
+    $oldSmallPath = $media->variants['sm']['path'];
 
     config(['adminphp.media.sizes' => ['md' => 960]]);
-    app(GenerateAssetVariants::class)->handle($asset);
+    app(GenerateMediaVariants::class)->handle($media);
 
-    expect(array_keys($asset->fresh()->variants))->toBe(['md']);
+    expect(array_keys($media->fresh()->variants))->toBe(['md']);
     Storage::disk('public')->assertMissing($oldSmallPath);
 });
 
 it('regenerates the copies from the command', function () {
     Queue::fake();
-    $asset = uploadedAsset(1200, 800);
+    $media = uploadedMedia(1200, 800);
 
-    expect($asset->fresh()->variants)->toBeNull();
+    expect($media->fresh()->variants)->toBeNull();
 
     $this->artisan('adminphp:media:regenerate')->assertSuccessful();
 
-    expect(array_keys($asset->fresh()->variants))->toEqualCanonicalizing(['sm', 'md']);
+    expect(array_keys($media->fresh()->variants))->toEqualCanonicalizing(['sm', 'md']);
 });
 
 it('renders a responsive image with the blade component', function () {
-    $asset = uploadedAsset(1200, 800);
+    $media = uploadedMedia(1200, 800);
 
-    $html = Blade::render('<x-adminphp::image :asset="$asset" alt="Ferme" sizes="50vw" class="rounded" />', ['asset' => $asset]);
+    $html = Blade::render('<x-adminphp::image :media="$media" alt="Ferme" sizes="50vw" class="rounded" />', ['media' => $media]);
 
-    expect($html)->toContain('src="'.$asset->url().'"')
-        ->toContain('srcset="'.$asset->srcset().'"')
+    expect($html)->toContain('src="'.$media->url().'"')
+        ->toContain('srcset="'.$media->srcset().'"')
         ->toContain('sizes="50vw"')
         ->toContain('width="1200" height="800"')
         ->toContain('alt="Ferme"')
@@ -99,5 +99,5 @@ it('renders a responsive image with the blade component', function () {
 });
 
 it('renders nothing for a missing image', function () {
-    expect(trim(Blade::render('<x-adminphp::image :asset="null" />')))->toBe('');
+    expect(trim(Blade::render('<x-adminphp::image :media="null" />')))->toBe('');
 });

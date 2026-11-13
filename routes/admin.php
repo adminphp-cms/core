@@ -3,13 +3,13 @@
 use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Http\Controllers\AccountController;
 use Gmarineau\AdminPhp\Http\Controllers\ActivityController;
-use Gmarineau\AdminPhp\Http\Controllers\AssetController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemLockController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemOrderController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemPreviewController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemPublicationController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemRevisionController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemTrashController;
+use Gmarineau\AdminPhp\Http\Controllers\MediaController;
 use Gmarineau\AdminPhp\Http\Controllers\ModuleController;
 use Gmarineau\AdminPhp\Http\Controllers\ModuleItemController;
 use Gmarineau\AdminPhp\Http\Controllers\PasswordController;
@@ -50,10 +50,10 @@ Route::prefix('api')->name('api.')->group(function () {
             Route::post('users/{id}/activate', [UserController::class, 'activate'])->name('users.activate');
         });
 
-        Route::get('assets', [AssetController::class, 'index'])->name('assets.index');
-        Route::post('assets', [AssetController::class, 'store'])->name('assets.store');
-        Route::get('assets/{id}', [AssetController::class, 'show'])->name('assets.show');
-        Route::delete('assets/{id}', [AssetController::class, 'destroy'])->name('assets.destroy');
+        Route::get('medias', [MediaController::class, 'index'])->name('medias.index');
+        Route::post('medias', [MediaController::class, 'store'])->name('medias.store');
+        Route::get('medias/{id}', [MediaController::class, 'show'])->name('medias.show');
+        Route::delete('medias/{id}', [MediaController::class, 'destroy'])->name('medias.destroy');
 
         Route::get('references', [ReferenceController::class, 'index'])->name('references.index');
 

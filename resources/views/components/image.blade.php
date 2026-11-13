@@ -3,16 +3,16 @@
     fills the space given by `sizes` (100vw by default). Width and height keep the
     layout from jumping while it loads.
 
-    <x-adminphp::image :asset="$block->asset('image')" alt="…" sizes="(min-width: 768px) 700px, 100vw" class="…" />
+    <x-adminphp::image :media="$block->media('image')" alt="…" sizes="(min-width: 768px) 700px, 100vw" class="…" />
 --}}
-@props(['asset', 'alt' => '', 'sizes' => '100vw', 'loading' => 'lazy'])
+@props(['media', 'alt' => '', 'sizes' => '100vw', 'loading' => 'lazy'])
 
-@if ($asset)
+@if ($media)
     <img
-        src="{{ $asset->url() }}"
-        @if ($srcset = $asset->srcset()) srcset="{{ $srcset }}" sizes="{{ $sizes }}" @endif
+        src="{{ $media->url() }}"
+        @if ($srcset = $media->srcset()) srcset="{{ $srcset }}" sizes="{{ $sizes }}" @endif
         alt="{{ $alt }}"
-        @if ($asset->width && $asset->height) width="{{ $asset->width }}" height="{{ $asset->height }}" @endif
+        @if ($media->width && $media->height) width="{{ $media->width }}" height="{{ $media->height }}" @endif
         loading="{{ $loading }}"
         decoding="async"
         {{ $attributes }}

@@ -5,6 +5,7 @@ import { useEditorStore } from '../stores/editor'
 import type { BlockSchema, BlocksFieldSchema, BlockValue } from '../types'
 import UiIcon from '../components/ui/UiIcon.vue'
 import FieldRenderer from './FieldRenderer.vue'
+import { defaultValues } from './initialValues'
 
 const props = defineProps<{
     field: BlocksFieldSchema
@@ -32,7 +33,7 @@ const insertedBlockId = ref<string | null>(null)
 function insert(schema: BlockSchema, afterIndex: number): void {
     const id = ulid()
     const newBlocks = [...blocks.value]
-    newBlocks.splice(afterIndex + 1, 0, { id, type: schema.type, content: {} })
+    newBlocks.splice(afterIndex + 1, 0, { id, type: schema.type, content: defaultValues(schema.fields) })
     openMenuAt.value = null
     insertedBlockId.value = id
     update(newBlocks)

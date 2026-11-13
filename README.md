@@ -112,27 +112,46 @@ use Gmarineau\AdminPhp\AdminPhp;
 app(AdminPhp::class)->registerModules([ProjectModule::class]);
 ```
 
+Every field takes a `note()` shown under it, a `placeholder()` shown while it is empty, and a
+`default()` value for new contents (items, blocks, repeater rows, settings never saved). A text can be
+of a given kind, with the matching keyboard on mobile and its validation:
+
+```php
+Text::make('email')->label('E-mail')->email()->note('Shown in the footer.'),
+Text::make('website')->url()->placeholder('https://…'),
+Text::make('phone')->tel(),
+Text::make('rooms')->number(min: 1, max: 20, step: 1)->default(1), // Stored as a number.
+```
+
 ## Displaying content on your site
 
 Your models stay regular Eloquent models:
 
 ```php
-use Gmarineau\AdminPhp\Models\Asset;
+use Gmarineau\AdminPhp\Models\Media;
 
 $project = Project::query()->published()->where('slug', $slug)->firstOrFail();
-$cover = Asset::query()->find($project->cover); // An Image field stores the id of its asset.
+$cover = Media::query()->find($project->cover); // An Image field stores the id of its media.
 ```
 
 ```blade
 <h1>{{ $project->title }}</h1>
 
-<x-adminphp::image :asset="$cover" sizes="100vw" />
+<x-adminphp::image :media="$cover" sizes="100vw" />
 
 @foreach ($project->blocks as $block)
     @if ($block->type === 'text')
         <p>{{ $block->translated('text') }}</p>
     @endif
 @endforeach
+```
+
+A `RichText` field stores the JSON document of its editor. Render it as HTML, every text escaped and
+only safe links kept, with `$block->richText('body')` or with the component, which takes any stored
+document (a block field or a model attribute):
+
+```blade
+<x-adminphp::rich-text :content="$block->translated('body')" class="prose" />
 ```
 
 Settings are read with `app(AdminPhp::class)->setting('site_name')`.

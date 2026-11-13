@@ -2,9 +2,9 @@
 
 namespace Gmarineau\AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\ListAssetUsages;
-use Gmarineau\AdminPhp\Actions\StoreAsset;
-use Gmarineau\AdminPhp\Models\Asset;
+use Gmarineau\AdminPhp\Actions\ListMediaUsages;
+use Gmarineau\AdminPhp\Actions\StoreMedia;
+use Gmarineau\AdminPhp\Models\Media;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -13,13 +13,13 @@ use Illuminate\Validation\Rules\File;
 /**
  * The media library: list, search, upload and delete images.
  */
-class AssetController
+class MediaController
 {
     public function index(Request $request): JsonResponse
     {
         $search = trim((string) $request->query('search', ''));
 
-        $assets = Asset::query()
+        $medias = Media::query()
             ->withCount('usages')
             ->when($search !== '', fn ($query) => $query->whereLike('name', "%{$search}%", caseSensitive: false))
             ->latest()
@@ -27,34 +27,34 @@ class AssetController
             ->paginate(48);
 
         return response()->json([
-            'data' => $assets->getCollection()->map(fn (Asset $asset): array => [...$asset->toAdminArray(), 'usageCount' => $asset->usages_count])->all(),
+            'data' => $medias->getCollection()->map(fn (Media $media): array => [...$media->toAdminArray(), 'usageCount' => $media->usages_count])->all(),
             'meta' => [
-                'currentPage' => $assets->currentPage(),
-                'lastPage' => $assets->lastPage(),
-                'total' => $assets->total(),
+                'currentPage' => $medias->currentPage(),
+                'lastPage' => $medias->lastPage(),
+                'total' => $medias->total(),
             ],
         ]);
     }
 
     /**
-     * The asset with the contents using it.
+     * The media with the contents using it.
      */
-    public function show(ListAssetUsages $listAssetUsages, string $id): JsonResponse
+    public function show(ListMediaUsages $listMediaUsages, string $id): JsonResponse
     {
-        $asset = Asset::query()->findOrFail($id);
-        $usages = $listAssetUsages->handle($asset);
+        $media = Media::query()->findOrFail($id);
+        $usages = $listMediaUsages->handle($media);
 
-        return response()->json(['data' => [...$asset->toAdminArray(), 'usageCount' => count($usages), 'usages' => $usages]]);
+        return response()->json(['data' => [...$media->toAdminArray(), 'usageCount' => count($usages), 'usages' => $usages]]);
     }
 
     /**
-     * Deletes an asset and its files, unless a content still uses it: a deleted image
+     * Deletes a media and its files, unless a content still uses it: a deleted image
      * would leave a hole on the site.
      */
     public function destroy(string $id): Response
     {
-        $asset = Asset::query()->findOrFail($id);
-        $usageCount = $asset->usages()->count();
+        $media = Media::query()->findOrFail($id);
+        $usageCount = $media->usages()->count();
 
         abort_if($usageCount > 0, 409, sprintf(
             'Cette image est utilisée par %d %s : retirez-la d’abord.',
@@ -62,12 +62,12 @@ class AssetController
             $usageCount > 1 ? 'contenus' : 'contenu',
         ));
 
-        $asset->deleteWithFiles();
+        $media->deleteWithFiles();
 
         return response()->noContent();
     }
 
-    public function store(Request $request, StoreAsset $storeAsset): JsonResponse
+    public function store(Request $request, StoreMedia $storeMedia): JsonResponse
     {
         $request->validate([
             'file' => [
@@ -78,8 +78,8 @@ class AssetController
             ],
         ]);
 
-        $asset = $storeAsset->handle($request->file('file'));
+        $media = $storeMedia->handle($request->file('file'));
 
-        return response()->json(['data' => $asset->toAdminArray()], 201);
+        return response()->json(['data' => $media->toAdminArray()], 201);
     }
 }

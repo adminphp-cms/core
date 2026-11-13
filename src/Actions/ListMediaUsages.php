@@ -3,28 +3,28 @@
 namespace Gmarineau\AdminPhp\Actions;
 
 use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\Asset;
-use Gmarineau\AdminPhp\Models\AssetUsage;
+use Gmarineau\AdminPhp\Models\Media;
+use Gmarineau\AdminPhp\Models\MediaUsage;
 
 /**
- * Names the contents using an asset, for the media library: one query per module.
+ * Names the contents using a media, for the media library: one query per module.
  * Usages of a module that is no longer registered, or of a deleted item, are left out.
  */
-class ListAssetUsages
+class ListMediaUsages
 {
     public function __construct(protected AdminPhp $adminPhp) {}
 
     /**
      * @return array<int, array{type: string, id: string|null, title: string, moduleTitle: string, icon: string, isTrashed: bool}>
      */
-    public function handle(Asset $asset): array
+    public function handle(Media $media): array
     {
-        $usages = $asset->usages()->get()->groupBy('usable_type');
+        $usages = $media->usages()->get()->groupBy('usable_type');
         $locale = $this->adminPhp->defaultLocale();
         $data = [];
 
         foreach ($usages as $type => $typeUsages) {
-            if ($type === AssetUsage::SETTINGS) {
+            if ($type === MediaUsage::SETTINGS) {
                 $settings = $this->adminPhp->settingsForm();
 
                 if ($settings !== null) {

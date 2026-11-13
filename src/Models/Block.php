@@ -3,12 +3,14 @@
 namespace Gmarineau\AdminPhp\Models;
 
 use Gmarineau\AdminPhp\AdminPhp;
+use Gmarineau\AdminPhp\RichTextRenderer;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\HtmlString;
 
 /**
  * @property string $id
@@ -64,6 +66,14 @@ class Block extends Model
     }
 
     /**
+     * HTML of a RichText field of the block, every text escaped, translated like translated().
+     */
+    public function richText(string $field, ?string $locale = null): HtmlString
+    {
+        return app(RichTextRenderer::class)->render($this->translated($field, $locale));
+    }
+
+    /**
      * Contents chosen in a Browser field of the block, in their chosen order. Only the ones
      * the site may show are returned, unless $onlyPublished is false.
      *
@@ -77,14 +87,14 @@ class Block extends Model
     }
 
     /**
-     * Media library asset chosen in an Image field of the block, e.g. to render
-     * <img src="{{ $block->asset('image')?->url() }}">.
+     * Media chosen in an Image field of the block, e.g. to render
+     * <img src="{{ $block->media('image')?->url() }}">.
      */
-    public function asset(string $field): ?Asset
+    public function media(string $field): ?Media
     {
         $id = $this->content[$field] ?? null;
 
-        return is_string($id) && $id !== '' ? Asset::query()->find($id) : null;
+        return is_string($id) && $id !== '' ? Media::query()->find($id) : null;
     }
 
     /**

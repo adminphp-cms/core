@@ -4,6 +4,7 @@ use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Http\Controllers\AccountController;
 use Gmarineau\AdminPhp\Http\Controllers\ActivityController;
 use Gmarineau\AdminPhp\Http\Controllers\AssetController;
+use Gmarineau\AdminPhp\Http\Controllers\ItemLockController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemOrderController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemPreviewController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemPublicationController;
@@ -67,6 +68,8 @@ Route::prefix('api')->name('api.')->group(function () {
         Route::get('modules/{module}/items/{id}', [ModuleItemController::class, 'show'])->name('items.show');
         Route::put('modules/{module}/items/{id}', [ModuleItemController::class, 'update'])->name('items.update');
         Route::delete('modules/{module}/items/{id}', [ItemTrashController::class, 'destroy'])->name('items.destroy');
+        Route::post('modules/{module}/items/{id}/lock', [ItemLockController::class, 'store'])->name('items.lock.store');
+        Route::delete('modules/{module}/items/{id}/lock', [ItemLockController::class, 'destroy'])->name('items.lock.destroy');
         Route::post('modules/{module}/items/{id}/duplicate', [ItemTrashController::class, 'duplicate'])->name('items.duplicate');
 
         Route::post('modules/{module}/items/{id}/publish', [ItemPublicationController::class, 'publish'])->name('items.publish');

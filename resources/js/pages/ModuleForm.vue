@@ -8,11 +8,13 @@ import PreviewPanel from '../components/PreviewPanel.vue'
 import PublicationPanel from '../components/PublicationPanel.vue'
 import { provideFormContext } from '../composables/useFormContext'
 import { useToast } from '../composables/useToast'
+import { useEditLock } from '../composables/useEditLock'
 import { useSaveShortcut, useUnsavedChanges } from '../composables/useUnsavedChanges'
 import UiButton from '../components/ui/UiButton.vue'
 import UiIconButton from '../components/ui/UiIconButton.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
 import FieldRenderer from '../fields/FieldRenderer.vue'
+import { formatRelative } from '../format'
 import { useEditorStore } from '../stores/editor'
 import { useModulesStore } from '../stores/modules'
 import type { BlockValue, FieldSchema, FormValues, Item, ModuleSchema, Publication, RevisionSummary } from '../types'
@@ -36,6 +38,30 @@ const toast = useToast()
 const publication = ref<Publication | null>(null)
 const revisions = ref<RevisionSummary[]>([])
 const isPreviewOpen = ref(false)
+
+/** Reloads the saved item, e.g. once the lock frees up after watching someone else edit it. */
+async function reloadItem(): Promise<void> {
+    if (props.id) {
+        await applyItem(await api.item(props.module, props.id))
+        await loadRevisions(props.id)
+    }
+}
+
+const editLock = useEditLock(props.module, props.id, reloadItem)
+const isReadOnly = editLock.isReadOnly
+
+async function takeOverLock(): Promise<void> {
+    const name = editLock.lock.value?.userName ?? 'L’autre personne'
+
+    if (window.confirm(`${name} ne pourra plus enregistrer ses modifications. Prendre la main ?`)) {
+        await editLock.takeOver()
+    }
+}
+
+function reloadPage(): void {
+    isDirty.value = false
+    window.location.reload()
+}
 const publishStartAt = ref('')
 const publishEndAt = ref('')
 
@@ -179,6 +205,13 @@ async function run(action: () => Promise<Item>, successMessage: string): Promise
 
         return item
     } catch (error) {
+        if (error instanceof ApiError && error.status === 423) {
+            toast.error(error.message)
+            await editLock.markLost()
+
+            return null
+        }
+
         if (error instanceof ApiError && error.status === 422) {
             editor.errors = error.errors
             toast.error(error.errors.publishEndAt?.[0] ?? 'Certains champs sont à corriger')
@@ -214,7 +247,7 @@ async function save(): Promise<void> {
 
 useUnsavedChanges(isDirty)
 useSaveShortcut(() => {
-    if (isLoaded.value && !isSaving.value) {
+    if (isLoaded.value && !isSaving.value && !isReadOnly.value) {
         save()
     }
 })
@@ -365,20 +398,33 @@ onMounted(async () => {
 
                 <template v-if="id">
                     <UiIconButton label="Dupliquer" :disabled="isSaving" @click="duplicate"><UiIcon name="copy" :size="14" /></UiIconButton>
-                    <UiIconButton v-if="schema?.trashable" label="Mettre à la corbeille" :disabled="isSaving" @click="trash"><UiIcon name="trash" :size="14" /></UiIconButton>
+                    <UiIconButton v-if="schema?.trashable" label="Mettre à la corbeille" :disabled="isSaving || isReadOnly" @click="trash"><UiIcon name="trash" :size="14" /></UiIconButton>
                 </template>
 
                 <template v-if="isPublishable">
-                    <UiButton :disabled="isSaving" @click="save">Enregistrer</UiButton>
-                    <UiButton variant="primary" :disabled="isSaving || !hasSomethingToPublish" @click="publish">
+                    <UiButton :disabled="isSaving || isReadOnly" @click="save">Enregistrer</UiButton>
+                    <UiButton variant="primary" :disabled="isSaving || isReadOnly || !hasSomethingToPublish" @click="publish">
                         <UiIcon name="send" :size="14" /> {{ publishLabel }}
                     </UiButton>
                 </template>
-                <UiButton v-else variant="primary" :disabled="isSaving" @click="save">
+                <UiButton v-else variant="primary" :disabled="isSaving || isReadOnly" @click="save">
                     {{ isSaving ? 'Enregistrement…' : 'Enregistrer' }}
                 </UiButton>
             </template>
         </header>
+
+        <div v-if="isLoaded && isReadOnly" class="flex flex-wrap items-center gap-3 border-b border-line bg-warning-soft px-7 py-2.5 text-sm text-ink max-md:px-3" role="status">
+            <UiIcon name="lock" :size="14" class="text-warning" />
+            <p v-if="editLock.hasLost.value" class="flex-1">
+                <strong>{{ editLock.lock.value?.userName ?? 'Quelqu’un' }}</strong> a pris la main sur ce contenu. Vos modifications non enregistrées ne peuvent plus l’être.
+            </p>
+            <p v-else class="flex-1">
+                <strong>{{ editLock.lock.value?.userName ?? 'Quelqu’un' }}</strong> modifie ce contenu
+                <template v-if="editLock.lock.value">depuis {{ formatRelative(editLock.lock.value.lockedAt).replace('il y a ', '') }}</template>. Vous le voyez en lecture seule.
+            </p>
+            <UiButton v-if="editLock.hasLost.value" @click="reloadPage">Recharger</UiButton>
+            <UiButton @click="takeOverLock">{{ editLock.hasLost.value ? 'Reprendre la main' : 'Prendre la main' }}</UiButton>
+        </div>
 
         <div v-if="!isLoaded" :class="canvasClass" aria-busy="true">
             <div :class="[docClass, 'flex flex-col gap-3.5 pl-49']" aria-label="Chargement du contenu">
@@ -391,7 +437,7 @@ onMounted(async () => {
 
         <div v-else-if="schema" :class="{ [inspectorLayoutClass]: publication !== null }">
             <div :class="canvasClass">
-                <div :class="[docClass, 'pl-5']">
+                <div :class="[docClass, 'pl-5', { 'opacity-70': isReadOnly }]" :inert="isReadOnly || undefined">
                     <FieldRenderer
                         v-for="(field, index) in schema.fields"
                         :key="field.name"
@@ -409,7 +455,7 @@ onMounted(async () => {
                 v-model:publish-end-at="publishEndAt"
                 :publication="publication"
                 :revisions="revisions"
-                :is-busy="isSaving"
+                :is-busy="isSaving || isReadOnly"
                 @unpublish="unpublish"
                 @discard-draft="discardDraft"
                 @restore="restoreRevision"

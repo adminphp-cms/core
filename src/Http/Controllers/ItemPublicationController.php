@@ -19,6 +19,7 @@ class ItemPublicationController
     {
         $moduleDefinition = $this->findPublishableModule($module);
         $item = $this->findItem($moduleDefinition, $id);
+        $this->ensureNotLockedByOther($item);
 
         $validated = $request->validate([
             'values' => ['nullable', 'array'],
@@ -41,7 +42,10 @@ class ItemPublicationController
     {
         $moduleDefinition = $this->findPublishableModule($module);
 
-        $item = $unpublishItem->handle($moduleDefinition, $this->findItem($moduleDefinition, $id));
+        $item = $this->findItem($moduleDefinition, $id);
+        $this->ensureNotLockedByOther($item);
+
+        $item = $unpublishItem->handle($moduleDefinition, $item);
 
         return $this->itemResponse($moduleDefinition, $item);
     }
@@ -53,6 +57,7 @@ class ItemPublicationController
     {
         $moduleDefinition = $this->findPublishableModule($module);
         $item = $this->findItem($moduleDefinition, $id);
+        $this->ensureNotLockedByOther($item);
 
         $item->draftRevision()->delete();
 

@@ -57,7 +57,10 @@ class ModuleItemController
     {
         $moduleDefinition = $this->findModule($module);
 
-        $item = $saveDraft->handle($moduleDefinition, $this->findItem($moduleDefinition, $id), $request->all());
+        $item = $this->findItem($moduleDefinition, $id);
+        $this->ensureNotLockedByOther($item);
+
+        $item = $saveDraft->handle($moduleDefinition, $item, $request->all());
 
         return $this->itemResponse($moduleDefinition, $item);
     }

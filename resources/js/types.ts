@@ -292,6 +292,15 @@ export interface ItemSummary {
     parentId: string | null
     /** Values of the listing columns, by column name. */
     cells: Record<string, unknown>
+    /** Name of the other admin user editing the item right now, if any. */
+    lockedBy: string | null
+}
+
+/** Who edits an item: the current user (isMine) or someone else. */
+export interface EditLock {
+    isMine: boolean
+    userName: string | null
+    lockedAt: string
 }
 
 export type BulkAction = 'publish' | 'unpublish' | 'trash' | 'restore' | 'delete'

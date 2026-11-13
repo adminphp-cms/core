@@ -3,6 +3,7 @@
 namespace Gmarineau\AdminPhp\Actions;
 
 use Gmarineau\AdminPhp\Models\Block;
+use Gmarineau\AdminPhp\Models\Lock;
 use Gmarineau\AdminPhp\Models\Related;
 use Gmarineau\AdminPhp\Models\Revision;
 use Gmarineau\AdminPhp\Modules\Module;
@@ -37,6 +38,7 @@ class DeleteItemsPermanently
             foreach ($items as $item) {
                 Block::query()->whereMorphedTo('blockable', $item)->delete();
                 Revision::query()->whereMorphedTo('revisionable', $item)->delete();
+                Lock::query()->whereMorphedTo('lockable', $item)->delete();
                 Related::query()
                     ->where(fn (Builder $query) => $query->whereMorphedTo('subject', $item)->orWhereMorphedTo('related', $item))
                     ->delete();

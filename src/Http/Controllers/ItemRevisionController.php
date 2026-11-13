@@ -39,6 +39,7 @@ class ItemRevisionController
     {
         $moduleDefinition = $this->findPublishableModule($module);
         $item = $this->findItem($moduleDefinition, $id);
+        $this->ensureNotLockedByOther($item);
 
         $revisionToRestore = $item->revisions()
             ->where('status', RevisionStatus::Published)

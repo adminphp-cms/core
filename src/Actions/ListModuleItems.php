@@ -176,6 +176,8 @@ class ListModuleItems
         $isPublishable = $module->isPublishable();
         $isNested = $module->nestingDepth() > 0;
         $assets = $this->assets($module, $columns, $paginator->items(), $locale);
+        $locks = app(ManageEditLock::class)->activeLocks($paginator->items());
+        $userId = $this->adminPhp->user()?->getKey();
 
         return array_map(fn (Model $item): array => [
             'id' => $item->getKey(),
@@ -185,6 +187,7 @@ class ListModuleItems
             'visibility' => $isPublishable ? $item->visibility()->value : null,
             'hasDraft' => $isPublishable && $item->getAttribute('has_draft'),
             'parentId' => $isNested ? $item->getAttribute('parent_id') : null,
+            'lockedBy' => ($lock = $locks[(string) $item->getKey()] ?? null) !== null && $lock->user_id !== $userId ? $lock->user?->name : null,
         ], $paginator->items());
     }
 

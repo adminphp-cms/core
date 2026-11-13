@@ -149,7 +149,10 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenu))
             </div>
         </template>
 
-        <div v-if="blocks.length === 0" :class="insertClass">
+        <p v-if="field.blocks.length === 0" class="m-0 rounded-md border border-dashed border-line px-3 py-2.5 text-sm text-faint">
+            Aucun type de bloc n’est autorisé : ajoutez-en dans <code>allow()</code> du champ Blocks.
+        </p>
+        <div v-else-if="blocks.length === 0" :class="insertClass">
             <button type="button" aria-haspopup="menu" :class="insertButtonClass" :aria-expanded="openMenuAt === -1" @click="toggleMenu(-1)"><UiIcon name="plus" :size="15" /> Ajouter un premier bloc</button>
             <div v-if="openMenuAt === -1" :class="menuClass" role="menu">
                 <button v-for="schema in field.blocks" :key="schema.type" type="button" role="menuitem" :class="menuItemClass" @click="insert(schema, -1)">

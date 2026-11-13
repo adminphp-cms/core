@@ -1,0 +1,21 @@
+<?php
+
+namespace {{ namespace }};
+
+{{ imports }}
+
+class {{ class }} extends Module
+{
+    protected string $model = {{ model }}::class;
+
+    protected string $description = '';
+
+    protected string $icon = 'file-text';
+{{ properties }}
+    public function form(): array
+    {
+        return [
+{{ fields }}
+        ];
+    }
+}

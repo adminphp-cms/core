@@ -1,0 +1,18 @@
+<?php
+
+namespace {{ namespace }};
+
+use Gmarineau\AdminPhp\Blocks\Block;
+use Gmarineau\AdminPhp\Fields\Text;
+
+class {{ class }} extends Block
+{
+    protected string $title = '{{ title }}';
+
+    public function form(): array
+    {
+        return [
+            Text::make('text')->label('Texte'){{ translatable }}->required(),
+        ];
+    }
+}

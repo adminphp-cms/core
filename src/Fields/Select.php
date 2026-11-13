@@ -71,6 +71,11 @@ class Select extends Field
         return $this;
     }
 
+    public function isMultiple(): bool
+    {
+        return $this->isMultiple;
+    }
+
     public function validationRules(string $path, mixed $value): array
     {
         $optionRule = Rule::in(array_map(strval(...), array_keys($this->resolvedOptions())));
@@ -106,6 +111,24 @@ class Select extends Field
         }
 
         return $this->scalarValue($value);
+    }
+
+    /**
+     * The labels of the chosen options.
+     */
+    public function listingValue(Model $model, string $locale): ?string
+    {
+        $options = $this->resolvedOptions();
+        $values = $this->valueFromModel($model);
+        $labels = [];
+
+        foreach ($this->isMultiple ? $values : [$values] as $value) {
+            if ($value !== null && $value !== '') {
+                $labels[] = $options[$this->optionKey($value)] ?? (string) $value;
+            }
+        }
+
+        return $labels === [] ? null : implode(', ', $labels);
     }
 
     protected function schemaAttributes(): array

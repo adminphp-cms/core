@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useRoute, useRouter, type LocationQuery } from 'vue-router'
 import { api } from '../api'
 import SortableTree from '../components/listing/SortableTree.vue'
 import EmptyState from '../components/ui/EmptyState.vue'
@@ -8,29 +9,150 @@ import UiBadge from '../components/ui/UiBadge.vue'
 import UiButton from '../components/ui/UiButton.vue'
 import UiCard from '../components/ui/UiCard.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
+import { controlClasses } from '../components/ui/controlClasses'
 import { useToast } from '../composables/useToast'
-import { formatDateTime, visibilityBadges } from '../format'
+import { formatDate, formatDateTime, visibilityBadges } from '../format'
 import { useModulesStore } from '../stores/modules'
-import type { ItemPlacement, ItemSummary, ModuleSchema } from '../types'
+import type { ItemPlacement, ItemSummary, ListingColumn, ListingMeta, ListingQuery, ListingView, ModuleSchema } from '../types'
 
 const props = defineProps<{ module: string }>()
 
+const route = useRoute()
+const router = useRouter()
 const modulesStore = useModulesStore()
-const schema = ref<ModuleSchema | null>(null)
-const items = ref<ItemSummary[]>([])
-const isLoading = ref(true)
-const search = ref('')
-
-const filteredItems = computed(() => {
-    const query = search.value.trim().toLocaleLowerCase()
-
-    return query === '' ? items.value : items.value.filter((item) => item.title.toLocaleLowerCase().includes(query))
-})
-
 const toast = useToast()
 
-/** Drag and drop is offered on the full list only, not on search results. */
-const isTreeShown = computed(() => schema.value?.sortable === true && search.value.trim() === '')
+const schema = ref<ModuleSchema | null>(null)
+const items = ref<ItemSummary[]>([])
+const meta = ref<ListingMeta | null>(null)
+const isLoading = ref(true)
+
+const views: { value: ListingView; label: string }[] = [
+    { value: 'all', label: 'Tous' },
+    { value: 'published', label: 'Publiés' },
+    { value: 'unpublished', label: 'Hors ligne' },
+    { value: 'pending', label: 'À publier' },
+]
+
+/** The listing state lives in the address, so a reload or the back button keeps it. */
+function queryFromRoute(routeQuery: LocationQuery): ListingQuery {
+    const filters: Record<string, string> = {}
+
+    Object.entries(routeQuery).forEach(([key, value]) => {
+        const name = key.match(/^filters\[(.+)\]$/)?.[1]
+
+        if (name && typeof value === 'string') {
+            filters[name] = value
+        }
+    })
+
+    const view = routeQuery.view
+    const page = Number(routeQuery.page)
+
+    return {
+        search: typeof routeQuery.search === 'string' ? routeQuery.search : '',
+        filters,
+        view: views.some((option) => option.value === view) ? (view as ListingView) : 'all',
+        sort: typeof routeQuery.sort === 'string' ? routeQuery.sort : null,
+        page: Number.isInteger(page) && page > 1 ? page : 1,
+    }
+}
+
+const query = computed(() => queryFromRoute(route.query))
+const search = ref(query.value.search)
+
+function update(changes: Partial<ListingQuery>): void {
+    const next = { ...query.value, page: 1, ...changes }
+    const routeQuery: Record<string, string> = {}
+
+    if (next.search.trim()) {
+        routeQuery.search = next.search.trim()
+    }
+
+    if (next.view !== 'all') {
+        routeQuery.view = next.view
+    }
+
+    if (next.sort) {
+        routeQuery.sort = next.sort
+    }
+
+    if (next.page > 1) {
+        routeQuery.page = String(next.page)
+    }
+
+    Object.entries(next.filters).forEach(([name, value]) => {
+        if (value) {
+            routeQuery[`filters[${name}]`] = value
+        }
+    })
+
+    router.replace({ query: routeQuery })
+}
+
+let searchTimer: ReturnType<typeof setTimeout> | undefined
+
+watch(search, (value) => {
+    clearTimeout(searchTimer)
+    searchTimer = setTimeout(() => update({ search: value }), 250)
+})
+
+let requestNumber = 0
+
+async function load(): Promise<void> {
+    const currentRequest = ++requestNumber
+    const [moduleSchema, response] = await Promise.all([modulesStore.schema(props.module), api.listItems(props.module, query.value)])
+
+    // An older request answering late must not replace the newer one.
+    if (currentRequest !== requestNumber) {
+        return
+    }
+
+    schema.value = moduleSchema
+    items.value = response.data
+    meta.value = response.meta
+    isLoading.value = false
+}
+
+watch([() => props.module, query], load, { immediate: true })
+
+watch(
+    () => props.module,
+    () => {
+        isLoading.value = true
+        search.value = ''
+    },
+)
+
+const hasCriteria = computed(() => query.value.search !== '' || query.value.view !== 'all' || Object.keys(query.value.filters).length > 0)
+const isModuleEmpty = computed(() => !hasCriteria.value && meta.value?.total === 0)
+const columns = computed(() => schema.value?.listing.columns ?? [])
+
+/** Current sort: the requested one, else the one the server applied. */
+const activeSort = computed(() => query.value.sort ?? meta.value?.sort ?? null)
+
+function sortBy(column: ListingColumn): void {
+    const isAscending = activeSort.value === column.name
+
+    update({ sort: isAscending ? `-${column.name}` : column.name })
+}
+
+function sortIcon(column: ListingColumn): string | null {
+    if (activeSort.value === column.name) {
+        return 'arrow-up'
+    }
+
+    return activeSort.value === `-${column.name}` ? 'arrow-down' : null
+}
+
+function setFilter(name: string, value: string): void {
+    update({ filters: { ...query.value.filters, [name]: value } })
+}
+
+function clearCriteria(): void {
+    search.value = ''
+    router.replace({ query: {} })
+}
 
 async function reorder(placements: ItemPlacement[]): Promise<void> {
     const previousItems = items.value
@@ -47,10 +169,14 @@ async function reorder(placements: ItemPlacement[]): Promise<void> {
     }
 }
 
-onMounted(async () => {
-    ;[schema.value, items.value] = await Promise.all([modulesStore.schema(props.module), api.items(props.module)])
-    isLoading.value = false
+const cardTitle = computed(() => {
+    const total = meta.value?.total ?? 0
+
+    return `${total} ${total > 1 ? 'éléments' : 'élément'}`
 })
+
+const tabClass = 'flex h-8 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium transition-[background,color]'
+const headerButtonClass = 'inline-flex items-center gap-1 rounded-xs hover:text-ink focus-visible:text-ink'
 </script>
 
 <template>
@@ -69,7 +195,7 @@ onMounted(async () => {
             </PageIntro>
 
             <EmptyState
-                v-if="!isLoading && items.length === 0"
+                v-if="!isLoading && isModuleEmpty"
                 :icon="schema.icon"
                 :title="`Aucun contenu dans ${schema.title} pour l’instant`"
                 description="Créez le premier : vous pourrez le relire, le traduire et le publier quand il sera prêt."
@@ -79,52 +205,117 @@ onMounted(async () => {
                 </UiButton>
             </EmptyState>
 
-            <UiCard v-else-if="!isLoading" :title="`${items.length} ${items.length > 1 ? 'éléments' : 'élément'}`" :padded="false">
-                <template #actions>
-                    <label class="search-field">
-                        <UiIcon name="search" :size="14" />
-                        <input v-model="search" type="search" placeholder="Rechercher" :aria-label="`Rechercher dans ${schema.title}`" />
-                    </label>
-                </template>
+            <template v-else-if="!isLoading && meta">
+                <nav v-if="meta.counts" class="mb-3 flex flex-wrap gap-1" aria-label="Vues">
+                    <button
+                        v-for="view in views"
+                        :key="view.value"
+                        type="button"
+                        :class="[tabClass, query.view === view.value ? 'bg-surface text-strong [box-shadow:inset_0_0_0_1px_var(--ring-control)]' : 'text-muted hover:bg-nav-hover hover:text-ink']"
+                        :aria-pressed="query.view === view.value"
+                        @click="update({ view: view.value })"
+                    >
+                        {{ view.label }}
+                        <span class="text-xs text-faint tabular-nums">{{ meta.counts[view.value] }}</span>
+                    </button>
+                </nav>
 
-                <SortableTree
-                    v-if="isTreeShown"
-                    :module="module"
-                    :items="items"
-                    :nesting-depth="schema.nestingDepth"
-                    :publishable="schema.publishable"
-                    @reorder="reorder"
-                />
+                <UiCard :title="cardTitle" :padded="false">
+                    <template #actions>
+                        <div class="flex flex-wrap items-center justify-end gap-2">
+                            <select
+                                v-for="filter in schema.listing.filters"
+                                :key="filter.name"
+                                :class="[controlClasses, 'h-8 w-auto max-w-44 pr-7', query.filters[filter.name] ? 'border-brand-ring text-ink' : 'text-muted']"
+                                :value="query.filters[filter.name] ?? ''"
+                                :aria-label="filter.label"
+                                @change="setFilter(filter.name, ($event.target as HTMLSelectElement).value)"
+                            >
+                                <option value="">{{ filter.label }} : tous</option>
+                                <option v-for="option in filter.options" :key="option.value" :value="option.value">{{ filter.label }} : {{ option.label }}</option>
+                            </select>
+                            <label class="search-field">
+                                <UiIcon name="search" :size="14" />
+                                <input v-model="search" type="search" placeholder="Rechercher" :aria-label="`Rechercher dans ${schema.title}`" />
+                            </label>
+                        </div>
+                    </template>
 
-                <div v-else class="table-scroll">
-                    <table class="listing">
-                        <thead>
-                            <tr>
-                                <th>Titre</th>
-                                <th v-if="schema.publishable">Statut</th>
-                                <th class="listing-date">Modifié</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in filteredItems" :key="item.id">
-                                <td>
-                                    <RouterLink :to="{ name: 'module.edit', params: { module, id: item.id } }" class="stretched-link">{{ item.title }}</RouterLink>
-                                </td>
-                                <td v-if="schema.publishable" class="listing-status">
-                                    <UiBadge v-if="item.visibility" :tone="visibilityBadges[item.visibility].tone" dot>
-                                        {{ visibilityBadges[item.visibility].label }}
-                                    </UiBadge>
-                                    <UiBadge v-if="item.hasDraft" tone="warning">À publier</UiBadge>
-                                </td>
-                                <td class="listing-date">{{ item.updatedAt ? formatDateTime(item.updatedAt) : '' }}</td>
-                            </tr>
-                            <tr v-if="filteredItems.length === 0">
-                                <td :colspan="schema.publishable ? 3 : 2" class="listing-empty">Aucun résultat pour « {{ search }} ».</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </UiCard>
+                    <SortableTree
+                        v-if="meta.isTree"
+                        :module="module"
+                        :items="items"
+                        :nesting-depth="schema.nestingDepth"
+                        :publishable="schema.publishable"
+                        @reorder="reorder"
+                    />
+
+                    <div v-else class="table-scroll">
+                        <table class="listing">
+                            <thead>
+                                <tr>
+                                    <th
+                                        v-for="column in columns"
+                                        :key="column.name"
+                                        class="whitespace-nowrap"
+                                        :class="{ 'listing-date': column.type === 'date' || column.type === 'datetime', 'w-14': column.type === 'image' }"
+                                        :aria-sort="sortIcon(column) === 'arrow-up' ? 'ascending' : sortIcon(column) === 'arrow-down' ? 'descending' : undefined"
+                                    >
+                                        <button v-if="column.sortable" type="button" :class="headerButtonClass" @click="sortBy(column)">
+                                            {{ column.label }}
+                                            <UiIcon v-if="sortIcon(column)" :name="sortIcon(column)!" :size="12" />
+                                        </button>
+                                        <span v-else-if="column.type !== 'image'">{{ column.label }}</span>
+                                        <span v-else class="sr-only">{{ column.label }}</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item in items" :key="item.id">
+                                    <td
+                                        v-for="column in columns"
+                                        :key="column.name"
+                                        :class="{ 'listing-status': column.type === 'status', 'listing-date': column.type === 'date' || column.type === 'datetime' }"
+                                    >
+                                        <RouterLink v-if="column.type === 'title'" :to="{ name: 'module.edit', params: { module, id: item.id } }" class="stretched-link">{{ item.title }}</RouterLink>
+
+                                        <template v-else-if="column.type === 'status'">
+                                            <UiBadge v-if="item.visibility" :tone="visibilityBadges[item.visibility].tone" dot>{{ visibilityBadges[item.visibility].label }}</UiBadge>
+                                            <UiBadge v-if="item.hasDraft" tone="warning">À publier</UiBadge>
+                                        </template>
+
+                                        <template v-else-if="column.type === 'image'">
+                                            <img v-if="item.cells[column.name]" :src="String(item.cells[column.name])" alt="" class="h-8 w-11 rounded-xs bg-accent-soft object-cover" />
+                                            <span v-else class="block h-8 w-11 rounded-xs bg-accent-soft" aria-hidden="true" />
+                                        </template>
+
+                                        <UiIcon v-else-if="column.type === 'boolean'" :name="item.cells[column.name] ? 'check' : 'minus'" :size="14" :class="item.cells[column.name] ? 'text-ink' : 'text-faint'" />
+
+                                        <template v-else-if="item.cells[column.name] === null || item.cells[column.name] === ''"><span class="text-faint">—</span></template>
+                                        <template v-else-if="column.type === 'date'">{{ formatDate(String(item.cells[column.name])) }}</template>
+                                        <template v-else-if="column.type === 'datetime'">{{ formatDateTime(String(item.cells[column.name])) }}</template>
+                                        <template v-else>{{ item.cells[column.name] }}</template>
+                                    </td>
+                                </tr>
+                                <tr v-if="items.length === 0">
+                                    <td :colspan="columns.length" class="listing-empty">
+                                        Aucun résultat<template v-if="query.search"> pour « {{ query.search }} »</template>.
+                                        <button type="button" class="ml-1 font-medium text-ink underline underline-offset-3" @click="clearCriteria">Tout afficher</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <footer v-if="!meta.isTree && meta.lastPage > 1" class="flex items-center justify-between gap-3 border-t border-line px-4.5 py-2.5 text-sm text-muted">
+                        <span class="tabular-nums">Page {{ meta.currentPage }} sur {{ meta.lastPage }}</span>
+                        <span class="flex gap-2">
+                            <UiButton :disabled="meta.currentPage <= 1" @click="update({ ...query, page: meta.currentPage - 1 })"><UiIcon name="chevron-left" :size="14" /> Précédente</UiButton>
+                            <UiButton :disabled="meta.currentPage >= meta.lastPage" @click="update({ ...query, page: meta.currentPage + 1 })">Suivante <UiIcon name="chevron-right" :size="14" /></UiButton>
+                        </span>
+                    </footer>
+                </UiCard>
+            </template>
         </div>
     </main>
 </template>

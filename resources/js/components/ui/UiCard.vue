@@ -17,10 +17,10 @@ provide(cardContextKey, true)
     <section class="relative rounded-xl border border-ring-card bg-surface">
         <header
             v-if="title || $slots.actions"
-            class="flex min-h-14 items-center justify-between gap-3 border-b border-b-line px-4.5 py-3.5 max-md:flex-wrap"
+            class="flex min-h-14 flex-wrap items-center justify-between gap-3 border-b border-b-line px-4.5 py-3.5"
         >
             <div class="flex min-w-0 flex-col gap-0.5">
-                <h2 v-if="title" class="text-md font-semibold tracking-[-0.01em] text-strong">{{ title }}</h2>
+                <h2 v-if="title" class="whitespace-nowrap text-md font-semibold tracking-[-0.01em] text-strong">{{ title }}</h2>
                 <p v-if="description" class="text-sm text-muted">{{ description }}</p>
             </div>
             <div v-if="$slots.actions" class="flex flex-none items-center gap-2"><slot name="actions" /></div>

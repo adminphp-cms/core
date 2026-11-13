@@ -8,6 +8,15 @@ const dateTimeFormatter = new Intl.DateTimeFormat(interfaceLocale, { dateStyle: 
 const longDateFormatter = new Intl.DateTimeFormat(interfaceLocale, { weekday: 'long', day: 'numeric', month: 'long' })
 const relativeFormatter = new Intl.RelativeTimeFormat(interfaceLocale, { numeric: 'auto' })
 
+const dateFormatter = new Intl.DateTimeFormat(interfaceLocale, { dateStyle: 'medium' })
+
+/** A calendar date (`2026-12-05`), read as a local date so it never shifts by a day. */
+export function formatDate(date: string): string {
+    const [year, month, day] = date.slice(0, 10).split('-').map(Number)
+
+    return dateFormatter.format(new Date(year, month - 1, day))
+}
+
 export function formatDateTime(iso: string): string {
     return dateTimeFormatter.format(new Date(iso))
 }

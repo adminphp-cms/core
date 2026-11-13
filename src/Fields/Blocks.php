@@ -24,6 +24,11 @@ class Blocks extends Field
         return 'blocks';
     }
 
+    public function listingType(): ?string
+    {
+        return null;
+    }
+
     /**
      * @param  array<int, class-string<BlockDefinition>>  $blockClasses
      */

@@ -192,7 +192,55 @@ export interface ModuleSchema {
     sortable: boolean
     /** How many levels items can be nested under others (0: a flat list). */
     nestingDepth: number
+    listing: ListingSchema
     fields: FieldSchema[]
+}
+
+export type ListingColumnType = 'title' | 'status' | 'text' | 'boolean' | 'date' | 'datetime' | 'image'
+
+export interface ListingColumn {
+    name: string
+    label: string
+    type: ListingColumnType
+    sortable: boolean
+}
+
+export interface ListingFilter {
+    name: string
+    label: string
+    options: { value: string; label: string }[]
+}
+
+export interface ListingSchema {
+    columns: ListingColumn[]
+    filters: ListingFilter[]
+    /** A column name, with a leading "-" for descending order. */
+    defaultSort: string
+}
+
+/** Publication views of a publishable module, shown as tabs. */
+export type ListingView = 'all' | 'published' | 'unpublished' | 'pending'
+
+export interface ListingQuery {
+    search: string
+    filters: Record<string, string>
+    view: ListingView
+    /** Null for the module's default order (or the hand-made order of a sortable module). */
+    sort: string | null
+    page: number
+}
+
+export interface ListingMeta {
+    currentPage: number
+    lastPage: number
+    total: number
+    sort: string | null
+    view: ListingView | null
+    filters: Record<string, string>
+    /** Items per publication view, null when the module is not publishable. */
+    counts: Record<ListingView, number> | null
+    /** The whole module in its hand-made order, to drag around. */
+    isTree: boolean
 }
 
 export interface SettingsSchema {
@@ -238,6 +286,8 @@ export interface ItemSummary {
     hasDraft: boolean
     /** Parent item in a nested module, null at the top or in a flat module. */
     parentId: string | null
+    /** Values of the listing columns, by column name. */
+    cells: Record<string, unknown>
 }
 
 /** An item at its new place, as saved after a drag and drop. */

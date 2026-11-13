@@ -53,6 +53,16 @@ class Date extends Field
         return $this->hasTime ? $date->toIso8601String() : $date->format('Y-m-d');
     }
 
+    public function listingType(): string
+    {
+        return $this->hasTime ? 'datetime' : 'date';
+    }
+
+    public function listingValue(Model $model, string $locale): ?string
+    {
+        return $this->valueFromModel($model);
+    }
+
     protected function valueRules(): array
     {
         return [$this->hasTime ? 'date' : 'date_format:Y-m-d', ...$this->rules];

@@ -2,14 +2,13 @@
 
 namespace Gmarineau\AdminPhp\Http\Controllers;
 
+use Gmarineau\AdminPhp\Actions\ListModuleItems;
 use Gmarineau\AdminPhp\Actions\SaveDraft;
 use Gmarineau\AdminPhp\Actions\SaveModuleContent;
 use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class ModuleItemController
 {
@@ -18,41 +17,21 @@ class ModuleItemController
     public function __construct(protected AdminPhp $adminPhp) {}
 
     /**
-     * Items of a module, last updated first. `?search=` filters them by title.
+     * Items of a module for the admin listing. Query: `search`, `filters[name]=value`,
+     * `view` (all, published, unpublished, pending), `sort` (a column, "-" for descending) and `page`.
      */
-    public function index(Request $request, string $module): JsonResponse
+    public function index(Request $request, ListModuleItems $listModuleItems, string $module): JsonResponse
     {
-        $moduleDefinition = $this->findModule($module);
-        $search = trim((string) $request->query('search', ''));
-        $locale = $this->adminPhp->defaultLocale();
-        $isPublishable = $moduleDefinition->isPublishable();
+        $filters = $request->query('filters');
+        $sort = $request->query('sort');
 
-        $query = $moduleDefinition->modelClass()::query()
-            ->when($isPublishable, fn ($query) => $query->withExists('draftRevision as has_draft'))
-            ->when($search !== '', fn ($query) => $moduleDefinition->search($query, $search));
-
-        // Items ordered by hand are listed all at once, in their order, to be dragged around.
-        $items = $moduleDefinition->isSortable()
-            ? new LengthAwarePaginator($collection = $query->orderBy('position')->get(), $collection->count(), max($collection->count(), 1))
-            : $query->latest('updated_at')->paginate(30);
-
-        $isNested = $moduleDefinition->nestingDepth() > 0;
-
-        return response()->json([
-            'data' => $items->getCollection()->map(fn (Model $item): array => [
-                'id' => $item->getKey(),
-                'title' => $moduleDefinition->itemTitle($item, $locale),
-                'updatedAt' => $item->getAttribute('updated_at')?->toIso8601String(),
-                'visibility' => $isPublishable ? $item->visibility()->value : null,
-                'hasDraft' => $isPublishable && $item->getAttribute('has_draft'),
-                'parentId' => $isNested ? $item->getAttribute('parent_id') : null,
-            ])->all(),
-            'meta' => [
-                'currentPage' => $items->currentPage(),
-                'lastPage' => $items->lastPage(),
-                'total' => $items->total(),
-            ],
-        ]);
+        return response()->json($listModuleItems->handle($this->findModule($module), [
+            'search' => (string) $request->query('search', ''),
+            'filters' => is_array($filters) ? $filters : [],
+            'view' => (string) $request->query('view', 'all'),
+            'sort' => is_string($sort) && $sort !== '' ? $sort : null,
+            'page' => (int) $request->query('page', 1),
+        ]));
     }
 
     public function show(string $module, string $id): JsonResponse

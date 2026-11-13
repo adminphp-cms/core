@@ -4,6 +4,7 @@ namespace Gmarineau\AdminPhp\Fields;
 
 use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Fields\Concerns\IsNotTranslatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 
 /**
@@ -18,6 +19,21 @@ class Image extends Field
     public function type(): string
     {
         return 'image';
+    }
+
+    public function listingType(): string
+    {
+        return 'image';
+    }
+
+    /**
+     * The id of the asset; the listing turns it into a thumbnail url.
+     */
+    public function listingValue(Model $model, string $locale): ?string
+    {
+        $value = $this->valueFromModel($model);
+
+        return is_string($value) && $value !== '' ? $value : null;
     }
 
     protected function valueRules(): array

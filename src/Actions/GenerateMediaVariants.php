@@ -1,8 +1,8 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Models\Media;
+use AdminPhp\Models\Media;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Image\Image;

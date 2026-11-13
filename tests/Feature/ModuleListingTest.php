@@ -1,13 +1,13 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\Media;
-use Gmarineau\AdminPhp\Modules\Column;
-use Gmarineau\AdminPhp\Modules\Filter;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
-use Gmarineau\AdminPhp\Tests\Fixtures\ArticleModule;
-use Gmarineau\AdminPhp\Tests\Fixtures\MenuLinkModule;
-use Gmarineau\AdminPhp\Tests\Fixtures\TagModule;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\Media;
+use AdminPhp\Modules\Column;
+use AdminPhp\Modules\Filter;
+use AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\Tests\Fixtures\ArticleModule;
+use AdminPhp\Tests\Fixtures\MenuLinkModule;
+use AdminPhp\Tests\Fixtures\TagModule;
 use Illuminate\Support\Carbon;
 use Illuminate\Testing\TestResponse;
 

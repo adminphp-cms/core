@@ -1,12 +1,12 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Fields\Field;
-use Gmarineau\AdminPhp\Fields\Select;
-use Gmarineau\AdminPhp\Fields\Text;
-use Gmarineau\AdminPhp\Fields\Toggle;
-use Gmarineau\AdminPhp\Models\Setting;
-use Gmarineau\AdminPhp\Settings\Settings;
+use AdminPhp\AdminPhp;
+use AdminPhp\Fields\Field;
+use AdminPhp\Fields\Select;
+use AdminPhp\Fields\Text;
+use AdminPhp\Fields\Toggle;
+use AdminPhp\Models\Setting;
+use AdminPhp\Settings\Settings;
 use Illuminate\Support\Facades\Validator;
 
 class DefaultsSettings extends Settings

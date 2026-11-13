@@ -1,6 +1,6 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Enums;
+namespace AdminPhp\Enums;
 
 /**
  * What an admin user may do: admins also manage the other admin users,

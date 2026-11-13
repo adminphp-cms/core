@@ -1,8 +1,8 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Fields;
+namespace AdminPhp\Fields;
 
-use Gmarineau\AdminPhp\AdminPhp;
+use AdminPhp\AdminPhp;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use LogicException;

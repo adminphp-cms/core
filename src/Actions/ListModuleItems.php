@@ -1,12 +1,12 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Enums\PublicationStatus;
-use Gmarineau\AdminPhp\Models\Media;
-use Gmarineau\AdminPhp\Modules\Column;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\AdminPhp;
+use AdminPhp\Enums\PublicationStatus;
+use AdminPhp\Models\Media;
+use AdminPhp\Modules\Column;
+use AdminPhp\Modules\Module;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

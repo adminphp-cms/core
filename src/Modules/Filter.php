@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Modules;
+namespace AdminPhp\Modules;
 
-use Gmarineau\AdminPhp\Fields\Select;
-use Gmarineau\AdminPhp\Fields\Toggle;
+use AdminPhp\Fields\Select;
+use AdminPhp\Fields\Toggle;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use LogicException;

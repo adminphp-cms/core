@@ -1,6 +1,6 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests\Fixtures;
+namespace AdminPhp\Tests\Fixtures;
 
 enum Category: string
 {

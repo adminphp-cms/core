@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests\Fixtures;
+namespace AdminPhp\Tests\Fixtures;
 
-use Gmarineau\AdminPhp\Fields\Browser;
-use Gmarineau\AdminPhp\Fields\Text;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\Fields\Browser;
+use AdminPhp\Fields\Text;
+use AdminPhp\Modules\Module;
 
 /**
  * Links of a two-level site menu, ordered by hand.

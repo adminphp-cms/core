@@ -1,12 +1,12 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Models\Block;
-use Gmarineau\AdminPhp\Models\Lock;
-use Gmarineau\AdminPhp\Models\Related;
-use Gmarineau\AdminPhp\Models\Revision;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\Models\Block;
+use AdminPhp\Models\Lock;
+use AdminPhp\Models\Related;
+use AdminPhp\Models\Revision;
+use AdminPhp\Modules\Module;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use LogicException;

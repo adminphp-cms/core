@@ -1,6 +1,6 @@
 <?php
 
-use Gmarineau\AdminPhp\Fields\RichText;
+use AdminPhp\Fields\RichText;
 
 it('offers every tool by default', function () {
     expect(RichText::make('body')->toSchema())->toMatchArray([

@@ -1,9 +1,9 @@
 <?php
 
-use Gmarineau\AdminPhp\Fields\Blocks;
-use Gmarineau\AdminPhp\Fields\Repeater;
-use Gmarineau\AdminPhp\Models\Block;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\Fields\Blocks;
+use AdminPhp\Fields\Repeater;
+use AdminPhp\Models\Block;
+use AdminPhp\Tests\Fixtures\Article;
 use Illuminate\Support\Str;
 
 beforeEach(function () {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\SyncMediaUsages;
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Settings\Settings;
-use Gmarineau\AdminPhp\Settings\SettingsStore;
+use AdminPhp\Actions\SyncMediaUsages;
+use AdminPhp\AdminPhp;
+use AdminPhp\Settings\Settings;
+use AdminPhp\Settings\SettingsStore;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

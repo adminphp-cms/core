@@ -1,6 +1,6 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Fields;
+namespace AdminPhp\Fields;
 
 use LogicException;
 

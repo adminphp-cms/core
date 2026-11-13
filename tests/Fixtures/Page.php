@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests\Fixtures;
+namespace AdminPhp\Tests\Fixtures;
 
-use Gmarineau\AdminPhp\Concerns\HasNesting;
-use Gmarineau\AdminPhp\Concerns\HasPosition;
+use AdminPhp\Concerns\HasNesting;
+use AdminPhp\Concerns\HasPosition;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

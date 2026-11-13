@@ -1,17 +1,17 @@
 <?php
 
-namespace Gmarineau\AdminPhp;
+namespace AdminPhp;
 
-use Gmarineau\AdminPhp\Console\InstallCommand;
-use Gmarineau\AdminPhp\Console\MakeBlockCommand;
-use Gmarineau\AdminPhp\Console\MakeModuleCommand;
-use Gmarineau\AdminPhp\Console\RegenerateMediaCommand;
-use Gmarineau\AdminPhp\Console\SyncMediaUsagesCommand;
-use Gmarineau\AdminPhp\Console\UserCommand;
-use Gmarineau\AdminPhp\Enums\PublicationStatus;
-use Gmarineau\AdminPhp\Models\Block;
-use Gmarineau\AdminPhp\Models\User;
-use Gmarineau\AdminPhp\Settings\SettingsStore;
+use AdminPhp\Console\InstallCommand;
+use AdminPhp\Console\MakeBlockCommand;
+use AdminPhp\Console\MakeModuleCommand;
+use AdminPhp\Console\RegenerateMediaCommand;
+use AdminPhp\Console\SyncMediaUsagesCommand;
+use AdminPhp\Console\UserCommand;
+use AdminPhp\Enums\PublicationStatus;
+use AdminPhp\Models\Block;
+use AdminPhp\Models\User;
+use AdminPhp\Settings\SettingsStore;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;

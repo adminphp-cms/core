@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Jobs;
+namespace AdminPhp\Jobs;
 
-use Gmarineau\AdminPhp\Actions\GenerateMediaVariants;
-use Gmarineau\AdminPhp\Models\Media;
+use AdminPhp\Actions\GenerateMediaVariants;
+use AdminPhp\Models\Media;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 

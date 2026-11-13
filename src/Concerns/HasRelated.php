@@ -1,8 +1,8 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Concerns;
+namespace AdminPhp\Concerns;
 
-use Gmarineau\AdminPhp\Models\Related;
+use AdminPhp\Models\Related;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;

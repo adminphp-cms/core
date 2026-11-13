@@ -1,6 +1,6 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Enums;
+namespace AdminPhp\Enums;
 
 /**
  * A draft revision holds pending changes (one per content at most);

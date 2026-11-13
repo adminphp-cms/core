@@ -1,6 +1,6 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Enums;
+namespace AdminPhp\Enums;
 
 /**
  * Editorial status stored on a publishable model.

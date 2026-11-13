@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Enums\PublicationStatus;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\AdminPhp;
+use AdminPhp\Enums\PublicationStatus;
+use AdminPhp\Modules\Module;
 use Illuminate\Http\JsonResponse;
 
 class ModuleController

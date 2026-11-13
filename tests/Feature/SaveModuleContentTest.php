@@ -1,10 +1,10 @@
 <?php
 
-use Gmarineau\AdminPhp\Actions\GetFormData;
-use Gmarineau\AdminPhp\Actions\SaveModuleContent;
-use Gmarineau\AdminPhp\Models\Block;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
-use Gmarineau\AdminPhp\Tests\Fixtures\ArticleModule;
+use AdminPhp\Actions\GetFormData;
+use AdminPhp\Actions\SaveModuleContent;
+use AdminPhp\Models\Block;
+use AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\Tests\Fixtures\ArticleModule;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\InviteUser;
-use Gmarineau\AdminPhp\Actions\SendInvitation;
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Enums\UserRole;
-use Gmarineau\AdminPhp\Models\User;
+use AdminPhp\Actions\InviteUser;
+use AdminPhp\Actions\SendInvitation;
+use AdminPhp\AdminPhp;
+use AdminPhp\Enums\UserRole;
+use AdminPhp\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;

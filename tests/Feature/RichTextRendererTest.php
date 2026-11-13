@@ -1,7 +1,7 @@
 <?php
 
-use Gmarineau\AdminPhp\Models\Block;
-use Gmarineau\AdminPhp\RichTextRenderer;
+use AdminPhp\Models\Block;
+use AdminPhp\RichTextRenderer;
 use Illuminate\Support\Facades\Blade;
 
 /**

@@ -1,9 +1,9 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\User;
-use Gmarineau\AdminPhp\Tests\Console\InstallCommandTestCase;
-use Gmarineau\AdminPhp\Tests\TestCase;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\User;
+use AdminPhp\Tests\Console\InstallCommandTestCase;
+use AdminPhp\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(TestCase::class, RefreshDatabase::class)->in('Feature');

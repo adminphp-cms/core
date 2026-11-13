@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests\Fixtures;
+namespace AdminPhp\Tests\Fixtures;
 
-use Gmarineau\AdminPhp\Fields\Slug;
-use Gmarineau\AdminPhp\Fields\Text;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\Fields\Slug;
+use AdminPhp\Fields\Text;
+use AdminPhp\Modules\Module;
 
 /**
  * A module with a plain (untranslated) slug made from a field other than "title".

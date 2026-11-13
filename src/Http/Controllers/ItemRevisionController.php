@@ -1,11 +1,11 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\RestoreRevision;
-use Gmarineau\AdminPhp\Enums\RevisionStatus;
-use Gmarineau\AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
-use Gmarineau\AdminPhp\Models\Revision;
+use AdminPhp\Actions\RestoreRevision;
+use AdminPhp\Enums\RevisionStatus;
+use AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
+use AdminPhp\Models\Revision;
 use Illuminate\Http\JsonResponse;
 
 class ItemRevisionController

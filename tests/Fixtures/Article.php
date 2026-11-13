@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests\Fixtures;
+namespace AdminPhp\Tests\Fixtures;
 
-use Gmarineau\AdminPhp\Concerns\HasBlocks;
-use Gmarineau\AdminPhp\Concerns\HasPublication;
-use Gmarineau\AdminPhp\Concerns\HasRelated;
+use AdminPhp\Concerns\HasBlocks;
+use AdminPhp\Concerns\HasPublication;
+use AdminPhp\Concerns\HasRelated;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

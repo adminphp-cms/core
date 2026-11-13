@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\ReorderItems;
-use Gmarineau\AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
+use AdminPhp\Actions\ReorderItems;
+use AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

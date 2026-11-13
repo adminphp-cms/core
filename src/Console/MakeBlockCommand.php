@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Console;
+namespace AdminPhp\Console;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Console\Concerns\GeneratesFromStubs;
+use AdminPhp\AdminPhp;
+use AdminPhp\Console\Concerns\GeneratesFromStubs;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;

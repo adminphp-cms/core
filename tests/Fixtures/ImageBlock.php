@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests\Fixtures;
+namespace AdminPhp\Tests\Fixtures;
 
-use Gmarineau\AdminPhp\Blocks\Block;
-use Gmarineau\AdminPhp\Fields\Image;
-use Gmarineau\AdminPhp\Fields\Text;
+use AdminPhp\Blocks\Block;
+use AdminPhp\Fields\Image;
+use AdminPhp\Fields\Text;
 
 class ImageBlock extends Block
 {

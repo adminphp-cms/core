@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests;
+namespace AdminPhp\Tests;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\AdminPhpServiceProvider;
-use Gmarineau\AdminPhp\Tests\Fixtures\ArticleModule;
+use AdminPhp\AdminPhp;
+use AdminPhp\AdminPhpServiceProvider;
+use AdminPhp\Tests\Fixtures\ArticleModule;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra

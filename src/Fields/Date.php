@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Fields;
+namespace AdminPhp\Fields;
 
+use AdminPhp\Fields\Concerns\IsNotTranslatable;
 use DateTimeInterface;
-use Gmarineau\AdminPhp\Fields\Concerns\IsNotTranslatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 

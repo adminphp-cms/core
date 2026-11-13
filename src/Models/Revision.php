@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Models;
+namespace AdminPhp\Models;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Enums\RevisionStatus;
+use AdminPhp\AdminPhp;
+use AdminPhp\Enums\RevisionStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

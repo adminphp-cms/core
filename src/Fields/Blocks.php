@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Fields;
+namespace AdminPhp\Fields;
 
-use Gmarineau\AdminPhp\Actions\SyncBlocks;
-use Gmarineau\AdminPhp\Blocks\Block as BlockDefinition;
-use Gmarineau\AdminPhp\Models\Block;
+use AdminPhp\Actions\SyncBlocks;
+use AdminPhp\Blocks\Block as BlockDefinition;
+use AdminPhp\Models\Block;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;

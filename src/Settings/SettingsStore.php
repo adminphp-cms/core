@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Settings;
+namespace AdminPhp\Settings;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\Setting;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\Setting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 

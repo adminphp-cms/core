@@ -1,8 +1,8 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Concerns;
+namespace AdminPhp\Concerns;
 
-use Gmarineau\AdminPhp\Models\Block;
+use AdminPhp\Models\Block;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**

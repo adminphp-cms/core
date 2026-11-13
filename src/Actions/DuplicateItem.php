@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Fields\Blocks;
-use Gmarineau\AdminPhp\Fields\Slug;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\Fields\Blocks;
+use AdminPhp\Fields\Slug;
+use AdminPhp\Modules\Module;
 use Illuminate\Database\Eloquent\Model;
 
 /**

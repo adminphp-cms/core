@@ -1,11 +1,11 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Settings;
+namespace AdminPhp\Settings;
 
-use Gmarineau\AdminPhp\Fields\Blocks;
-use Gmarineau\AdminPhp\Fields\Field;
-use Gmarineau\AdminPhp\Fields\Slug;
-use Gmarineau\AdminPhp\Forms\HasFields;
+use AdminPhp\Fields\Blocks;
+use AdminPhp\Fields\Field;
+use AdminPhp\Fields\Slug;
+use AdminPhp\Forms\HasFields;
 use LogicException;
 
 /**

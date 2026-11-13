@@ -1,6 +1,6 @@
 # AdminPhp
 
-[![Tests](https://github.com/gmarineau/adminphp/actions/workflows/tests.yml/badge.svg)](https://github.com/gmarineau/adminphp/actions/workflows/tests.yml)
+[![Tests](https://github.com/adminphp-cms/core/actions/workflows/tests.yml/badge.svg)](https://github.com/adminphp-cms/core/actions/workflows/tests.yml)
 [![PHP](https://img.shields.io/badge/php-%5E8.3-777bb4)](composer.json)
 [![Laravel](https://img.shields.io/badge/laravel-12%20%7C%2013-ff2d20)](composer.json)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE.md)
@@ -41,7 +41,7 @@ AdminPhp is not on Packagist yet: add the repository to your `composer.json` fir
 
 ```json
 "repositories": [
-    { "type": "vcs", "url": "https://github.com/gmarineau/adminphp" }
+    { "type": "vcs", "url": "https://github.com/adminphp-cms/core" }
 ]
 ```
 
@@ -49,7 +49,7 @@ Then require the package and run the installer, which publishes the config, the 
 assets, and runs the migrations:
 
 ```bash
-composer require gmarineau/adminphp
+composer require adminphp-cms/core
 php artisan adminphp:install
 ```
 
@@ -77,11 +77,11 @@ namespace App\AdminPhp\Modules;
 
 use App\AdminPhp\Blocks\TextBlock;
 use App\Models\Project;
-use Gmarineau\AdminPhp\Fields\Blocks;
-use Gmarineau\AdminPhp\Fields\Image;
-use Gmarineau\AdminPhp\Fields\Slug;
-use Gmarineau\AdminPhp\Fields\Text;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\Fields\Blocks;
+use AdminPhp\Fields\Image;
+use AdminPhp\Fields\Slug;
+use AdminPhp\Fields\Text;
+use AdminPhp\Modules\Module;
 
 class ProjectModule extends Module
 {
@@ -107,7 +107,7 @@ Register it, for instance in `AppServiceProvider::boot()`, then run `php artisan
 
 ```php
 use App\AdminPhp\Modules\ProjectModule;
-use Gmarineau\AdminPhp\AdminPhp;
+use AdminPhp\AdminPhp;
 
 app(AdminPhp::class)->registerModules([ProjectModule::class]);
 ```
@@ -128,7 +128,7 @@ Text::make('rooms')->number(min: 1, max: 20, step: 1)->default(1), // Stored as 
 Your models stay regular Eloquent models:
 
 ```php
-use Gmarineau\AdminPhp\Models\Media;
+use AdminPhp\Models\Media;
 
 $project = Project::query()->published()->where('slug', $slug)->firstOrFail();
 $cover = Media::query()->find($project->cover); // An Image field stores the id of its media.

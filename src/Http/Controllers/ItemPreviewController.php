@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\BuildPreview;
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
+use AdminPhp\Actions\BuildPreview;
+use AdminPhp\AdminPhp;
+use AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

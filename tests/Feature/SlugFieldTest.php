@@ -1,12 +1,12 @@
 <?php
 
-use Gmarineau\AdminPhp\Actions\SaveModuleContent;
-use Gmarineau\AdminPhp\Blocks\Block;
-use Gmarineau\AdminPhp\Fields\Slug;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
-use Gmarineau\AdminPhp\Tests\Fixtures\ArticleModule;
-use Gmarineau\AdminPhp\Tests\Fixtures\Tag;
-use Gmarineau\AdminPhp\Tests\Fixtures\TagModule;
+use AdminPhp\Actions\SaveModuleContent;
+use AdminPhp\Blocks\Block;
+use AdminPhp\Fields\Slug;
+use AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\Tests\Fixtures\ArticleModule;
+use AdminPhp\Tests\Fixtures\Tag;
+use AdminPhp\Tests\Fixtures\TagModule;
 
 /**
  * @param  array<string, mixed>  $input

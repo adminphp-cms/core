@@ -1,9 +1,9 @@
 <?php
 
-use Gmarineau\AdminPhp\Enums\PublicationStatus;
-use Gmarineau\AdminPhp\Enums\RevisionStatus;
-use Gmarineau\AdminPhp\Models\Revision;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\Enums\PublicationStatus;
+use AdminPhp\Enums\RevisionStatus;
+use AdminPhp\Models\Revision;
+use AdminPhp\Tests\Fixtures\Article;
 use Illuminate\Support\Str;
 
 beforeEach(function () {

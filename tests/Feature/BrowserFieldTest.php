@@ -1,11 +1,11 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\Block;
-use Gmarineau\AdminPhp\Models\Related;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
-use Gmarineau\AdminPhp\Tests\Fixtures\Tag;
-use Gmarineau\AdminPhp\Tests\Fixtures\TagModule;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\Block;
+use AdminPhp\Models\Related;
+use AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\Tests\Fixtures\Tag;
+use AdminPhp\Tests\Fixtures\TagModule;
 use Illuminate\Support\Str;
 
 beforeEach(function () {

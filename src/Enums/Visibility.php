@@ -1,6 +1,6 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Enums;
+namespace AdminPhp\Enums;
 
 /**
  * What the site shows right now, derived from the status and the publication window.

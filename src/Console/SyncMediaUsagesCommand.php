@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Console;
+namespace AdminPhp\Console;
 
-use Gmarineau\AdminPhp\Actions\SyncMediaUsages;
-use Gmarineau\AdminPhp\AdminPhp;
+use AdminPhp\Actions\SyncMediaUsages;
+use AdminPhp\AdminPhp;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\Console\Attribute\AsCommand;

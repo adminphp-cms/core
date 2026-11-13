@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Console;
+namespace AdminPhp\Console;
 
-use Gmarineau\AdminPhp\Actions\GenerateMediaVariants;
-use Gmarineau\AdminPhp\Models\Media;
+use AdminPhp\Actions\GenerateMediaVariants;
+use AdminPhp\Models\Media;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 

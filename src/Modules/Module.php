@@ -1,13 +1,13 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Modules;
+namespace AdminPhp\Modules;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Concerns\HasNesting;
-use Gmarineau\AdminPhp\Concerns\HasPosition;
-use Gmarineau\AdminPhp\Concerns\HasPublication;
-use Gmarineau\AdminPhp\Fields\Field;
-use Gmarineau\AdminPhp\Forms\HasFields;
+use AdminPhp\AdminPhp;
+use AdminPhp\Concerns\HasNesting;
+use AdminPhp\Concerns\HasPosition;
+use AdminPhp\Concerns\HasPublication;
+use AdminPhp\Fields\Field;
+use AdminPhp\Forms\HasFields;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

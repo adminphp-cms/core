@@ -1,12 +1,12 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Modules;
+namespace AdminPhp\Modules;
 
+use AdminPhp\AdminPhp;
+use AdminPhp\Fields\Field;
+use AdminPhp\Models\Media;
 use BackedEnum;
 use Carbon\CarbonInterface;
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Fields\Field;
-use Gmarineau\AdminPhp\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;

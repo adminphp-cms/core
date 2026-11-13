@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Fields\Browser;
-use Gmarineau\AdminPhp\Models\Related;
+use AdminPhp\Fields\Browser;
+use AdminPhp\Models\Related;
 use Illuminate\Database\Eloquent\Model;
 
 /**

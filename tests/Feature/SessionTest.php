@@ -1,7 +1,7 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\User;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\User;
 use Illuminate\Support\Facades\RateLimiter;
 
 beforeEach(function () {

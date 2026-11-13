@@ -1,6 +1,6 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Concerns;
+namespace AdminPhp\Concerns;
 
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;

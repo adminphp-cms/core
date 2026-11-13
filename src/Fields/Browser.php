@@ -1,11 +1,11 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Fields;
+namespace AdminPhp\Fields;
 
-use Gmarineau\AdminPhp\Actions\SyncRelated;
-use Gmarineau\AdminPhp\Fields\Concerns\IsNotTranslatable;
-use Gmarineau\AdminPhp\Models\Related;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\Actions\SyncRelated;
+use AdminPhp\Fields\Concerns\IsNotTranslatable;
+use AdminPhp\Models\Related;
+use AdminPhp\Modules\Module;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 

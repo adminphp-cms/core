@@ -1,6 +1,6 @@
 <?php
 
-use Gmarineau\AdminPhp\Models\User;
+use AdminPhp\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 it('updates the name of the logged in user', function () {

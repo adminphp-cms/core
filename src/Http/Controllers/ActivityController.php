@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Enums\RevisionStatus;
-use Gmarineau\AdminPhp\Models\Revision;
+use AdminPhp\AdminPhp;
+use AdminPhp\Enums\RevisionStatus;
+use AdminPhp\Models\Revision;
 use Illuminate\Http\JsonResponse;
 
 /**

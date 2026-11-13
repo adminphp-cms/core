@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Fields;
+namespace AdminPhp\Fields;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Fields\Concerns\IsNotTranslatable;
+use AdminPhp\AdminPhp;
+use AdminPhp\Fields\Concerns\IsNotTranslatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 

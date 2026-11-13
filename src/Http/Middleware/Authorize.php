@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Middleware;
+namespace AdminPhp\Http\Middleware;
 
+use AdminPhp\AdminPhp;
 use Closure;
-use Gmarineau\AdminPhp\AdminPhp;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 

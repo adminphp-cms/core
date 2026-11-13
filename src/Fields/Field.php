@@ -16,6 +16,12 @@ abstract class Field
 
     protected bool $isRequired = false;
 
+    protected ?string $note = null;
+
+    protected ?string $placeholder = null;
+
+    protected mixed $default = null;
+
     /**
      * @var array<int, mixed>
      */
@@ -52,6 +58,49 @@ abstract class Field
         $this->isRequired = $isRequired;
 
         return $this;
+    }
+
+    /**
+     * Help shown under the field, e.g. what the value is used for or the expected format.
+     */
+    public function note(string $note): static
+    {
+        $this->note = $note;
+
+        return $this;
+    }
+
+    /**
+     * Example shown in the empty input, instead of the label.
+     */
+    public function placeholder(string $placeholder): static
+    {
+        $this->placeholder = $placeholder;
+
+        return $this;
+    }
+
+    /**
+     * Value of the field in a new content (item, block, repeater row, settings never saved).
+     * A string given to a translatable field is the value of the default locale.
+     */
+    public function default(mixed $value): static
+    {
+        $this->default = $value;
+
+        return $this;
+    }
+
+    /**
+     * The default value, in the shape the form edits: per locale for a translatable field.
+     */
+    public function defaultValue(): mixed
+    {
+        if ($this->isTranslatable && $this->default !== null && ! is_array($this->default)) {
+            return [app(AdminPhp::class)->defaultLocale() => $this->default];
+        }
+
+        return $this->default;
     }
 
     /**
@@ -238,6 +287,9 @@ abstract class Field
             'label' => $this->getLabel(),
             'translatable' => $this->isTranslatable,
             'required' => $this->isRequired,
+            'note' => $this->note,
+            'placeholder' => $this->placeholder,
+            'default' => $this->defaultValue(),
             ...$this->schemaAttributes(),
         ];
     }

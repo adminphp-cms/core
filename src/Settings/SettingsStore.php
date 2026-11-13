@@ -41,8 +41,10 @@ class SettingsStore
      */
     public function get(string $key, mixed $default = null, ?string $locale = null): mixed
     {
-        $value = $this->all()[$key] ?? null;
+        $stored = $this->all();
         $field = $this->adminPhp->settingsForm()?->fields()[$key] ?? null;
+        // A setting never saved reads the default of its field.
+        $value = array_key_exists($key, $stored) ? $stored[$key] : $field?->defaultValue();
 
         if ($field?->isTranslatable() && is_array($value)) {
             $locale ??= app()->getLocale();
@@ -85,7 +87,9 @@ class SettingsStore
         $values = [];
 
         foreach ($settings->fields() as $key => $field) {
-            $values[$key] = $stored[$key] ?? ($field->isTranslatable() ? [] : null);
+            $values[$key] = array_key_exists($key, $stored)
+                ? $stored[$key]
+                : ($field->defaultValue() ?? ($field->isTranslatable() ? [] : null));
         }
 
         return $values;

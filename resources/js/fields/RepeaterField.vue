@@ -6,6 +6,7 @@ import { useEditorStore } from '../stores/editor'
 import type { RepeaterFieldSchema, RepeaterItem } from '../types'
 import { ulid } from '../ulid'
 import FieldRenderer from './FieldRenderer.vue'
+import { defaultValues } from './initialValues'
 
 const props = defineProps<{
     field: RepeaterFieldSchema
@@ -33,7 +34,7 @@ function update(newItems: RepeaterItem[]): void {
 function add(): void {
     const id = ulid()
     addedItemId.value = id
-    update([...items.value, { id }])
+    update([...items.value, { ...defaultValues(props.field.fields), id }])
 }
 
 function move(index: number, offset: -1 | 1): void {

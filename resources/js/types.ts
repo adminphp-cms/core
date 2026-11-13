@@ -43,12 +43,20 @@ export interface BaseFieldSchema {
     label: string
     translatable: boolean
     required: boolean
+    note: string | null
+    placeholder: string | null
+    /** Value of the field in a new content, in the shape the form edits. */
+    default: unknown
 }
 
 export interface TextFieldSchema extends BaseFieldSchema {
     type: 'text'
+    inputType: 'text' | 'email' | 'url' | 'tel' | 'number'
     multiline: boolean
     maxLength: number
+    min: number | null
+    max: number | null
+    step: number | null
 }
 
 export type RichTextTool =

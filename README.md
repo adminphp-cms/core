@@ -112,6 +112,17 @@ use Gmarineau\AdminPhp\AdminPhp;
 app(AdminPhp::class)->registerModules([ProjectModule::class]);
 ```
 
+Every field takes a `note()` shown under it, a `placeholder()` shown while it is empty, and a
+`default()` value for new contents (items, blocks, repeater rows, settings never saved). A text can be
+of a given kind, with the matching keyboard on mobile and its validation:
+
+```php
+Text::make('email')->label('E-mail')->email()->note('Shown in the footer.'),
+Text::make('website')->url()->placeholder('https://…'),
+Text::make('phone')->tel(),
+Text::make('rooms')->number(min: 1, max: 20, step: 1)->default(1), // Stored as a number.
+```
+
 ## Displaying content on your site
 
 Your models stay regular Eloquent models:

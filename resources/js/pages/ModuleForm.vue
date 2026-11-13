@@ -14,6 +14,7 @@ import UiButton from '../components/ui/UiButton.vue'
 import UiIconButton from '../components/ui/UiIconButton.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
 import FieldRenderer from '../fields/FieldRenderer.vue'
+import { initialValue } from '../fields/initialValues'
 import { formatRelative } from '../format'
 import { useEditorStore } from '../stores/editor'
 import { useModulesStore } from '../stores/modules'
@@ -126,18 +127,6 @@ function toLocalInput(iso: string | null): string {
 
 function fromLocalInput(value: string): string | null {
     return value === '' ? null : new Date(value).toISOString()
-}
-
-function emptyValue(field: FieldSchema): unknown {
-    if (field.type === 'blocks' || (field.type === 'select' && field.multiple)) {
-        return []
-    }
-
-    if (field.type === 'toggle') {
-        return false
-    }
-
-    return field.translatable ? {} : null
 }
 
 /**
@@ -359,7 +348,7 @@ onMounted(async () => {
         await applyItem(await api.item(props.module, props.id))
         await loadRevisions(props.id)
     } else {
-        values.value = Object.fromEntries(schema.value.fields.map((field) => [field.name, emptyValue(field)]))
+        values.value = Object.fromEntries(schema.value.fields.map((field) => [field.name, initialValue(field)]))
         itemTitle.value = 'Nouveau'
     }
 

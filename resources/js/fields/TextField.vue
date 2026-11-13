@@ -25,7 +25,9 @@ function resize(): void {
 }
 
 function update(event: Event): void {
-    const text = (event.target as HTMLInputElement | HTMLTextAreaElement).value
+    const typed = (event.target as HTMLInputElement | HTMLTextAreaElement).value
+    // Spaces are never part of an e-mail, an address or a number: a pasted value often brings some.
+    const text = ['email', 'url', 'number'].includes(props.field.inputType) ? typed.trim() : typed
 
     value.value = text === '' ? null : text
 }
@@ -52,6 +54,17 @@ const variantClasses: Record<'default' | 'title' | 'lead', string> = {
     title: 'text-4xl leading-[1.15] font-semibold tracking-[-0.03em] text-strong max-md:text-3xl',
     lead: 'text-xl leading-[1.5] font-normal text-muted',
 }
+/** Mobile keyboard of each kind of text. */
+const inputModes: Record<TextFieldSchema['inputType'], 'text' | 'email' | 'url' | 'tel' | 'decimal'> = {
+    text: 'text',
+    email: 'email',
+    url: 'url',
+    tel: 'tel',
+    number: 'decimal',
+}
+
+const placeholder = computed(() => (isMissingTranslation.value ? 'Pas encore traduit' : (props.field.placeholder ?? props.field.label)))
+
 const textClass = computed(() => [
     inputClass,
     variantClasses[props.variant ?? 'default'],
@@ -67,17 +80,24 @@ const textClass = computed(() => [
         rows="1"
         :value="value ?? ''"
         :maxlength="field.maxLength"
-        :placeholder="isMissingTranslation ? 'Pas encore traduit' : field.label"
+        :placeholder="placeholder"
+        :aria-label="field.label"
         @input="update"
     />
     <input
         v-else
         ref="input"
-        type="text"
+        :type="field.inputType"
+        :inputmode="inputModes[field.inputType]"
+        :autocomplete="field.inputType === 'text' ? undefined : 'off'"
         :class="textClass"
         :value="value ?? ''"
-        :maxlength="field.maxLength"
-        :placeholder="isMissingTranslation ? 'Pas encore traduit' : field.label"
+        :maxlength="field.inputType === 'number' ? undefined : field.maxLength"
+        :min="field.min ?? undefined"
+        :max="field.max ?? undefined"
+        :step="field.inputType === 'number' ? (field.step ?? 'any') : undefined"
+        :placeholder="placeholder"
+        :aria-label="field.label"
         @input="update"
     />
 </template>

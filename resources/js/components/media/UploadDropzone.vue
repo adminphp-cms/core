@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { api, ApiError } from '../../api'
-import { useAssetsStore } from '../../stores/assets'
-import type { Asset } from '../../types'
+import { useMediasStore } from '../../stores/medias'
+import type { Media } from '../../types'
 import UiIcon from '../ui/UiIcon.vue'
 
 const props = withDefaults(defineProps<{ multiple?: boolean; compact?: boolean }>(), { multiple: false, compact: false })
 
-const emit = defineEmits<{ uploaded: [asset: Asset] }>()
+const emit = defineEmits<{ uploaded: [media: Media] }>()
 
-const assetsStore = useAssetsStore()
+const mediasStore = useMediasStore()
 const input = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 const uploadingCount = ref(0)
@@ -25,9 +25,9 @@ async function upload(files: FileList | File[]): Promise<void> {
         uploadingCount.value++
 
         try {
-            const asset = await api.uploadAsset(file)
-            assetsStore.remember(asset)
-            emit('uploaded', asset)
+            const media = await api.uploadMedia(file)
+            mediasStore.remember(media)
+            emit('uploaded', media)
         } catch (error) {
             const message = error instanceof ApiError ? (error.errors.file?.[0] ?? error.message) : 'L’envoi a échoué.'
             errors.value.push(`${file.name} : ${message}`)

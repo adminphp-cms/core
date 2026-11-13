@@ -4,7 +4,7 @@ namespace Gmarineau\AdminPhp\Actions;
 
 use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Enums\PublicationStatus;
-use Gmarineau\AdminPhp\Models\Asset;
+use Gmarineau\AdminPhp\Models\Media;
 use Gmarineau\AdminPhp\Modules\Column;
 use Gmarineau\AdminPhp\Modules\Module;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
@@ -175,14 +175,14 @@ class ListModuleItems
         $columns = $module->listingColumns();
         $isPublishable = $module->isPublishable();
         $isNested = $module->nestingDepth() > 0;
-        $assets = $this->assets($module, $columns, $paginator->items(), $locale);
+        $medias = $this->medias($module, $columns, $paginator->items(), $locale);
         $locks = app(ManageEditLock::class)->activeLocks($paginator->items());
         $userId = $this->adminPhp->user()?->getKey();
 
         return array_map(fn (Model $item): array => [
             'id' => $item->getKey(),
             'title' => $module->itemTitle($item, $locale),
-            'cells' => (object) array_map(fn (Column $column): mixed => $column->value($item, $module, $locale, $assets), $columns),
+            'cells' => (object) array_map(fn (Column $column): mixed => $column->value($item, $module, $locale, $medias), $columns),
             'updatedAt' => $item->getAttribute('updated_at')?->toIso8601String(),
             'visibility' => $isPublishable ? $item->visibility()->value : null,
             'hasDraft' => $isPublishable && $item->getAttribute('has_draft'),
@@ -192,13 +192,13 @@ class ListModuleItems
     }
 
     /**
-     * Assets shown by the image columns of the page, loaded in one query.
+     * Medias shown by the image columns of the page, loaded in one query.
      *
      * @param  array<string, Column>  $columns
      * @param  array<int, Model>  $items
-     * @return array<string, Asset>
+     * @return array<string, Media>
      */
-    protected function assets(Module $module, array $columns, array $items, string $locale): array
+    protected function medias(Module $module, array $columns, array $items, string $locale): array
     {
         $fields = $module->fields();
         $ids = [];
@@ -217,6 +217,6 @@ class ListModuleItems
 
         $ids = array_values(array_unique(array_filter($ids)));
 
-        return $ids === [] ? [] : Asset::query()->whereKey($ids)->get()->keyBy('id')->all();
+        return $ids === [] ? [] : Media::query()->whereKey($ids)->get()->keyBy('id')->all();
     }
 }

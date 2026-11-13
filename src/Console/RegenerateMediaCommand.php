@@ -2,8 +2,8 @@
 
 namespace Gmarineau\AdminPhp\Console;
 
-use Gmarineau\AdminPhp\Actions\GenerateAssetVariants;
-use Gmarineau\AdminPhp\Models\Asset;
+use Gmarineau\AdminPhp\Actions\GenerateMediaVariants;
+use Gmarineau\AdminPhp\Models\Media;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -15,11 +15,11 @@ class RegenerateMediaCommand extends Command
 
     protected $description = 'Make again the smaller copies of the media library images, e.g. after changing adminphp.media.sizes';
 
-    public function handle(GenerateAssetVariants $generateAssetVariants): int
+    public function handle(GenerateMediaVariants $generateMediaVariants): int
     {
         $ids = (array) $this->argument('ids');
 
-        $query = Asset::query()->when($ids !== [], fn ($query) => $query->whereKey($ids));
+        $query = Media::query()->when($ids !== [], fn ($query) => $query->whereKey($ids));
         $total = $query->count();
 
         if ($total === 0) {
@@ -28,7 +28,7 @@ class RegenerateMediaCommand extends Command
             return self::SUCCESS;
         }
 
-        $this->withProgressBar($query->lazyById(), fn (Asset $asset) => $generateAssetVariants->handle($asset));
+        $this->withProgressBar($query->lazyById(), fn (Media $media) => $generateMediaVariants->handle($media));
         $this->newLine(2);
 
         $this->components->info("Processed {$total} ".str('image')->plural($total).'.');

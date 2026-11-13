@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 
 /**
- * An image of the media library, stored as the id of its asset (a ULID).
+ * An image of the media library, stored as the id of its media (a ULID).
  * Give the image its alternative text and caption with fields next to it,
  * so they can be translated.
  */
@@ -27,7 +27,7 @@ class Image extends Field
     }
 
     /**
-     * The id of the asset; the listing turns it into a thumbnail url.
+     * The id of the media; the listing turns it into a thumbnail url.
      */
     public function listingValue(Model $model, string $locale): ?string
     {
@@ -38,10 +38,10 @@ class Image extends Field
 
     protected function valueRules(): array
     {
-        return ['string', 'ulid', Rule::exists(app(AdminPhp::class)->table('assets'), 'id'), ...$this->rules];
+        return ['string', 'ulid', Rule::exists(app(AdminPhp::class)->table('medias'), 'id'), ...$this->rules];
     }
 
-    public function assetIds(mixed $value): array
+    public function mediaIds(mixed $value): array
     {
         return is_string($value) && $value !== '' ? [$value] : [];
     }

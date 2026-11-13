@@ -6,7 +6,7 @@ use BackedEnum;
 use Carbon\CarbonInterface;
 use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Fields\Field;
-use Gmarineau\AdminPhp\Models\Asset;
+use Gmarineau\AdminPhp\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -110,11 +110,11 @@ class Column
 
     /**
      * The value of the column for an item. Image columns give a thumbnail url, looked up
-     * in the assets loaded for the page.
+     * in the medias loaded for the page.
      *
-     * @param  array<string, Asset>  $assets
+     * @param  array<string, Media>  $medias
      */
-    public function value(Model $model, Module $module, string $locale, array $assets = []): mixed
+    public function value(Model $model, Module $module, string $locale, array $medias = []): mixed
     {
         if ($this->isStatus) {
             return null;
@@ -137,7 +137,7 @@ class Column
         $value = $field->listingValue($model, $locale);
 
         if ($field->listingType() === 'image') {
-            return is_string($value) ? ($assets[$value] ?? null)?->toAdminArray()['thumbnailUrl'] : null;
+            return is_string($value) ? ($medias[$value] ?? null)?->toAdminArray()['thumbnailUrl'] : null;
         }
 
         return $value;

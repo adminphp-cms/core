@@ -14,7 +14,7 @@ use InvalidArgumentException;
  */
 class SaveModuleContent
 {
-    public function __construct(protected SyncAssetUsages $syncAssetUsages) {}
+    public function __construct(protected SyncMediaUsages $syncMediaUsages) {}
 
     /**
      * @param  array<string, mixed>  $input
@@ -54,7 +54,7 @@ class SaveModuleContent
                 $field->afterModelSaved($model, $validated[$name] ?? null);
             }
 
-            $this->syncAssetUsages->forItem($module, $model);
+            $this->syncMediaUsages->forItem($module, $model);
 
             return $model;
         });

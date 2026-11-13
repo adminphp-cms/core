@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { api } from '../api'
-import AssetGrid from '../components/media/AssetGrid.vue'
+import MediaGrid from '../components/media/MediaGrid.vue'
 import UploadDropzone from '../components/media/UploadDropzone.vue'
 import EmptyState from '../components/ui/EmptyState.vue'
 import PageIntro from '../components/ui/PageIntro.vue'
@@ -11,16 +11,16 @@ import UiIcon from '../components/ui/UiIcon.vue'
 import UiIconButton from '../components/ui/UiIconButton.vue'
 import { useToast } from '../composables/useToast'
 import { formatBytes, formatDateTime } from '../format'
-import { useAssetsStore } from '../stores/assets'
+import { useMediasStore } from '../stores/medias'
 import type { RouteLocationRaw } from 'vue-router'
-import type { Asset, AssetUsage } from '../types'
+import type { Media, MediaUsage } from '../types'
 
-const assetsStore = useAssetsStore()
-const assets = ref<Asset[]>([])
+const mediasStore = useMediasStore()
+const medias = ref<Media[]>([])
 const total = ref(0)
 const search = ref('')
 const isLoaded = ref(false)
-const selected = ref<Asset | null>(null)
+const selected = ref<Media | null>(null)
 const copied = ref(false)
 const isDeleting = ref(false)
 const toast = useToast()
@@ -31,9 +31,9 @@ const toast = useToast()
 const detailLayoutClasses = 'grid grid-cols-[minmax(0,1fr)_300px] items-start gap-4 max-lg:flex max-lg:flex-col-reverse'
 
 async function load(): Promise<void> {
-    const response = await api.assets(search.value.trim())
-    response.data.forEach(assetsStore.remember)
-    assets.value = response.data
+    const response = await api.medias(search.value.trim())
+    response.data.forEach(mediasStore.remember)
+    medias.value = response.data
     total.value = response.meta.total
     isLoaded.value = true
 }
@@ -48,10 +48,10 @@ watch(
             return
         }
 
-        const asset = await api.asset(id)
+        const media = await api.media(id)
 
         if (selected.value?.id === id) {
-            selected.value = asset
+            selected.value = media
         }
     },
 )
@@ -59,7 +59,7 @@ watch(
 /**
  * A trashed content cannot be opened: its link leads to the trash of its module.
  */
-function usageLocation(usage: AssetUsage): RouteLocationRaw {
+function usageLocation(usage: MediaUsage): RouteLocationRaw {
     if (!usage.id) {
         return { name: 'settings' }
     }
@@ -70,18 +70,18 @@ function usageLocation(usage: AssetUsage): RouteLocationRaw {
 }
 
 async function deleteSelected(): Promise<void> {
-    const asset = selected.value
+    const media = selected.value
 
-    if (!asset || !window.confirm(`Supprimer définitivement « ${asset.name} » ? Cette action est irréversible.`)) {
+    if (!media || !window.confirm(`Supprimer définitivement « ${media.name} » ? Cette action est irréversible.`)) {
         return
     }
 
     isDeleting.value = true
 
     try {
-        await api.deleteAsset(asset.id)
-        assetsStore.forget(asset.id)
-        assets.value = assets.value.filter((candidate) => candidate.id !== asset.id)
+        await api.deleteMedia(media.id)
+        mediasStore.forget(media.id)
+        medias.value = medias.value.filter((candidate) => candidate.id !== media.id)
         total.value--
         selected.value = null
         toast.success('Image supprimée')
@@ -99,10 +99,10 @@ watch(search, () => {
     searchTimer = setTimeout(load, 250)
 })
 
-function onUploaded(asset: Asset): void {
-    assets.value = [asset, ...assets.value]
+function onUploaded(media: Media): void {
+    medias.value = [media, ...medias.value]
     total.value++
-    selected.value = asset
+    selected.value = media
 }
 
 async function copyUrl(): Promise<void> {
@@ -136,7 +136,7 @@ onMounted(load)
                         </label>
                     </template>
 
-                    <AssetGrid v-if="assets.length" :assets="assets" :selected-id="selected?.id" @select="selected = $event" />
+                    <MediaGrid v-if="medias.length" :medias="medias" :selected-id="selected?.id" @select="selected = $event" />
                     <EmptyState
                         v-else-if="isLoaded"
                         icon="image"

@@ -21,7 +21,7 @@ class PublishItem
         protected SaveModuleContent $saveModuleContent,
         protected GetFormData $getFormData,
         protected AdminPhp $adminPhp,
-        protected SyncAssetUsages $syncAssetUsages,
+        protected SyncMediaUsages $syncMediaUsages,
     ) {}
 
     /**
@@ -57,7 +57,7 @@ class PublishItem
             ])->save();
 
             $draft?->delete();
-            $this->syncAssetUsages->forItem($module, $model);
+            $this->syncMediaUsages->forItem($module, $model);
 
             $model->revisions()->create([
                 'status' => RevisionStatus::Published,

@@ -178,13 +178,13 @@ class Repeater extends Field
         return $items;
     }
 
-    public function assetIds(mixed $value): array
+    public function mediaIds(mixed $value): array
     {
         $ids = [];
 
         foreach (is_array($value) ? $value : [] as $item) {
             foreach ($this->getFields() as $name => $field) {
-                $ids = [...$ids, ...$field->assetIds(is_array($item) ? ($item[$name] ?? null) : null)];
+                $ids = [...$ids, ...$field->mediaIds(is_array($item) ? ($item[$name] ?? null) : null)];
             }
         }
 

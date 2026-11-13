@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $user_id
  * @property Carbon $created_at
  */
-class Asset extends Model
+class Media extends Model
 {
     use HasUlids;
 
@@ -43,7 +43,7 @@ class Asset extends Model
 
     public function getTable(): string
     {
-        return app(AdminPhp::class)->table('assets');
+        return app(AdminPhp::class)->table('medias');
     }
 
     /**
@@ -111,17 +111,17 @@ class Asset extends Model
     }
 
     /**
-     * Contents showing the asset.
+     * Contents showing the media.
      *
-     * @return HasMany<AssetUsage, $this>
+     * @return HasMany<MediaUsage, $this>
      */
     public function usages(): HasMany
     {
-        return $this->hasMany(AssetUsage::class);
+        return $this->hasMany(MediaUsage::class);
     }
 
     /**
-     * Removes the original file and its smaller copies from the disk, then the asset.
+     * Removes the original file and its smaller copies from the disk, then the media.
      */
     public function deleteWithFiles(): void
     {

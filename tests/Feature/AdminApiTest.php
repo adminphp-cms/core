@@ -86,7 +86,7 @@ it('answers 404 for an unknown item', function () {
     $this->getJson('/admin/api/modules/article/items/'.Str::ulid())->assertNotFound();
 });
 
-it('serves the admin page with the published assets for any admin path', function () {
+it('serves the admin page with the published medias for any admin path', function () {
     $publicPath = sys_get_temp_dir().'/adminphp-public-'.Str::random(8);
     app()->usePublicPath($publicPath);
 

@@ -5,8 +5,8 @@ import UploadDropzone from '../components/media/UploadDropzone.vue'
 import UiButton from '../components/ui/UiButton.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
 import { formatBytes } from '../format'
-import { useAssetsStore } from '../stores/assets'
-import type { Asset, ImageFieldSchema } from '../types'
+import { useMediasStore } from '../stores/medias'
+import type { Media, ImageFieldSchema } from '../types'
 
 const props = defineProps<{
     field: ImageFieldSchema
@@ -15,26 +15,26 @@ const props = defineProps<{
 
 const emit = defineEmits<{ 'update:modelValue': [value: string | null] }>()
 
-const assetsStore = useAssetsStore()
+const mediasStore = useMediasStore()
 const isPickerOpen = ref(false)
 const isMissing = ref(false)
 
-const assetId = computed(() => (typeof props.modelValue === 'string' && props.modelValue !== '' ? props.modelValue : null))
-const asset = computed<Asset | null>(() => (assetId.value ? (assetsStore.byId[assetId.value] ?? null) : null))
+const mediaId = computed(() => (typeof props.modelValue === 'string' && props.modelValue !== '' ? props.modelValue : null))
+const media = computed<Media | null>(() => (mediaId.value ? (mediasStore.byId[mediaId.value] ?? null) : null))
 
 watch(
-    assetId,
+    mediaId,
     async (id) => {
         isMissing.value = false
 
-        if (id && !assetsStore.byId[id]) {
-            isMissing.value = (await assetsStore.find(id)) === null
+        if (id && !mediasStore.byId[id]) {
+            isMissing.value = (await mediasStore.find(id)) === null
         }
     },
     { immediate: true },
 )
 
-function choose(chosen: Asset): void {
+function choose(chosen: Media): void {
     emit('update:modelValue', chosen.id)
     isPickerOpen.value = false
 }
@@ -42,16 +42,16 @@ function choose(chosen: Asset): void {
 
 <template>
     <div class="flex flex-col gap-2.5">
-        <div v-if="asset" class="flex items-center gap-4 rounded-lg border border-ring-control bg-surface p-2.5 max-md:flex-col max-md:items-stretch">
+        <div v-if="media" class="flex items-center gap-4 rounded-lg border border-ring-control bg-surface p-2.5 max-md:flex-col max-md:items-stretch">
             <img
                 class="h-28 w-[168px] flex-none rounded-sm bg-accent-soft object-cover max-md:aspect-[3/2] max-md:h-auto max-md:w-full"
-                :src="asset.thumbnailUrl"
-                :alt="asset.name"
+                :src="media.thumbnailUrl"
+                :alt="media.name"
             />
             <div class="flex min-w-0 flex-col gap-0.5">
-                <p class="overflow-hidden font-medium text-ellipsis whitespace-nowrap text-strong">{{ asset.name }}</p>
+                <p class="overflow-hidden font-medium text-ellipsis whitespace-nowrap text-strong">{{ media.name }}</p>
                 <p class="text-xs text-faint">
-                    <template v-if="asset.width && asset.height">{{ asset.width }} × {{ asset.height }} px · </template>{{ formatBytes(asset.size) }}
+                    <template v-if="media.width && media.height">{{ media.width }} × {{ media.height }} px · </template>{{ formatBytes(media.size) }}
                 </p>
                 <div class="mt-2.5 flex flex-wrap gap-2">
                     <UiButton @click="isPickerOpen = true"><UiIcon name="image" :size="14" /> Remplacer</UiButton>
@@ -60,13 +60,13 @@ function choose(chosen: Asset): void {
             </div>
         </div>
 
-        <p v-else-if="assetId && isMissing" class="field-error">Cette image n’existe plus dans la médiathèque.</p>
+        <p v-else-if="mediaId && isMissing" class="field-error">Cette image n’existe plus dans la médiathèque.</p>
 
-        <div v-if="!asset" class="flex flex-col items-start gap-2.5 [&_.dropzone]:self-stretch">
+        <div v-if="!media" class="flex flex-col items-start gap-2.5 [&_.dropzone]:self-stretch">
             <UploadDropzone compact @uploaded="choose" />
             <UiButton @click="isPickerOpen = true"><UiIcon name="image" :size="14" /> Choisir dans la médiathèque</UiButton>
         </div>
 
-        <MediaPicker v-if="isPickerOpen" :selected-id="assetId" @pick="choose" @close="isPickerOpen = false" />
+        <MediaPicker v-if="isPickerOpen" :selected-id="mediaId" @pick="choose" @close="isPickerOpen = false" />
     </div>
 </template>

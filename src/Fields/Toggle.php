@@ -1,8 +1,8 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Fields;
+namespace AdminPhp\Fields;
 
-use Gmarineau\AdminPhp\Fields\Concerns\IsNotTranslatable;
+use AdminPhp\Fields\Concerns\IsNotTranslatable;
 use Illuminate\Database\Eloquent\Model;
 
 /**

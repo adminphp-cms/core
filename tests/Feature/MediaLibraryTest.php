@@ -1,9 +1,9 @@
 <?php
 
-use Gmarineau\AdminPhp\Fields\Image;
-use Gmarineau\AdminPhp\Models\Block;
-use Gmarineau\AdminPhp\Models\Media;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\Fields\Image;
+use AdminPhp\Models\Block;
+use AdminPhp\Models\Media;
+use AdminPhp\Tests\Fixtures\Article;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

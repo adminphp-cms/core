@@ -1,11 +1,11 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\ManageEditLock;
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
-use Gmarineau\AdminPhp\Models\Lock;
+use AdminPhp\Actions\ManageEditLock;
+use AdminPhp\AdminPhp;
+use AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
+use AdminPhp\Models\Lock;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

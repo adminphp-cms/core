@@ -1,6 +1,6 @@
 <?php
 
-use Gmarineau\AdminPhp\Models\Block;
+use AdminPhp\Models\Block;
 
 function blockWithContent(array $content): Block
 {

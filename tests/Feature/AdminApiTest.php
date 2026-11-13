@@ -1,7 +1,7 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\AdminPhp;
+use AdminPhp\Tests\Fixtures\Article;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 

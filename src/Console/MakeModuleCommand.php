@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Console;
+namespace AdminPhp\Console;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Console\Concerns\GeneratesFromStubs;
+use AdminPhp\AdminPhp;
+use AdminPhp\Console\Concerns\GeneratesFromStubs;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Carbon;
@@ -80,7 +80,7 @@ class MakeModuleCommand extends Command
 
         $this->components->info("Module [{$model}Module] created.");
         $this->components->bulletList([
-            "Register it, e.g. in AppServiceProvider::boot(): app(\\Gmarineau\\AdminPhp\\AdminPhp::class)->registerModules([\\{$appNamespace}AdminPhp\\Modules\\{$model}Module::class]);",
+            "Register it, e.g. in AppServiceProvider::boot(): app(\\AdminPhp\\AdminPhp::class)->registerModules([\\{$appNamespace}AdminPhp\\Modules\\{$model}Module::class]);",
             'Add your fields to the migration and to the form of the module, then run: php artisan migrate',
             ...(in_array('blocks', $features, true) ? ['Allow your blocks in the Blocks field of the form (php artisan adminphp:make:block)'] : []),
             ...(in_array('publishable', $features, true) ? ['Show the items on the site with the published() scope, and set $previewView to preview them'] : []),
@@ -137,10 +137,10 @@ class MakeModuleCommand extends Command
     protected function model(string $appNamespace, string $model, array $features, bool $isTranslatable): string
     {
         $traits = [
-            'blocks' => 'Gmarineau\AdminPhp\Concerns\HasBlocks',
-            'nested' => 'Gmarineau\AdminPhp\Concerns\HasNesting',
-            'sortable' => 'Gmarineau\AdminPhp\Concerns\HasPosition',
-            'publishable' => 'Gmarineau\AdminPhp\Concerns\HasPublication',
+            'blocks' => 'AdminPhp\Concerns\HasBlocks',
+            'nested' => 'AdminPhp\Concerns\HasNesting',
+            'sortable' => 'AdminPhp\Concerns\HasPosition',
+            'publishable' => 'AdminPhp\Concerns\HasPublication',
             'translatable' => 'Spatie\Translatable\HasTranslations',
             'ulids' => 'Illuminate\Database\Eloquent\Concerns\HasUlids',
             'trashable' => 'Illuminate\Database\Eloquent\SoftDeletes',
@@ -198,10 +198,10 @@ class MakeModuleCommand extends Command
 
         $imports = array_filter([
             "{$appNamespace}Models\\{$model}",
-            $has('blocks') ? 'Gmarineau\AdminPhp\Fields\Blocks' : null,
-            $has('publishable') ? 'Gmarineau\AdminPhp\Fields\Slug' : null,
-            'Gmarineau\AdminPhp\Fields\Text',
-            'Gmarineau\AdminPhp\Modules\Module',
+            $has('blocks') ? 'AdminPhp\Fields\Blocks' : null,
+            $has('publishable') ? 'AdminPhp\Fields\Slug' : null,
+            'AdminPhp\Fields\Text',
+            'AdminPhp\Modules\Module',
         ]);
         sort($imports);
 

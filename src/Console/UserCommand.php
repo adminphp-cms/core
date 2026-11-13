@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Console;
+namespace AdminPhp\Console;
 
-use Gmarineau\AdminPhp\Enums\UserRole;
-use Gmarineau\AdminPhp\Models\User;
+use AdminPhp\Enums\UserRole;
+use AdminPhp\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;

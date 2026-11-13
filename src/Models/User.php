@@ -1,11 +1,11 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Models;
+namespace AdminPhp\Models;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Database\Factories\UserFactory;
-use Gmarineau\AdminPhp\Enums\UserRole;
-use Gmarineau\AdminPhp\Notifications\ResetPasswordNotification;
+use AdminPhp\AdminPhp;
+use AdminPhp\Database\Factories\UserFactory;
+use AdminPhp\Enums\UserRole;
+use AdminPhp\Notifications\ResetPasswordNotification;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword;

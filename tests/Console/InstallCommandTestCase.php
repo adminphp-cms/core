@@ -1,8 +1,8 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests\Console;
+namespace AdminPhp\Tests\Console;
 
-use Gmarineau\AdminPhp\Tests\TestCase;
+use AdminPhp\Tests\TestCase;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\ListModuleItems;
-use Gmarineau\AdminPhp\Actions\SaveDraft;
-use Gmarineau\AdminPhp\Actions\SaveModuleContent;
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
+use AdminPhp\Actions\ListModuleItems;
+use AdminPhp\Actions\SaveDraft;
+use AdminPhp\Actions\SaveModuleContent;
+use AdminPhp\AdminPhp;
+use AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

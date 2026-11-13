@@ -1,19 +1,19 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests\Fixtures;
+namespace AdminPhp\Tests\Fixtures;
 
-use Gmarineau\AdminPhp\Fields\Blocks;
-use Gmarineau\AdminPhp\Fields\Browser;
-use Gmarineau\AdminPhp\Fields\Date;
-use Gmarineau\AdminPhp\Fields\Image;
-use Gmarineau\AdminPhp\Fields\Repeater;
-use Gmarineau\AdminPhp\Fields\Select;
-use Gmarineau\AdminPhp\Fields\Slug;
-use Gmarineau\AdminPhp\Fields\Text;
-use Gmarineau\AdminPhp\Fields\Toggle;
-use Gmarineau\AdminPhp\Modules\Column;
-use Gmarineau\AdminPhp\Modules\Filter;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\Fields\Blocks;
+use AdminPhp\Fields\Browser;
+use AdminPhp\Fields\Date;
+use AdminPhp\Fields\Image;
+use AdminPhp\Fields\Repeater;
+use AdminPhp\Fields\Select;
+use AdminPhp\Fields\Slug;
+use AdminPhp\Fields\Text;
+use AdminPhp\Fields\Toggle;
+use AdminPhp\Modules\Column;
+use AdminPhp\Modules\Filter;
+use AdminPhp\Modules\Module;
 
 class ArticleModule extends Module
 {

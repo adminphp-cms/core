@@ -1,11 +1,11 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\PublishItem;
-use Gmarineau\AdminPhp\Actions\SyncMediaUsages;
-use Gmarineau\AdminPhp\Actions\UnpublishItem;
-use Gmarineau\AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
+use AdminPhp\Actions\PublishItem;
+use AdminPhp\Actions\SyncMediaUsages;
+use AdminPhp\Actions\UnpublishItem;
+use AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

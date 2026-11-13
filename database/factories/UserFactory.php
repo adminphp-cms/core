@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Database\Factories;
+namespace AdminPhp\Database\Factories;
 
-use Gmarineau\AdminPhp\Enums\UserRole;
-use Gmarineau\AdminPhp\Models\User;
+use AdminPhp\Enums\UserRole;
+use AdminPhp\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

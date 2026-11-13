@@ -2,8 +2,8 @@
 
 namespace Workbench\App\Providers;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Tests\Fixtures\ArticleModule;
+use AdminPhp\AdminPhp;
+use AdminPhp\Tests\Fixtures\ArticleModule;
 use Illuminate\Support\ServiceProvider;
 
 /**

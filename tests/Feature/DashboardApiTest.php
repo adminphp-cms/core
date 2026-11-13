@@ -1,6 +1,6 @@
 <?php
 
-use Gmarineau\AdminPhp\Tests\Fixtures\ArticleModule;
+use AdminPhp\Tests\Fixtures\ArticleModule;
 
 beforeEach(function () {
     $this->admin = actingAsAdmin();

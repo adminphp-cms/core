@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Enums\UserRole;
-use Gmarineau\AdminPhp\Models\User;
+use AdminPhp\Enums\UserRole;
+use AdminPhp\Models\User;
 
 /**
  * Creates an admin user without a password and emails them an invitation.

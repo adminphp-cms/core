@@ -1,12 +1,12 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Fields\Image;
-use Gmarineau\AdminPhp\Fields\Repeater;
-use Gmarineau\AdminPhp\Fields\Text;
-use Gmarineau\AdminPhp\Models\Media;
-use Gmarineau\AdminPhp\Models\MediaUsage;
-use Gmarineau\AdminPhp\Tests\Fixtures\SiteSettings;
+use AdminPhp\AdminPhp;
+use AdminPhp\Fields\Image;
+use AdminPhp\Fields\Repeater;
+use AdminPhp\Fields\Text;
+use AdminPhp\Models\Media;
+use AdminPhp\Models\MediaUsage;
+use AdminPhp\Tests\Fixtures\SiteSettings;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 

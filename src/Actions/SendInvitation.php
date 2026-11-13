@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\User;
-use Gmarineau\AdminPhp\Notifications\InvitationNotification;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\User;
+use AdminPhp\Notifications\InvitationNotification;
 
 /**
  * Emails an invited user a link to choose their password. Sending it again

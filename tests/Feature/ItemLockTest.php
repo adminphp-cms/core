@@ -1,9 +1,9 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\Lock;
-use Gmarineau\AdminPhp\Models\User;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\Lock;
+use AdminPhp\Models\User;
+use AdminPhp\Tests\Fixtures\Article;
 use Illuminate\Testing\TestResponse;
 
 beforeEach(function () {

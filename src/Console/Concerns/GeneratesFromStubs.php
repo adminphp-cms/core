@@ -1,6 +1,6 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Console\Concerns;
+namespace AdminPhp\Console\Concerns;
 
 use Illuminate\Support\Str;
 use RuntimeException;

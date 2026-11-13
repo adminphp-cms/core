@@ -1,12 +1,12 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
+use AdminPhp\AdminPhp;
+use AdminPhp\Enums\PublicationStatus;
+use AdminPhp\Enums\RevisionStatus;
+use AdminPhp\Modules\Module;
 use Carbon\CarbonInterface;
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Enums\PublicationStatus;
-use Gmarineau\AdminPhp\Enums\RevisionStatus;
-use Gmarineau\AdminPhp\Modules\Module;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use LogicException;

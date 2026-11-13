@@ -1,10 +1,10 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\Block;
-use Gmarineau\AdminPhp\Models\Related;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
-use Gmarineau\AdminPhp\Tests\Fixtures\MenuLinkModule;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\Block;
+use AdminPhp\Models\Related;
+use AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\Tests\Fixtures\MenuLinkModule;
 
 beforeEach(function () {
     actingAsAdmin();

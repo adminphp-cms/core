@@ -1,7 +1,7 @@
 <?php
 
-use Gmarineau\AdminPhp\Models\Media;
-use Gmarineau\AdminPhp\Models\MediaUsage;
+use AdminPhp\Models\Media;
+use AdminPhp\Models\MediaUsage;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;

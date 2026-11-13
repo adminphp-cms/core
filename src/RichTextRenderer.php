@@ -1,6 +1,6 @@
 <?php
 
-namespace Gmarineau\AdminPhp;
+namespace AdminPhp;
 
 use Illuminate\Support\HtmlString;
 

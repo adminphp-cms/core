@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\Media;
-use Gmarineau\AdminPhp\Models\MediaUsage;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\Media;
+use AdminPhp\Models\MediaUsage;
 
 /**
  * Names the contents using a media, for the media library: one query per module.

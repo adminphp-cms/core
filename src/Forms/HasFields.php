@@ -1,8 +1,8 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Forms;
+namespace AdminPhp\Forms;
 
-use Gmarineau\AdminPhp\Fields\Field;
+use AdminPhp\Fields\Field;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 

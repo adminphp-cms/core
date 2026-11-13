@@ -1,7 +1,7 @@
 <?php
 
-use Gmarineau\AdminPhp\Enums\UserRole;
-use Gmarineau\AdminPhp\Models\User;
+use AdminPhp\Enums\UserRole;
+use AdminPhp\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 it('creates an admin user', function () {

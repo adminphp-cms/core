@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Fields\Blocks;
-use Gmarineau\AdminPhp\Models\Block;
+use AdminPhp\Fields\Blocks;
+use AdminPhp\Models\Block;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 

@@ -1,13 +1,13 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\Block;
-use Gmarineau\AdminPhp\Models\Related;
-use Gmarineau\AdminPhp\Models\Revision;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
-use Gmarineau\AdminPhp\Tests\Fixtures\MenuLinkModule;
-use Gmarineau\AdminPhp\Tests\Fixtures\Page;
-use Gmarineau\AdminPhp\Tests\Fixtures\PageModule;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\Block;
+use AdminPhp\Models\Related;
+use AdminPhp\Models\Revision;
+use AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\Tests\Fixtures\MenuLinkModule;
+use AdminPhp\Tests\Fixtures\Page;
+use AdminPhp\Tests\Fixtures\PageModule;
 use Illuminate\Testing\TestResponse;
 
 beforeEach(function () {

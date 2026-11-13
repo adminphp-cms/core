@@ -7,7 +7,7 @@ env:
   - DB_CONNECTION=sqlite
 
 providers:
-  - Gmarineau\AdminPhp\AdminPhpServiceProvider
+  - AdminPhp\AdminPhpServiceProvider
   - Workbench\App\Providers\WorkbenchServiceProvider
 
 migrations:

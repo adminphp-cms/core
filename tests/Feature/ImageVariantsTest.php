@@ -1,8 +1,8 @@
 <?php
 
-use Gmarineau\AdminPhp\Actions\GenerateMediaVariants;
-use Gmarineau\AdminPhp\Jobs\GenerateMediaVariantsJob;
-use Gmarineau\AdminPhp\Models\Media;
+use AdminPhp\Actions\GenerateMediaVariants;
+use AdminPhp\Jobs\GenerateMediaVariantsJob;
+use AdminPhp\Models\Media;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Queue;

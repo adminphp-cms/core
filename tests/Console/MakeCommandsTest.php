@@ -1,10 +1,10 @@
 <?php
 
+use AdminPhp\AdminPhp;
 use App\AdminPhp\Blocks\PhotoGalleryBlock;
 use App\AdminPhp\Modules\MenuEntryModule;
 use App\AdminPhp\Modules\ProjectModule;
 use App\Models\Project;
-use Gmarineau\AdminPhp\AdminPhp;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;

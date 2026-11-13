@@ -1,24 +1,24 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Http\Controllers\AccountController;
-use Gmarineau\AdminPhp\Http\Controllers\ActivityController;
-use Gmarineau\AdminPhp\Http\Controllers\ItemLockController;
-use Gmarineau\AdminPhp\Http\Controllers\ItemOrderController;
-use Gmarineau\AdminPhp\Http\Controllers\ItemPreviewController;
-use Gmarineau\AdminPhp\Http\Controllers\ItemPublicationController;
-use Gmarineau\AdminPhp\Http\Controllers\ItemRevisionController;
-use Gmarineau\AdminPhp\Http\Controllers\ItemTrashController;
-use Gmarineau\AdminPhp\Http\Controllers\MediaController;
-use Gmarineau\AdminPhp\Http\Controllers\ModuleController;
-use Gmarineau\AdminPhp\Http\Controllers\ModuleItemController;
-use Gmarineau\AdminPhp\Http\Controllers\PasswordController;
-use Gmarineau\AdminPhp\Http\Controllers\ReferenceController;
-use Gmarineau\AdminPhp\Http\Controllers\SessionController;
-use Gmarineau\AdminPhp\Http\Controllers\SettingsController;
-use Gmarineau\AdminPhp\Http\Controllers\SpaController;
-use Gmarineau\AdminPhp\Http\Controllers\UserController;
-use Gmarineau\AdminPhp\Http\Middleware\Authorize;
+use AdminPhp\AdminPhp;
+use AdminPhp\Http\Controllers\AccountController;
+use AdminPhp\Http\Controllers\ActivityController;
+use AdminPhp\Http\Controllers\ItemLockController;
+use AdminPhp\Http\Controllers\ItemOrderController;
+use AdminPhp\Http\Controllers\ItemPreviewController;
+use AdminPhp\Http\Controllers\ItemPublicationController;
+use AdminPhp\Http\Controllers\ItemRevisionController;
+use AdminPhp\Http\Controllers\ItemTrashController;
+use AdminPhp\Http\Controllers\MediaController;
+use AdminPhp\Http\Controllers\ModuleController;
+use AdminPhp\Http\Controllers\ModuleItemController;
+use AdminPhp\Http\Controllers\PasswordController;
+use AdminPhp\Http\Controllers\ReferenceController;
+use AdminPhp\Http\Controllers\SessionController;
+use AdminPhp\Http\Controllers\SettingsController;
+use AdminPhp\Http\Controllers\SpaController;
+use AdminPhp\Http\Controllers\UserController;
+use AdminPhp\Http\Middleware\Authorize;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 

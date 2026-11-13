@@ -1,11 +1,11 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests\Fixtures;
+namespace AdminPhp\Tests\Fixtures;
 
-use Gmarineau\AdminPhp\Blocks\Block;
-use Gmarineau\AdminPhp\Fields\Browser;
-use Gmarineau\AdminPhp\Fields\Repeater;
-use Gmarineau\AdminPhp\Fields\Text;
+use AdminPhp\Blocks\Block;
+use AdminPhp\Fields\Browser;
+use AdminPhp\Fields\Repeater;
+use AdminPhp\Fields\Text;
 
 /**
  * A block mixing chosen articles and a list of free links.

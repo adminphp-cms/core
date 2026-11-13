@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Models;
+namespace AdminPhp\Models;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Concerns\HasPublication;
+use AdminPhp\AdminPhp;
+use AdminPhp\Concerns\HasPublication;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;

@@ -1,9 +1,9 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Enums\UserRole;
-use Gmarineau\AdminPhp\Models\User;
-use Gmarineau\AdminPhp\Notifications\InvitationNotification;
+use AdminPhp\AdminPhp;
+use AdminPhp\Enums\UserRole;
+use AdminPhp\Models\User;
+use AdminPhp\Notifications\InvitationNotification;
 use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {

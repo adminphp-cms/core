@@ -7,5 +7,5 @@
 @props(['content'])
 
 @if (is_array($content))
-    <div {{ $attributes }}>{{ app(\Gmarineau\AdminPhp\RichTextRenderer::class)->render($content) }}</div>
+    <div {{ $attributes }}>{{ app(\AdminPhp\RichTextRenderer::class)->render($content) }}</div>
 @endif

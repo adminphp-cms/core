@@ -1,10 +1,10 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Modules\Module;
-use Gmarineau\AdminPhp\Tests\Fixtures\MenuLink;
-use Gmarineau\AdminPhp\Tests\Fixtures\MenuLinkModule;
-use Gmarineau\AdminPhp\Tests\Fixtures\Tag;
+use AdminPhp\AdminPhp;
+use AdminPhp\Modules\Module;
+use AdminPhp\Tests\Fixtures\MenuLink;
+use AdminPhp\Tests\Fixtures\MenuLinkModule;
+use AdminPhp\Tests\Fixtures\Tag;
 use Illuminate\Support\Carbon;
 use Illuminate\Testing\TestResponse;
 

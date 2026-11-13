@@ -1,8 +1,8 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\User;
-use Gmarineau\AdminPhp\Notifications\ResetPasswordNotification;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\User;
+use AdminPhp\Notifications\ResetPasswordNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 

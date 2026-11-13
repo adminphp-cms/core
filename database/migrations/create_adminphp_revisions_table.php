@@ -1,6 +1,6 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
+use AdminPhp\AdminPhp;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

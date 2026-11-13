@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Jobs\GenerateMediaVariantsJob;
-use Gmarineau\AdminPhp\Models\Media;
+use AdminPhp\AdminPhp;
+use AdminPhp\Jobs\GenerateMediaVariantsJob;
+use AdminPhp\Models\Media;
 use Illuminate\Http\UploadedFile;
 
 /**

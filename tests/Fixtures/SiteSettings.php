@@ -1,12 +1,12 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests\Fixtures;
+namespace AdminPhp\Tests\Fixtures;
 
-use Gmarineau\AdminPhp\Fields\Image;
-use Gmarineau\AdminPhp\Fields\Select;
-use Gmarineau\AdminPhp\Fields\Text;
-use Gmarineau\AdminPhp\Fields\Toggle;
-use Gmarineau\AdminPhp\Settings\Settings;
+use AdminPhp\Fields\Image;
+use AdminPhp\Fields\Select;
+use AdminPhp\Fields\Text;
+use AdminPhp\Fields\Toggle;
+use AdminPhp\Settings\Settings;
 
 class SiteSettings extends Settings
 {

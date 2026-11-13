@@ -1,8 +1,8 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\Modules\Module;
 use Illuminate\Database\Eloquent\Model;
 
 /**

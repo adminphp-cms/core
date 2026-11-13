@@ -1,11 +1,11 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers\Concerns;
+namespace AdminPhp\Http\Controllers\Concerns;
 
-use Gmarineau\AdminPhp\Actions\GetFormData;
-use Gmarineau\AdminPhp\Actions\ManageEditLock;
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\Actions\GetFormData;
+use AdminPhp\Actions\ManageEditLock;
+use AdminPhp\AdminPhp;
+use AdminPhp\Modules\Module;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 

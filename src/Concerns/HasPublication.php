@@ -1,11 +1,11 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Concerns;
+namespace AdminPhp\Concerns;
 
-use Gmarineau\AdminPhp\Enums\PublicationStatus;
-use Gmarineau\AdminPhp\Enums\RevisionStatus;
-use Gmarineau\AdminPhp\Enums\Visibility;
-use Gmarineau\AdminPhp\Models\Revision;
+use AdminPhp\Enums\PublicationStatus;
+use AdminPhp\Enums\RevisionStatus;
+use AdminPhp\Enums\Visibility;
+use AdminPhp\Models\Revision;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;

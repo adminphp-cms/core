@@ -1,8 +1,8 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Notifications;
+namespace AdminPhp\Notifications;
 
-use Gmarineau\AdminPhp\Models\User;
+use AdminPhp\Models\User;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 

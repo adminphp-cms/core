@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Fields;
+namespace AdminPhp\Fields;
 
+use AdminPhp\Fields\Concerns\IsNotTranslatable;
 use BackedEnum;
 use Closure;
-use Gmarineau\AdminPhp\Fields\Concerns\IsNotTranslatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Models\Lock;
-use Gmarineau\AdminPhp\Models\User;
+use AdminPhp\Models\Lock;
+use AdminPhp\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\UniqueConstraintViolationException;

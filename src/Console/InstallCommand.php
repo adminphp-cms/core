@@ -1,6 +1,6 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Console;
+namespace AdminPhp\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
@@ -37,7 +37,7 @@ class InstallCommand extends Command
         $this->components->info('AdminPhp is installed.');
 
         $this->components->bulletList([
-            'Register your modules, e.g. in AppServiceProvider::boot(): app(\Gmarineau\AdminPhp\AdminPhp::class)->registerModules([ArticleModule::class]);',
+            'Register your modules, e.g. in AppServiceProvider::boot(): app(\AdminPhp\AdminPhp::class)->registerModules([ArticleModule::class]);',
             'Create an admin user: php artisan adminphp:user',
             'Make uploaded images public: php artisan storage:link (with the default "public" media disk)',
             sprintf('Open %s', url(config('adminphp.path'))),

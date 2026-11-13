@@ -7,7 +7,7 @@
     <title>AdminPHP</title>
     {{-- Applies the theme chosen in "Mon compte" before the first paint. --}}
     <script>try { const theme = localStorage.getItem('adminphp.theme'); if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme } catch (error) {}</script>
-    {{ app(\Gmarineau\AdminPhp\AdminPhp::class)->assets() }}
+    {{ app(\AdminPhp\AdminPhp::class)->assets() }}
 </head>
 <body>
     <div id="adminphp"></div>

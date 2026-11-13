@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Models\Lock;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\AdminPhp;
+use AdminPhp\Models\Lock;
+use AdminPhp\Modules\Module;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\DuplicateItem;
-use Gmarineau\AdminPhp\Actions\RunBulkAction;
-use Gmarineau\AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
+use AdminPhp\Actions\DuplicateItem;
+use AdminPhp\Actions\RunBulkAction;
+use AdminPhp\Http\Controllers\Concerns\ResolvesModuleItems;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

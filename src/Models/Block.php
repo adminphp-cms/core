@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Models;
+namespace AdminPhp\Models;
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\RichTextRenderer;
+use AdminPhp\AdminPhp;
+use AdminPhp\RichTextRenderer;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Concerns;
+namespace AdminPhp\Concerns;
 
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Attributes\Scope;

@@ -1,5 +1,5 @@
 {
-    "name": "gmarineau/adminphp",
+    "name": "adminphp-cms/core",
     "description": "A content management admin for Laravel, inspired by Twill",
     "type": "library",
     "license": "MIT",
@@ -29,20 +29,20 @@
     },
     "autoload": {
         "psr-4": {
-            "Gmarineau\\AdminPhp\\": "src/",
-            "Gmarineau\\AdminPhp\\Database\\Factories\\": "database/factories/"
+            "AdminPhp\\": "src/",
+            "AdminPhp\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Gmarineau\\AdminPhp\\Tests\\": "tests/",
+            "AdminPhp\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Gmarineau\\AdminPhp\\AdminPhpServiceProvider"
+                "AdminPhp\\AdminPhpServiceProvider"
             ]
         }
     },

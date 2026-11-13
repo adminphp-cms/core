@@ -1,12 +1,12 @@
 <?php
 
-namespace Gmarineau\AdminPhp;
+namespace AdminPhp;
 
+use AdminPhp\Models\User;
+use AdminPhp\Modules\Module;
+use AdminPhp\Settings\Settings;
+use AdminPhp\Settings\SettingsStore;
 use Closure;
-use Gmarineau\AdminPhp\Models\User;
-use Gmarineau\AdminPhp\Modules\Module;
-use Gmarineau\AdminPhp\Settings\Settings;
-use Gmarineau\AdminPhp\Settings\SettingsStore;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Database\Eloquent\Relations\Relation;

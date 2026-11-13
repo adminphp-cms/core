@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Blocks;
+namespace AdminPhp\Blocks;
 
-use Gmarineau\AdminPhp\Fields\Blocks;
-use Gmarineau\AdminPhp\Fields\Field;
-use Gmarineau\AdminPhp\Fields\Slug;
+use AdminPhp\Fields\Blocks;
+use AdminPhp\Fields\Field;
+use AdminPhp\Fields\Slug;
 use Illuminate\Support\Str;
 use LogicException;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Tests\Fixtures;
+namespace AdminPhp\Tests\Fixtures;
 
-use Gmarineau\AdminPhp\Concerns\HasNesting;
-use Gmarineau\AdminPhp\Concerns\HasPosition;
-use Gmarineau\AdminPhp\Concerns\HasRelated;
+use AdminPhp\Concerns\HasNesting;
+use AdminPhp\Concerns\HasPosition;
+use AdminPhp\Concerns\HasRelated;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;

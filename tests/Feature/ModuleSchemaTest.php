@@ -1,8 +1,8 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
-use Gmarineau\AdminPhp\Tests\Fixtures\ArticleModule;
+use AdminPhp\AdminPhp;
+use AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\Tests\Fixtures\ArticleModule;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 it('registers the module under its name and morph alias', function () {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\AdminPhp;
+use AdminPhp\AdminPhp;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

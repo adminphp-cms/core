@@ -1,10 +1,10 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Http\Controllers;
+namespace AdminPhp\Http\Controllers;
 
-use Gmarineau\AdminPhp\Actions\ListMediaUsages;
-use Gmarineau\AdminPhp\Actions\StoreMedia;
-use Gmarineau\AdminPhp\Models\Media;
+use AdminPhp\Actions\ListMediaUsages;
+use AdminPhp\Actions\StoreMedia;
+use AdminPhp\Models\Media;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

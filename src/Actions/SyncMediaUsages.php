@@ -1,12 +1,12 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Models\Media;
-use Gmarineau\AdminPhp\Models\MediaUsage;
-use Gmarineau\AdminPhp\Modules\Module;
-use Gmarineau\AdminPhp\Settings\Settings;
-use Gmarineau\AdminPhp\Settings\SettingsStore;
+use AdminPhp\Models\Media;
+use AdminPhp\Models\MediaUsage;
+use AdminPhp\Modules\Module;
+use AdminPhp\Settings\Settings;
+use AdminPhp\Settings\SettingsStore;
 use Illuminate\Database\Eloquent\Model;
 
 /**

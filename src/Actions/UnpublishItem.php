@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Enums\PublicationStatus;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\Enums\PublicationStatus;
+use AdminPhp\Modules\Module;
 use Illuminate\Database\Eloquent\Model;
 
 /**

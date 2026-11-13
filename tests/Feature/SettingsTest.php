@@ -1,12 +1,12 @@
 <?php
 
-use Gmarineau\AdminPhp\AdminPhp;
-use Gmarineau\AdminPhp\Fields\Blocks;
-use Gmarineau\AdminPhp\Models\Setting;
-use Gmarineau\AdminPhp\Models\User;
-use Gmarineau\AdminPhp\Settings\Settings;
-use Gmarineau\AdminPhp\Tests\Fixtures\Article;
-use Gmarineau\AdminPhp\Tests\Fixtures\SiteSettings;
+use AdminPhp\AdminPhp;
+use AdminPhp\Fields\Blocks;
+use AdminPhp\Models\Setting;
+use AdminPhp\Models\User;
+use AdminPhp\Settings\Settings;
+use AdminPhp\Tests\Fixtures\Article;
+use AdminPhp\Tests\Fixtures\SiteSettings;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Gmarineau\AdminPhp\Actions;
+namespace AdminPhp\Actions;
 
-use Gmarineau\AdminPhp\Models\Revision;
-use Gmarineau\AdminPhp\Modules\Module;
+use AdminPhp\Models\Revision;
+use AdminPhp\Modules\Module;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 

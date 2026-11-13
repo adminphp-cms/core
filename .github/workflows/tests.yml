@@ -44,8 +44,9 @@ jobs:
         ports: ['5432:5432']
         options: --health-cmd=pg_isready --health-interval=5s --health-timeout=5s --health-retries=20
 
+    # SQLite runs in memory on the "testing" connection of Testbench (see phpunit.xml.dist).
     env:
-      DB_CONNECTION: ${{ matrix.database }}
+      DB_CONNECTION: ${{ matrix.database == 'sqlite' && 'testing' || matrix.database }}
       DB_HOST: 127.0.0.1
       DB_PORT: ${{ matrix.database == 'pgsql' && '5432' || '3306' }}
       DB_DATABASE: adminphp
@@ -53,12 +54,12 @@ jobs:
       DB_PASSWORD: secret
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: gd, pdo_sqlite, pdo_mysql, pdo_pgsql, fileinfo
+          extensions: gd, exif, pdo_sqlite, pdo_mysql, pdo_pgsql, fileinfo
           coverage: none
 
       - name: Install dependencies
@@ -74,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -90,9 +91,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: npm

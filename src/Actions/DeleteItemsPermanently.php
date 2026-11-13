@@ -3,6 +3,7 @@
 namespace Gmarineau\AdminPhp\Actions;
 
 use Gmarineau\AdminPhp\Models\Block;
+use Gmarineau\AdminPhp\Models\Lock;
 use Gmarineau\AdminPhp\Models\Related;
 use Gmarineau\AdminPhp\Models\Revision;
 use Gmarineau\AdminPhp\Modules\Module;
@@ -12,11 +13,13 @@ use LogicException;
 
 /**
  * Empties items out of the trash for good, with what AdminPhp stored for them: their
- * blocks, revisions and Browser choices, and the choices of other contents pointing to them.
+ * blocks, revisions, image usages and Browser choices, and the choices of other contents pointing to them.
  * Only trashed items can be deleted this way.
  */
 class DeleteItemsPermanently
 {
+    public function __construct(protected SyncAssetUsages $syncAssetUsages) {}
+
     /**
      * @param  array<int, string>  $ids
      * @return int How many items were deleted.
@@ -33,10 +36,12 @@ class DeleteItemsPermanently
             return 0;
         }
 
-        $items->first()->getConnection()->transaction(function () use ($items): void {
+        $items->first()->getConnection()->transaction(function () use ($module, $items): void {
             foreach ($items as $item) {
                 Block::query()->whereMorphedTo('blockable', $item)->delete();
                 Revision::query()->whereMorphedTo('revisionable', $item)->delete();
+                Lock::query()->whereMorphedTo('lockable', $item)->delete();
+                $this->syncAssetUsages->forget($module, $item);
                 Related::query()
                     ->where(fn (Builder $query) => $query->whereMorphedTo('subject', $item)->orWhereMorphedTo('related', $item))
                     ->delete();

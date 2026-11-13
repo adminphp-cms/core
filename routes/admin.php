@@ -4,7 +4,9 @@ use Gmarineau\AdminPhp\AdminPhp;
 use Gmarineau\AdminPhp\Http\Controllers\AccountController;
 use Gmarineau\AdminPhp\Http\Controllers\ActivityController;
 use Gmarineau\AdminPhp\Http\Controllers\AssetController;
+use Gmarineau\AdminPhp\Http\Controllers\ItemLockController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemOrderController;
+use Gmarineau\AdminPhp\Http\Controllers\ItemPreviewController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemPublicationController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemRevisionController;
 use Gmarineau\AdminPhp\Http\Controllers\ItemTrashController;
@@ -51,6 +53,7 @@ Route::prefix('api')->name('api.')->group(function () {
         Route::get('assets', [AssetController::class, 'index'])->name('assets.index');
         Route::post('assets', [AssetController::class, 'store'])->name('assets.store');
         Route::get('assets/{id}', [AssetController::class, 'show'])->name('assets.show');
+        Route::delete('assets/{id}', [AssetController::class, 'destroy'])->name('assets.destroy');
 
         Route::get('references', [ReferenceController::class, 'index'])->name('references.index');
 
@@ -60,10 +63,14 @@ Route::prefix('api')->name('api.')->group(function () {
         Route::get('modules/{module}/items', [ModuleItemController::class, 'index'])->name('items.index');
         Route::post('modules/{module}/items', [ModuleItemController::class, 'store'])->name('items.store');
         Route::put('modules/{module}/items/order', [ItemOrderController::class, 'update'])->name('items.order');
+        Route::post('modules/{module}/preview', ItemPreviewController::class)->name('items.preview.new');
+        Route::post('modules/{module}/items/{id}/preview', ItemPreviewController::class)->name('items.preview');
         Route::post('modules/{module}/items/bulk', [ItemTrashController::class, 'bulk'])->name('items.bulk');
         Route::get('modules/{module}/items/{id}', [ModuleItemController::class, 'show'])->name('items.show');
         Route::put('modules/{module}/items/{id}', [ModuleItemController::class, 'update'])->name('items.update');
         Route::delete('modules/{module}/items/{id}', [ItemTrashController::class, 'destroy'])->name('items.destroy');
+        Route::post('modules/{module}/items/{id}/lock', [ItemLockController::class, 'store'])->name('items.lock.store');
+        Route::delete('modules/{module}/items/{id}/lock', [ItemLockController::class, 'destroy'])->name('items.lock.destroy');
         Route::post('modules/{module}/items/{id}/duplicate', [ItemTrashController::class, 'duplicate'])->name('items.duplicate');
 
         Route::post('modules/{module}/items/{id}/publish', [ItemPublicationController::class, 'publish'])->name('items.publish');

@@ -119,4 +119,19 @@ return [
         'queue' => env('ADMINPHP_MEDIA_QUEUE'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Edit locks
+    |--------------------------------------------------------------------------
+    |
+    | While someone edits an item, others see it read-only and may take over.
+    | The admin renews the lock every 30 seconds; a lock not renewed for
+    | `ttl` seconds (a closed tab, a lost connection) is released.
+    |
+    */
+
+    'locks' => [
+        'ttl' => 120,
+    ],
+
 ];

@@ -384,7 +384,12 @@ const headerButtonClass = 'inline-flex items-center gap-1 rounded-xs hover:text-
                                         :class="{ 'listing-status': column.type === 'status', 'listing-date': column.type === 'date' || column.type === 'datetime' }"
                                     >
                                         <span v-if="column.type === 'title' && isTrashView" class="text-muted">{{ item.title }}</span>
-                                        <RouterLink v-else-if="column.type === 'title'" :to="{ name: 'module.edit', params: { module, id: item.id } }" class="stretched-link">{{ item.title }}</RouterLink>
+                                        <template v-else-if="column.type === 'title'">
+                                            <RouterLink :to="{ name: 'module.edit', params: { module, id: item.id } }" class="stretched-link">{{ item.title }}</RouterLink>
+                                            <span v-if="column.type === 'title' && item.lockedBy" class="relative ml-2 inline-flex items-center gap-1 text-xs whitespace-nowrap text-warning" :title="`${item.lockedBy} modifie ce contenu`">
+                                                <UiIcon name="lock" :size="12" /> {{ item.lockedBy }}
+                                            </span>
+                                        </template>
 
                                         <UiBadge v-else-if="column.type === 'status' && isTrashView">À la corbeille</UiBadge>
                                         <template v-else-if="column.type === 'status'">

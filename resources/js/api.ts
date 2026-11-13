@@ -1,5 +1,5 @@
 import { config } from './config'
-import type { ActivityEntry, AdminUser, Asset, FormValues, BulkAction, Item, ItemPlacement, ItemSummary, ListingMeta, ListingQuery, ContentReference, ReferencedContent, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
+import type { ActivityEntry, AdminUser, Asset, FormValues, BulkAction, EditLock, Item, ItemPlacement, ItemSummary, ListingMeta, ListingQuery, ContentReference, ReferencedContent, ManagedUser, ModuleSchema, ModuleSummary, PublishOptions, RevisionSummary, SettingsData, UserValues, ValidationErrors } from './types'
 
 export class ApiError extends Error {
     constructor(
@@ -22,7 +22,10 @@ export function handleUnauthorized(callback: () => void): void {
     onUnauthorized = callback
 }
 
-async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+/**
+ * `keepalive` lets a request finish while the page is closing (releasing an edit lock).
+ */
+async function request<T>(method: string, path: string, body?: unknown, options: { keepalive?: boolean } = {}): Promise<T> {
     const isForm = body instanceof FormData
 
     const response = await fetch(`${config.apiUrl}/${path}`, {
@@ -34,6 +37,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
             'X-CSRF-TOKEN': csrfToken,
         },
         credentials: 'same-origin',
+        keepalive: options.keepalive,
         body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
     })
 
@@ -105,6 +109,8 @@ export const api = {
 
     asset: (id: string) => request<{ data: Asset }>('GET', `assets/${id}`).then((response) => response.data),
 
+    deleteAsset: (id: string) => request<unknown>('DELETE', `assets/${id}`),
+
     uploadAsset: (file: File) => {
         const body = new FormData()
         body.append('file', file)
@@ -147,6 +153,17 @@ export const api = {
 
         return request<{ data: ItemSummary[]; meta: ListingMeta }>('GET', `modules/${module}/items${params.size ? `?${params}` : ''}`)
     },
+
+    /** Renders the site's page of an item with the form values, saved or not (no id: a new item). */
+    previewItem: (module: string, id: string | undefined, values: FormValues, locale: string) =>
+        request<{ data: { html: string } }>('POST', id ? `modules/${module}/items/${id}/preview` : `modules/${module}/preview`, { values, locale }).then((response) => response.data.html),
+
+    /** Takes or renews the edit lock of an item; with `takeOver`, takes it from whoever holds it. */
+    lockItem: (module: string, id: string, takeOver = false) =>
+        request<{ data: EditLock }>('POST', `modules/${module}/items/${id}/lock`, { takeOver }).then((response) => response.data),
+
+    /** Releases the edit lock, even while the page is closing. */
+    unlockItem: (module: string, id: string) => request<unknown>('DELETE', `modules/${module}/items/${id}/lock`, undefined, { keepalive: true }),
 
     /** Moves an item to the trash. */
     trashItem: (module: string, id: string) => request<unknown>('DELETE', `modules/${module}/items/${id}`),

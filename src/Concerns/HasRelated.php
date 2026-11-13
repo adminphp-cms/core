@@ -13,6 +13,23 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 trait HasRelated
 {
     /**
+     * Choices of an unsaved preview, by Browser field name.
+     *
+     * @var array<string, array<int, array{type: string, id: string}>>
+     */
+    protected array $previewRelated = [];
+
+    /**
+     * Used by previews: related() gives these choices instead of the stored ones.
+     *
+     * @param  array<int, array{type: string, id: string}>  $references
+     */
+    public function setPreviewRelated(string $browser, array $references): void
+    {
+        $this->previewRelated[$browser] = $references;
+    }
+
+    /**
      * Rows of all the Browser fields of the model.
      *
      * @return MorphMany<Related, $this>
@@ -30,6 +47,10 @@ trait HasRelated
      */
     public function related(string $browser, bool $onlyPublished = true): Collection
     {
+        if (array_key_exists($browser, $this->previewRelated)) {
+            return Related::resolve($this->previewRelated[$browser], $onlyPublished);
+        }
+
         $references = $this->relatedItems()
             ->where('browser_name', $browser)
             ->get(['related_type', 'related_id'])

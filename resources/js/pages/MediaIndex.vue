@@ -9,9 +9,11 @@ import UiButton from '../components/ui/UiButton.vue'
 import UiCard from '../components/ui/UiCard.vue'
 import UiIcon from '../components/ui/UiIcon.vue'
 import UiIconButton from '../components/ui/UiIconButton.vue'
+import { useToast } from '../composables/useToast'
 import { formatBytes, formatDateTime } from '../format'
 import { useAssetsStore } from '../stores/assets'
-import type { Asset } from '../types'
+import type { RouteLocationRaw } from 'vue-router'
+import type { Asset, AssetUsage } from '../types'
 
 const assetsStore = useAssetsStore()
 const assets = ref<Asset[]>([])
@@ -20,6 +22,8 @@ const search = ref('')
 const isLoaded = ref(false)
 const selected = ref<Asset | null>(null)
 const copied = ref(false)
+const isDeleting = ref(false)
+const toast = useToast()
 
 /**
  * Next to the details card the grid shrinks to a column; on narrow screens the details move above it.
@@ -32,6 +36,60 @@ async function load(): Promise<void> {
     assets.value = response.data
     total.value = response.meta.total
     isLoaded.value = true
+}
+
+/**
+ * Loads the contents using the selected image; the listing only knows how many there are.
+ */
+watch(
+    () => selected.value?.id,
+    async (id) => {
+        if (!id) {
+            return
+        }
+
+        const asset = await api.asset(id)
+
+        if (selected.value?.id === id) {
+            selected.value = asset
+        }
+    },
+)
+
+/**
+ * A trashed content cannot be opened: its link leads to the trash of its module.
+ */
+function usageLocation(usage: AssetUsage): RouteLocationRaw {
+    if (!usage.id) {
+        return { name: 'settings' }
+    }
+
+    return usage.isTrashed
+        ? { name: 'module.index', params: { module: usage.type }, query: { view: 'trash' } }
+        : { name: 'module.edit', params: { module: usage.type, id: usage.id } }
+}
+
+async function deleteSelected(): Promise<void> {
+    const asset = selected.value
+
+    if (!asset || !window.confirm(`Supprimer définitivement « ${asset.name} » ? Cette action est irréversible.`)) {
+        return
+    }
+
+    isDeleting.value = true
+
+    try {
+        await api.deleteAsset(asset.id)
+        assetsStore.forget(asset.id)
+        assets.value = assets.value.filter((candidate) => candidate.id !== asset.id)
+        total.value--
+        selected.value = null
+        toast.success('Image supprimée')
+    } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'La suppression a échoué.')
+    } finally {
+        isDeleting.value = false
+    }
 }
 
 let searchTimer: ReturnType<typeof setTimeout> | undefined
@@ -112,6 +170,28 @@ onMounted(load)
                         <dd class="m-0 text-ink wrap-anywhere">{{ formatDateTime(selected.createdAt) }}</dd>
                     </dl>
                     <UiButton @click="copyUrl"><UiIcon name="link" :size="14" /> {{ copied ? 'Adresse copiée' : 'Copier l’adresse' }}</UiButton>
+
+                    <section v-if="selected.usages" class="flex flex-col gap-2 border-t border-line pt-3.5">
+                        <h3 class="m-0 text-sm font-semibold text-ink">
+                            {{ selected.usages.length ? `Utilisée dans ${selected.usages.length} ${selected.usages.length > 1 ? 'contenus' : 'contenu'}` : 'Utilisée nulle part' }}
+                        </h3>
+                        <ul v-if="selected.usages.length" class="m-0 flex list-none flex-col gap-1 p-0">
+                            <li v-for="usage in selected.usages" :key="`${usage.type}:${usage.id}`">
+                                <RouterLink
+                                    :to="usageLocation(usage)"
+                                    class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-ink no-underline hover:bg-hover"
+                                >
+                                    <UiIcon :name="usage.icon" :size="14" class="shrink-0 text-faint" />
+                                    <span class="min-w-0 flex-1 truncate">{{ usage.title }}</span>
+                                    <span class="shrink-0 text-xs text-faint">{{ usage.isTrashed ? 'À la corbeille' : usage.moduleTitle }}</span>
+                                </RouterLink>
+                            </li>
+                        </ul>
+                        <UiButton variant="danger" :disabled="isDeleting || selected.usages.length > 0" @click="deleteSelected">
+                            <UiIcon name="trash" :size="14" /> Supprimer l’image
+                        </UiButton>
+                        <p v-if="selected.usages.length" class="m-0 text-xs text-faint">Retirez-la de ces contenus pour pouvoir la supprimer.</p>
+                    </section>
                 </UiCard>
             </div>
         </div>

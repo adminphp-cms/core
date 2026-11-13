@@ -41,6 +41,11 @@ class Image extends Field
         return ['string', 'ulid', Rule::exists(app(AdminPhp::class)->table('assets'), 'id'), ...$this->rules];
     }
 
+    public function assetIds(mixed $value): array
+    {
+        return is_string($value) && $value !== '' ? [$value] : [];
+    }
+
     public function dehydrate(mixed $value): mixed
     {
         return $value === '' ? null : $value;

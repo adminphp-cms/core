@@ -24,7 +24,10 @@ class ItemTrashController
 
         abort_unless($moduleDefinition->isTrashable(), 404);
 
-        $this->findItem($moduleDefinition, $id)->delete();
+        $item = $this->findItem($moduleDefinition, $id);
+        $this->ensureNotLockedByOther($item);
+
+        $item->delete();
 
         return response()->noContent();
     }

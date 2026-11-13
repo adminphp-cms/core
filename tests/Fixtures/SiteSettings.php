@@ -2,6 +2,7 @@
 
 namespace Gmarineau\AdminPhp\Tests\Fixtures;
 
+use Gmarineau\AdminPhp\Fields\Image;
 use Gmarineau\AdminPhp\Fields\Select;
 use Gmarineau\AdminPhp\Fields\Text;
 use Gmarineau\AdminPhp\Fields\Toggle;
@@ -20,6 +21,7 @@ class SiteSettings extends Settings
                 fn (): array => Article::query()->get()->mapWithKeys(fn (Article $article): array => [$article->id => $article->getTranslation('title', 'fr')])->all(),
             ),
             Toggle::make('maintenance')->label('Maintenance'),
+            Image::make('logo')->label('Logo'),
         ];
     }
 }

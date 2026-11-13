@@ -2,13 +2,16 @@
 
 namespace Gmarineau\AdminPhp\Actions;
 
+use Gmarineau\AdminPhp\AdminPhp;
+use Gmarineau\AdminPhp\Models\Lock;
 use Gmarineau\AdminPhp\Modules\Module;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 
 /**
  * Applies an action of the listing to several items at once. An item that cannot take the
- * action (a draft that no longer validates, for instance) is skipped and reported.
+ * action (a draft that no longer validates, an item someone else is editing) is skipped
+ * and reported.
  */
 class RunBulkAction
 {
@@ -18,6 +21,8 @@ class RunBulkAction
         protected PublishItem $publishItem,
         protected UnpublishItem $unpublishItem,
         protected DeleteItemsPermanently $deleteItemsPermanently,
+        protected ManageEditLock $manageEditLock,
+        protected AdminPhp $adminPhp,
     ) {}
 
     /**
@@ -31,21 +36,22 @@ class RunBulkAction
         $this->ensureSupported($module, $action);
 
         $query = $module->modelClass()::query();
+        $failed = $this->idsLockedByOthers($module, $ids);
+        $ids = array_values(array_diff($ids, $failed));
 
         if ($action === 'delete') {
-            return ['done' => $this->deleteItemsPermanently->handle($module, $ids), 'failed' => []];
+            return ['done' => $this->deleteItemsPermanently->handle($module, $ids), 'failed' => $failed];
         }
 
         if ($action === 'restore') {
-            return ['done' => $query->onlyTrashed()->whereKey($ids)->get()->each->restore()->count(), 'failed' => []];
+            return ['done' => $query->onlyTrashed()->whereKey($ids)->get()->each->restore()->count(), 'failed' => $failed];
         }
 
         if ($action === 'trash') {
-            return ['done' => $query->whereKey($ids)->get()->each->delete()->count(), 'failed' => []];
+            return ['done' => $query->whereKey($ids)->get()->each->delete()->count(), 'failed' => $failed];
         }
 
         $done = 0;
-        $failed = [];
 
         foreach ($query->whereKey($ids)->get() as $item) {
             try {
@@ -57,6 +63,27 @@ class RunBulkAction
         }
 
         return ['done' => $done, 'failed' => $failed];
+    }
+
+    /**
+     * @param  array<int, string>  $ids
+     * @return array<int, string>
+     */
+    protected function idsLockedByOthers(Module $module, array $ids): array
+    {
+        $query = $module->modelClass()::query();
+
+        if ($module->isTrashable()) {
+            $query->withTrashed();
+        }
+
+        $locks = $this->manageEditLock->activeLocks($query->whereKey($ids)->get()->all());
+        $userId = $this->adminPhp->user()?->getKey();
+
+        return array_values(array_map(
+            fn (Lock $lock): string => $lock->lockable_id,
+            array_filter($locks, fn (Lock $lock): bool => $lock->user_id !== $userId),
+        ));
     }
 
     protected function ensureSupported(Module $module, string $action): void

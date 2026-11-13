@@ -161,6 +161,15 @@ abstract class Field
     }
 
     /**
+     * Writes the value on an unsaved copy of the model shown in a preview. Nothing is
+     * stored: fields that save outside the model's columns keep their value in memory.
+     */
+    public function fillPreview(Model $model, mixed $value): void
+    {
+        $this->fillModel($model, $value);
+    }
+
+    /**
      * Last chance to complete the model before it is saved. Called on every save for every
      * field of the form, even when the field was not submitted (partial update, new item),
      * once the submitted values are filled in.
@@ -184,6 +193,17 @@ abstract class Field
         $this->ensureModelTranslates($model);
 
         return $model->getTranslations($this->name);
+    }
+
+    /**
+     * Ids of the media library assets the value uses, so an image is not deleted while
+     * a content shows it. Fields holding other fields (blocks, repeaters) collect theirs.
+     *
+     * @return array<int, string>
+     */
+    public function assetIds(mixed $value): array
+    {
+        return [];
     }
 
     /**

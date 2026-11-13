@@ -114,6 +114,22 @@ export interface Asset {
     width: number | null
     height: number | null
     createdAt: string
+    /** How many contents use the image (listing and details only). */
+    usageCount?: number
+    /** The contents using the image (details only). */
+    usages?: AssetUsage[]
+}
+
+/**
+ * A content showing an image: an item of a module, or the settings (no id).
+ */
+export interface AssetUsage {
+    type: string
+    id: string | null
+    title: string
+    moduleTitle: string
+    icon: string
+    isTrashed: boolean
 }
 
 export interface RepeaterFieldSchema extends BaseFieldSchema {
@@ -194,6 +210,8 @@ export interface ModuleSchema {
     nestingDepth: number
     /** Deleted items go to a trash, from where they can be restored. */
     trashable: boolean
+    /** The site can show an item with unsaved changes. */
+    previewable: boolean
     listing: ListingSchema
     fields: FieldSchema[]
 }
@@ -290,6 +308,15 @@ export interface ItemSummary {
     parentId: string | null
     /** Values of the listing columns, by column name. */
     cells: Record<string, unknown>
+    /** Name of the other admin user editing the item right now, if any. */
+    lockedBy: string | null
+}
+
+/** Who edits an item: the current user (isMine) or someone else. */
+export interface EditLock {
+    isMine: boolean
+    userName: string | null
+    lockedAt: string
 }
 
 export type BulkAction = 'publish' | 'unpublish' | 'trash' | 'restore' | 'delete'

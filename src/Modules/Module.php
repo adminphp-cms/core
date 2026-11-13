@@ -8,6 +8,7 @@ use Gmarineau\AdminPhp\Concerns\HasPosition;
 use Gmarineau\AdminPhp\Concerns\HasPublication;
 use Gmarineau\AdminPhp\Fields\Field;
 use Gmarineau\AdminPhp\Forms\HasFields;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -38,6 +39,12 @@ abstract class Module
      * Modules ordered by hand (HasPosition) are listed in their order instead.
      */
     protected string $defaultSort = '-updated_at';
+
+    /**
+     * Blade view of the site showing an item, used to preview unsaved changes in the admin.
+     * It receives the item as `$item` and under the module name (`$article`…). Null: no preview.
+     */
+    protected ?string $previewView = null;
 
     /**
      * Short sentence shown under the module title in the admin.
@@ -206,6 +213,30 @@ abstract class Module
         return in_array(HasPublication::class, class_uses_recursive($this->model), true);
     }
 
+    public function isPreviewable(): bool
+    {
+        return $this->previewView !== null;
+    }
+
+    /**
+     * Renders the preview of an item built from the admin form, nothing saved.
+     * Override it to pass other variables or to render something else than a view.
+     */
+    public function preview(Model $item): Renderable|string
+    {
+        return view($this->previewView ?? throw new LogicException(sprintf('Module [%s] has no $previewView.', $this->name())), $this->previewData($item));
+    }
+
+    /**
+     * Variables of the preview view.
+     *
+     * @return array<string, mixed>
+     */
+    protected function previewData(Model $item): array
+    {
+        return ['item' => $item, Str::camel($this->name()) => $item];
+    }
+
     /**
      * Whether deleted items go to a trash, from where they can be restored (SoftDeletes).
      */
@@ -247,6 +278,7 @@ abstract class Module
             'publishable' => $this->isPublishable(),
             'sortable' => $this->isSortable(),
             'trashable' => $this->isTrashable(),
+            'previewable' => $this->isPreviewable(),
             'nestingDepth' => $this->nestingDepth(),
             'listing' => [
                 'columns' => array_values(array_map(fn (Column $column): array => $column->toSchema($this), $this->listingColumns())),

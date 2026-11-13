@@ -4,6 +4,7 @@ namespace Gmarineau\AdminPhp\Fields;
 
 use Gmarineau\AdminPhp\AdminPhp;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Spatie\Translatable\HasTranslations;
 
@@ -12,8 +13,8 @@ use Spatie\Translatable\HasTranslations;
  *
  * Left empty, it is generated on save from that field; typed by hand, it is
  * normalized (lowercase, no accents, dashes). It never follows later changes
- * of the title, so published addresses stay stable. Unique by default: a
- * taken slug gets a "-2", "-3"… suffix.
+ * of the title, so published addresses stay stable. Unique by default, trashed
+ * contents included: a taken slug gets a "-2", "-3"… suffix.
  */
 class Slug extends Text
 {
@@ -195,7 +196,14 @@ class Slug extends Text
 
     protected function isTaken(Model $model, string $column, string $slug): bool
     {
-        return $model->newQuery()
+        $query = $model->newQuery();
+
+        // A trashed content keeps its slug: it gets it back when restored.
+        if (in_array(SoftDeletes::class, class_uses_recursive($model), true)) {
+            $query->withTrashed();
+        }
+
+        return $query
             ->when($model->exists, fn ($query) => $query->whereKeyNot($model->getKey()))
             ->where($column, $slug)
             ->exists();

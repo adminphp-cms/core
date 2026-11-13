@@ -63,5 +63,15 @@ it('renames the tables of an install made before the media library was renamed',
         ->and(Media::query()->find($mediaId)?->name)->toBe('a.jpg')
         ->and(MediaUsage::query()->where('media_id', $mediaId)->count())->toBe(1)
         ->and(collect(Schema::getIndexes('adminphp_medias'))->pluck('name'))->toContain('adminphp_medias_created_at_index', 'adminphp_medias_user_id_index')
-        ->and(collect(Schema::getIndexes('adminphp_media_usages'))->pluck('name'))->toContain('adminphp_media_usages_unique', 'adminphp_media_usages_usable_index');
+        ->and(collect(Schema::getIndexes('adminphp_media_usages'))->pluck('columns', 'name')->all())->toMatchArray([
+            'adminphp_media_usages_unique' => ['media_id', 'usable_type', 'usable_id'],
+            'adminphp_media_usages_usable_index' => ['usable_type', 'usable_id'],
+        ]);
+
+    // A content uses several medias: the unique index must be on the media, not only on the content.
+    $otherMediaId = (string) Str::ulid();
+    DB::table('adminphp_medias')->insert(['id' => $otherMediaId, 'disk' => 'public', 'path' => 'adminphp/b.jpg', 'name' => 'b.jpg', 'mime_type' => 'image/jpeg', 'size' => 10]);
+    MediaUsage::query()->create(['media_id' => $otherMediaId, 'usable_type' => 'article', 'usable_id' => 'x']);
+
+    expect(MediaUsage::query()->where('usable_id', 'x')->count())->toBe(2);
 });

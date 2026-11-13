@@ -14,12 +14,22 @@ return new class extends Migration
 
         // Installed before the media library was renamed: keep the usages, rename the table.
         if (Schema::hasTable($formerTable) && ! Schema::hasTable($table)) {
+            // The indexes are dropped and created again rather than renamed: SQLite renames an
+            // index by rebuilding it from its former columns, which would still name asset_id.
+            Schema::table($formerTable, function (Blueprint $blueprint) use ($formerTable) {
+                $blueprint->dropUnique("{$formerTable}_unique");
+                $blueprint->dropIndex("{$formerTable}_usable_index");
+            });
+
             Schema::rename($formerTable, $table);
 
-            Schema::table($table, function (Blueprint $blueprint) use ($formerTable, $table) {
+            Schema::table($table, function (Blueprint $blueprint) {
                 $blueprint->renameColumn('asset_id', 'media_id');
-                $blueprint->renameIndex("{$formerTable}_unique", "{$table}_unique");
-                $blueprint->renameIndex("{$formerTable}_usable_index", "{$table}_usable_index");
+            });
+
+            Schema::table($table, function (Blueprint $blueprint) use ($table) {
+                $blueprint->unique(['media_id', 'usable_type', 'usable_id'], "{$table}_unique");
+                $blueprint->index(['usable_type', 'usable_id'], "{$table}_usable_index");
             });
 
             return;

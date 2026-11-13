@@ -1,6 +1,6 @@
 {
     "name": "gmarineau/adminphp",
-    "description": "Simpel CMS for Laravel",
+    "description": "A content management admin for Laravel, inspired by Twill",
     "type": "library",
     "license": "MIT",
     "authors": [

@@ -139,12 +139,23 @@ $cover = Media::query()->find($project->cover); // An Image field stores the id 
 
 <x-adminphp::image :media="$cover" sizes="100vw" />
 
-@foreach ($project->blocks as $block)
-    @if ($block->type === 'text')
-        <p>{{ $block->translated('text') }}</p>
-    @endif
-@endforeach
+{{ $project->renderBlocks() }}
 ```
+
+`renderBlocks()` renders each block with the view named after its type, in `resources/views/blocks`
+(see `adminphp.blocks.views`). The view receives the block as `$block` and the content as `$item`:
+
+```blade
+{{-- resources/views/blocks/text.blade.php --}}
+<div class="prose">{{ $block->richText('body') }}</div>
+
+{{-- resources/views/blocks/image.blade.php --}}
+<x-adminphp::image :media="$block->media('image')" :alt="$block->translated('alt')" />
+```
+
+A block without its view shows the file to create while `APP_DEBUG` is on, and nothing in production.
+When a model has several Blocks fields, name the one to render, and give other views by block type
+when a place needs them: `$project->renderBlocks('sidebar', ['quote' => 'blocks.quote-small'])`.
 
 A `RichText` field stores the JSON document of its editor. Render it as HTML, every text escaped and
 only safe links kept, with `$block->richText('body')` or with the component, which takes any stored

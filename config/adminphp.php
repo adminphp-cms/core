@@ -134,4 +134,18 @@ return [
         'ttl' => 120,
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Blocks
+    |--------------------------------------------------------------------------
+    |
+    | $item->renderBlocks() renders each block with the view named after its
+    | type in this folder of resources/views: blocks.text for a text block.
+    |
+    */
+
+    'blocks' => [
+        'views' => 'blocks',
+    ],
+
 ];

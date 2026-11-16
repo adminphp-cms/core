@@ -1,12 +1,13 @@
-# AdminPhp
+# AdminPHP
 
 [![Tests](https://github.com/adminphp-cms/core/actions/workflows/tests.yml/badge.svg)](https://github.com/adminphp-cms/core/actions/workflows/tests.yml)
+[![Packagist](https://img.shields.io/packagist/v/adminphp-cms/core)](https://packagist.org/packages/adminphp-cms/core)
 [![PHP](https://img.shields.io/badge/php-%5E8.3-777bb4)](composer.json)
 [![Laravel](https://img.shields.io/badge/laravel-12%20%7C%2013-ff2d20)](composer.json)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE.md)
 
 A content management admin for Laravel, inspired by [Twill](https://twillcms.com). You describe your
-content as PHP classes (modules, fields and blocks); AdminPhp gives your editors a fast admin to write,
+content as PHP classes (modules, fields and blocks); AdminPHP gives your editors a fast admin to write,
 preview, schedule and publish it, while your site keeps rendering it with plain Eloquent and Blade.
 
 The admin is a Vue 3 single page application shipped prebuilt with the package: there is nothing to
@@ -15,9 +16,11 @@ compile in your project.
 ## Features
 
 - **Modules**: one PHP class per kind of content (articles, pages, menu links…), with its form and listing.
-- **Fields**: text, rich text, slug, select, toggle, date, image, repeater, browser (links to other
-  contents) and blocks. Text fields can be translated in every locale of the site.
-- **Block editor**: build pages from your own blocks (text, image, quote…), reorder them by drag and drop.
+- **Fields**: text (also as e-mail, URL, phone or number), rich text, slug, select, toggle, date, image,
+  repeater, browser (links to other contents) and blocks, each with its help, placeholder and default.
+  Text fields can be translated in every locale of the site.
+- **Block editor**: build pages from your own blocks (text, image, quote…), reorder them by drag and drop,
+  and render them on the site with `{{ $item->renderBlocks() }}`.
 - **Publication workflow**: drafts kept apart from the live version, publication windows, revisions you
   can restore, and a preview of unsaved changes rendered by your own Blade view.
 - **Listings**: columns, filters, views, search and sort declared on the module; manual ordering and
@@ -37,16 +40,11 @@ compile in your project.
 
 ## Installation
 
-AdminPhp is not on Packagist yet: add the repository to your `composer.json` first.
+To start a new site, the [starter](https://github.com/adminphp-cms/starter) comes with AdminPHP set up:
+articles, pages, a menu, blocks, settings and a demo.
 
-```json
-"repositories": [
-    { "type": "vcs", "url": "https://github.com/adminphp-cms/core" }
-]
-```
-
-Then require the package and run the installer, which publishes the config, the migrations and the admin
-assets, and runs the migrations:
+To add AdminPHP to an existing Laravel application, require the package and run the installer, which
+publishes the config, the migrations and the admin assets, and runs the migrations:
 
 ```bash
 composer require adminphp-cms/core
@@ -61,6 +59,12 @@ php artisan storage:link
 ```
 
 The admin is now available at `/admin` (see `ADMINPHP_PATH` in `config/adminphp.php`).
+
+## Versions
+
+AdminPHP follows [semantic versioning](https://semver.org). Until 1.0, a minor version (0.1 → 0.2) may
+change the API, so require `^0.1` to receive only the fixes and additions of 0.1. Each
+[release](https://github.com/adminphp-cms/core/releases) explains what changed and how to upgrade.
 
 ## Quick start
 
@@ -193,4 +197,4 @@ The admin front lives in `resources/js`. After changing it, rebuild the committe
 
 ## License
 
-AdminPhp is open-source software licensed under the [MIT license](LICENSE.md).
+AdminPHP is open-source software licensed under the [MIT license](LICENSE.md).
